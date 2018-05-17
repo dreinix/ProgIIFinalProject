@@ -17,9 +17,9 @@ namespace ProgIIFinalProject
             Console.SetCursorPosition(5, 0);
             Console.WriteLine("*****Menú*****");
             Console.WriteLine("1. Agregar usuarios \n" +
-                "2. Modificar usuarios \n" +
-                "3. Visualizar usuarios \n" +
-                "4. Buscar \n" +
+                "2. Visualizar usuarios \n" +
+                "3. Buscar \n" +
+                "4. Modificar usuarios \n" +
                 "5. Eliminar usuarios \n" +
                 "6. Salir \n");
             try
@@ -36,10 +36,11 @@ namespace ProgIIFinalProject
                     AgregarUsuario();
                     break;
                 case 2:
-
+                    RevisarUsuarios();
                     break;
                 case 3:
-
+                    string iD = Console.ReadLine();
+                    BuscarUsuario(iD);
                     break;
                 case 4:
 
@@ -88,41 +89,41 @@ namespace ProgIIFinalProject
             nombre  = Console.ReadLine();
             xPosition += nombre.Length + 1;
 
-            gotoXY("Apellido: ", xPosition, 1);
+            gotoXY("|Apellido: ", xPosition, 1);
             xPosition += 10;
             Console.SetCursorPosition(xPosition, 1);
             apellido = Console.ReadLine();
             xPosition += apellido.Length + 1;
 
-            gotoXY("ID: ", xPosition, 1);
+            gotoXY("|ID: ", xPosition, 1);
             xPosition += 5;
             Console.SetCursorPosition(xPosition, 1);
             ID = Console.ReadLine();
             xPosition += ID.Length + 1;
 
-            gotoXY("Carrera: ", xPosition, 1);
+            gotoXY("|Carrera: ", xPosition, 1);
             xPosition += 9;
             Console.SetCursorPosition(xPosition, 1);
             carrera = Console.ReadLine();
             xPosition += carrera.Length + 1;
 
-            gotoXY("Identificador nacional: ", xPosition, 1);
+            gotoXY("|Identificador nacional: ", xPosition, 1);
             xPosition += 26;
             Console.SetCursorPosition(xPosition, 1);
             identificador = Console.ReadLine();
             xPosition =0;
 
-            gotoXY("Fecha de nacimiento mm/dd/yyyy: ", xPosition, 2);
+            gotoXY("|Fecha de nacimiento mm/dd/yyyy: ", xPosition, 2);
             xPosition += 33;
             Console.SetCursorPosition(xPosition, 2);
             fechaNacimiento = DateTime.Parse(Console.ReadLine());
             xPosition += fechaNacimiento.ToString().Length + 1;
 
             Console.Clear();
-            gotoXY("Nacionalidad dominicana? \n" +
+            gotoXY("|Nacionalidad dominicana? \n" +
                 "1.Si \n" +
                 "2.No",0,1);
-            Console.SetCursorPosition(25, 1);
+            Console.SetCursorPosition(27, 1);
             try
             {
                 option = int.Parse(Console.ReadLine());
@@ -150,7 +151,7 @@ namespace ProgIIFinalProject
                 
 
             Console.Clear();
-            gotoXY("Estados del usuario: \n" +
+            gotoXY("|Estados del usuario: \n" +
                 "1. Incompleto \n" +
                 "2. Activo \n" +
                 "3. Inactivo \n" +
@@ -197,6 +198,7 @@ namespace ProgIIFinalProject
                 usuario.estado = estado;
                 usuario.fechaNacimiento = fechaNacimiento;
                 usuario.ID = ID;
+                usuario.identificadorPersonal = identificador;
                 usuario.extrangero = extrangero;
                 userList.Add(usuario);
                 Console.WriteLine("usuario agregado con exito");
@@ -206,6 +208,60 @@ namespace ProgIIFinalProject
             }
             Console.ReadKey();
             Menu();
+        }
+        static void RevisarUsuarios()
+        {
+            Console.Clear();
+            gotoXY("Nombre: ", 0, 0);
+            gotoXY("|Apellido: ", 30, 0);
+            gotoXY("|ID: ", 60, 0);
+            gotoXY("|Carrera: ",73, 0);
+            gotoXY("|Identificador nacional: ", 95, 0);
+            gotoXY("|Fecha de nacimiento ", 125, 0);
+            gotoXY("|dominicano?", 150, 0);
+            gotoXY("|Estado", 165, 0);
+            int i = 1;
+            foreach (User estudent in userList)
+            {
+                gotoXY(estudent.nombre, 0, i);
+                gotoXY(estudent.apellido, 30, i);
+                gotoXY(estudent.ID, 60, i);
+                gotoXY(estudent.carrera, 73, i);
+                gotoXY(estudent.identificadorPersonal, 95, i);
+                gotoXY(estudent.fechaNacimiento.ToShortDateString(), 125, i);
+                gotoXY(estudent.extrangero.ToString(), 150, i);
+                gotoXY(estudent.estado, 165, i);
+                i++;
+            }
+        }
+        static void BuscarUsuario(String id)
+        {
+            Console.Clear();
+            gotoXY("Nombre: ", 0, 0);
+            gotoXY("|Apellido: ", 30, 0);
+            gotoXY("|ID: ", 60, 0);
+            gotoXY("|Carrera: ", 73, 0);
+            gotoXY("|Identificador nacional: ", 95, 0);
+            gotoXY("|Fecha de nacimiento ", 125, 0);
+            gotoXY("|dominicano?", 150, 0);
+            gotoXY("|Estado", 165, 0);
+            int i = 1;
+            foreach (User estudent in userList)
+            {
+                if (estudent.ID == id)
+                {
+                    gotoXY(estudent.nombre, 0, i);
+                    gotoXY(estudent.apellido, 30, i);
+                    gotoXY(estudent.ID, 60, i);
+                    gotoXY(estudent.carrera, 73, i);
+                    gotoXY(estudent.identificadorPersonal, 95, i);
+                    gotoXY(estudent.fechaNacimiento.ToShortDateString(), 125, i);
+                    gotoXY(estudent.extrangero.ToString(), 150, i);
+                    gotoXY(estudent.estado, 165, i);
+                    i++;
+                }
+                
+            }
         }
     }
 }

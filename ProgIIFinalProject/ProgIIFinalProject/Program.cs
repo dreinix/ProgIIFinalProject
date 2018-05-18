@@ -65,7 +65,9 @@ namespace ProgIIFinalProject
         static void Main(string[] args)
         {
 
-            Console.SetWindowSize(Convert.ToInt32(Console.LargestWindowWidth * 0.8), Convert.ToInt32(Console.LargestWindowHeight*0.8));
+            Console.SetWindowSize(Convert.ToInt32(Console.LargestWindowWidth), Convert.ToInt32(Console.LargestWindowHeight));
+            Console.WindowTop = 0;
+            Console.WindowLeft = 0;
             Console.SetWindowPosition(0, 0);
             Menu();
         }
@@ -213,24 +215,24 @@ namespace ProgIIFinalProject
         {
             Console.Clear();
             gotoXY("Nombre: ", 0, 0);
-            gotoXY("|Apellido: ", 30, 0);
-            gotoXY("|ID: ", 60, 0);
-            gotoXY("|Carrera: ",73, 0);
-            gotoXY("|Identificador nacional: ", 95, 0);
-            gotoXY("|Fecha de nacimiento ", 125, 0);
-            gotoXY("|dominicano?", 150, 0);
-            gotoXY("|Estado", 165, 0);
+            gotoXY("|Apellido: ", 20, 0);
+            gotoXY("|ID: ", 40, 0);
+            gotoXY("|Carrera: ",51, 0);
+            gotoXY("|Identificador nacional: ", 70, 0);
+            gotoXY("|Fecha de nacimiento ", 95, 0);
+            gotoXY("|dominicano?", 120, 0);
+            gotoXY("|Estado", 133, 0);
             int i = 1;
             foreach (User estudent in userList)
             {
                 gotoXY(estudent.nombre, 0, i);
-                gotoXY(estudent.apellido, 30, i);
-                gotoXY(estudent.ID, 60, i);
-                gotoXY(estudent.carrera, 73, i);
-                gotoXY(estudent.identificadorPersonal, 95, i);
-                gotoXY(estudent.fechaNacimiento.ToShortDateString(), 125, i);
-                gotoXY(estudent.extrangero.ToString(), 150, i);
-                gotoXY(estudent.estado, 165, i);
+                gotoXY(estudent.apellido, 20, i);
+                gotoXY(estudent.ID, 40, i);
+                gotoXY(estudent.carrera, 51, i);
+                gotoXY(estudent.identificadorPersonal, 70, i);
+                gotoXY(estudent.fechaNacimiento.ToShortDateString(), 95, i);
+                gotoXY(estudent.extrangero.ToString(), 120, i);
+                gotoXY(estudent.estado, 133, i);
                 i++;
             }
         }

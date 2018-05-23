@@ -89,9 +89,8 @@ namespace ProgIIFinalProject
             Console.WriteLine(word);
         }
         static string GenerarID()
-        {
+        {   
             string iD = "";
-            bool noExist = true;
             Random r1 = new Random();
             iD = currentId + "" + r1.Next(0, 10000);
             foreach (string cid in idList)

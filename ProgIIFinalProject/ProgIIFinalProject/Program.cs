@@ -73,7 +73,7 @@ namespace ProgIIFinalProject
         }
         static void Main(string[] args)
         {
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("es-ES");
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("es-LA");
             Console.SetWindowSize(Convert.ToInt32(Console.LargestWindowWidth), Convert.ToInt32(Console.LargestWindowHeight));
             Console.WindowTop = 0;
             Console.WindowLeft = 0;

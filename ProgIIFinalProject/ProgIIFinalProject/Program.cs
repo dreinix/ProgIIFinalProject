@@ -60,7 +60,7 @@ namespace ProgIIFinalProject
                 case 6:
                     Console.Clear();
                     Console.WriteLine("Gracias por utilizar nuestros servicios");
-                    Console.ReadKey();
+                    //Console.ReadKey();
                     return;
                 default:
                     Console.WriteLine("Opcion invalida,intente de nuevo");
@@ -130,7 +130,7 @@ namespace ProgIIFinalProject
             catch (Exception)
             {
                fechaNacimiento = Convert.ToDateTime("01/01/1999");
-                Console.WriteLine("Formato de fecha invalidoSe. Se establecera una fecha predeterminada");
+                Console.WriteLine("Formato de fecha invalido. Se establecera una fecha predeterminada");
                 Console.ReadKey();
             }
             xPosition += fechaNacimiento.ToString().Length + 1;
@@ -152,7 +152,7 @@ namespace ProgIIFinalProject
                         extrangero = false;
                         break;
                     default:
-                        Console.WriteLine("Error al seleccionar la opcion, el usuario será puesto como extrangero");
+                        gotoXY("Error en la selección. El usuario será identificado como extranjero", 0, 6);
                         extrangero = true;
                         Console.ReadKey();
                         break;
@@ -160,7 +160,7 @@ namespace ProgIIFinalProject
             }
             catch
             {
-                Console.WriteLine("Error en la selección. El usuario será identificado como extrangero");
+                gotoXY("Error en la selección. El usuario será identificado como extranjero", 0, 6);
                 extrangero = true;
                 Console.ReadKey();
             }
@@ -192,7 +192,8 @@ namespace ProgIIFinalProject
                         estado = "APA";
                         break;
                     default:
-                        Console.WriteLine("Error al seleccionar la opcion, el usuario será puesto como incompleto");
+                        gotoXY("Error al seleccionar la opcion, el usuario será puesto como incompleto", 0, 6);
+                           
                         estado = "Incompleto";
                         Console.ReadKey();
                         break;
@@ -200,7 +201,7 @@ namespace ProgIIFinalProject
             }
             catch
             {
-                Console.WriteLine("Error al seleccionar la opcion, el usuario será puesto como incompleto");
+                gotoXY("Error al seleccionar la opcion, el usuario será puesto como incompleto", 0, 6);
                 estado = "Incompleto";
                 Console.ReadKey();
             }
@@ -321,6 +322,8 @@ namespace ProgIIFinalProject
                     {
                         case 1:
                             Console.WriteLine("-Nombre: ");
+
+                            Console.SetCursorPosition(8, 2);
                             newInput = Console.ReadLine();
                             estudent.nombre = newInput;
                             
@@ -328,23 +331,27 @@ namespace ProgIIFinalProject
                         break;
                         case 2:
                             Console.WriteLine("-Apellido: ");
+                            Console.SetCursorPosition(10, 2);
                             newInput = Console.ReadLine();
                             estudent.apellido = newInput;
                             break;
                         case 3:
                             Console.WriteLine("-ID: ");
+                            Console.SetCursorPosition(5, 2);
                             newInput = Console.ReadLine();
                             estudent.ID = newInput;
                             ;
                             break;
                         case 4:
                             Console.WriteLine("-Carrera: ");
+                            Console.SetCursorPosition(9, 2);
                             newInput = Console.ReadLine();
                             estudent.carrera = newInput;
                             ;
                             break;
                         case 5:
                             Console.WriteLine("-Iddentificador nacional: ");
+                            Console.SetCursorPosition(26, 2);
                             newInput = Console.ReadLine();
                             estudent.identificadorPersonal = newInput;
                             ;
@@ -357,6 +364,7 @@ namespace ProgIIFinalProject
 
                             try
                             {
+                                Console.SetCursorPosition(33, 2);
                                 fechaNacimiento = DateTime.Parse(Console.ReadLine());
                                 estudent.fechaNacimiento = fechaNacimiento;
                             }
@@ -385,7 +393,7 @@ namespace ProgIIFinalProject
                                         estudent.extrangero = false;
                                         break;
                                     default:
-                                        Console.WriteLine("Error al seleccionar la opcion, el usuario será puesto como extrangero");
+                                        gotoXY("Error en la selección. El usuario será identificado como extranjero", 0, 6);
                                         estudent.extrangero = true;
                                         Console.ReadKey();
                                         Menu();
@@ -394,7 +402,8 @@ namespace ProgIIFinalProject
                             }
                             catch
                             {
-                                Console.WriteLine("Error en la selección. El usuario será identificado como extrangero");
+                                gotoXY("Error en la selección. El usuario será identificado como extranjero", 0, 6);
+                                
                                 estudent.extrangero = true;
                                 Console.ReadKey();
                                 Menu();
@@ -427,7 +436,7 @@ namespace ProgIIFinalProject
                                         estudent.estado = "APA";
                                         break;
                                     default:
-                                        Console.WriteLine("Error al seleccionar la opcion, el usuario será puesto como incompleto");
+                                        gotoXY("Error al seleccionar la opcion, el usuario será puesto como incompleto", 0, 7);
                                         estudent.estado = "Incompleto";
                                         Console.ReadKey();
                                         Menu();
@@ -436,7 +445,7 @@ namespace ProgIIFinalProject
                             }
                             catch
                             {
-                                Console.WriteLine("Error al seleccionar la opcion, el usuario será puesto como incompleto");
+                                gotoXY("Error al seleccionar la opcion, el usuario será puesto como incompleto", 0, 7);
                                 estudent.estado = "Incompleto";
                                 Console.ReadKey();
                                 Menu();

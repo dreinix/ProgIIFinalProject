@@ -62,8 +62,9 @@ namespace ProgIIFinalProject
                 case 6:
                     Console.Clear();
                     Console.WriteLine("Gracias por utilizar nuestros servicios");
+                    Environment.Exit(0);
                     //Console.ReadKey();
-                    return;
+                    break;
                 default:
                     Console.WriteLine("Opcion invalida,intente de nuevo");
                     Console.ReadKey();

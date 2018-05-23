@@ -14,7 +14,7 @@ namespace ProgIIFinalProject
         private String _nombre;
         private String _apellido;
         private String _estado;
-        private String _ID;
+        private int _ID;
         private String _carrera;
         private String _identificadorPersonal;
         private DateTime _fechaNacimiento;
@@ -35,7 +35,7 @@ namespace ProgIIFinalProject
             get { return _estado; }
             set { _estado = value; }
         }
-        public string ID
+        public int ID
         {
             get { return _ID; }
             set { _ID = value; }

@@ -12,7 +12,7 @@ namespace ProgIIFinalProject
         static void Menu()
         {
             byte opcion;
-
+            string iD;
             Console.Clear();
             Console.SetCursorPosition(5, 0);
             Console.WriteLine("*****Menú*****");
@@ -40,16 +40,18 @@ namespace ProgIIFinalProject
                     break;
                 case 3:
                     Console.WriteLine("Ingrese el ID o el identificador nacional del usuario: ");
-                    string iD = Console.ReadLine();
+                    iD = Console.ReadLine();
                     BuscarUsuario(iD);
                     break;
                 case 4:
                     Console.WriteLine("Ingrese el ID del usuario al que desea modificar algun dato: \n");
-                    string Id = Console.ReadLine();
-                    EditarUsuario(Id);
+                    iD = Console.ReadLine();
+                    EditarUsuario(iD);
                     break;
                 case 5:
-
+                    Console.WriteLine("Ingrese el ID del usuario al que desea modificar algun dato: \n");
+                    iD = Console.ReadLine();
+                    EliminarUsuario(iD);
                     break;
                 case 6:
                     Console.Clear();
@@ -432,6 +434,21 @@ namespace ProgIIFinalProject
                 }
             }
 
+        }
+        static void EliminarUsuario(String id)
+        {
+            foreach (User estudent in userList)
+            {
+                if (estudent.ID == id)
+                {
+                    userList.Remove(estudent);
+                    break;
+                }
+            }
+            Console.WriteLine("Usuario eliminado con exito");
+            Console.WriteLine("Presione cualquier tecla para continuar...");
+            Console.ReadKey();
+            Menu();
         }
     }
 }

@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
+using System.Globalization;
 
 namespace ProgIIFinalProject
 {
     class Program
     {
+        
         static List<User> userList = new List<User>();
         static void Menu()
         {
+            
             byte opcion;
             string iD;
             Console.Clear();
@@ -69,7 +73,7 @@ namespace ProgIIFinalProject
         }
         static void Main(string[] args)
         {
-
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("es-ES");
             Console.SetWindowSize(Convert.ToInt32(Console.LargestWindowWidth), Convert.ToInt32(Console.LargestWindowHeight));
             Console.WindowTop = 0;
             Console.WindowLeft = 0;
@@ -89,7 +93,6 @@ namespace ProgIIFinalProject
             String nombre, apellido, estado, ID, carrera, identificador;
             bool extrangero;
             DateTime fechaNacimiento;
-
             gotoXY("-Nombre: ", xPosition, 1);
             xPosition += 8;
             Console.SetCursorPosition(xPosition, 1);
@@ -120,7 +123,7 @@ namespace ProgIIFinalProject
             identificador = Console.ReadLine();
             xPosition =0;
 
-            gotoXY("-Fecha de nacimiento mm/dd/yyyy: ", xPosition, 2);
+            gotoXY("-Fecha de nacimiento dd/mm/yyyy: ", xPosition, 2);
             xPosition += 33;
             Console.SetCursorPosition(xPosition, 2);
             fechaNacimiento = DateTime.Parse(Console.ReadLine());
@@ -341,7 +344,7 @@ namespace ProgIIFinalProject
                             ;
                             break;
                         case 6:
-                            Console.WriteLine("-Fecha de nacimiento mm/dd/yyyy: ");
+                            Console.WriteLine("-Fecha de nacimiento dd/mm/yyyy: ");
                             DateTime fechaNacimiento = DateTime.Parse(Console.ReadLine());
                             estudent.fechaNacimiento = fechaNacimiento;
                             ;

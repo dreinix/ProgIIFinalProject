@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
+using System.Threading;
 
 namespace ProgIIFinalProject
 {
     class User
     {
+        
         private String _nombre;
         private String _apellido;
         private String _estado;
@@ -15,7 +18,7 @@ namespace ProgIIFinalProject
         private String _carrera;
         private String _identificadorPersonal;
         private DateTime _fechaNacimiento;
-        private bool _extrangero;
+        private bool _extrangero=true;
 
         public string nombre
         {
@@ -50,7 +53,10 @@ namespace ProgIIFinalProject
         public DateTime fechaNacimiento
         {
             get { return _fechaNacimiento; }
-            set { _fechaNacimiento = value; }
+            set {
+                CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("es-ES");
+                _fechaNacimiento = value; }
+
         }
         public bool extrangero
         {

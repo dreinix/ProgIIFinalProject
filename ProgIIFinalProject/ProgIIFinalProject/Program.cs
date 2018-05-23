@@ -89,18 +89,18 @@ namespace ProgIIFinalProject
         }
         static string GenerarID()
         {
-            string iD="";
+            string iD = "";
             bool noExist = true;
             Random r1 = new Random();
-            iD = currentId +""+ r1.Next(0, 10000);
-                foreach (string cid in idList)
+            iD = currentId + "" + r1.Next(0, 10000);
+            foreach (string cid in idList)
+            {
+                if (cid == iD)
                 {
-                    if (cid == iD)
-                    {
-                        GenerarID();
-                        break;
-                    }
+                    GenerarID();
+                    break;
                 }
+            }
             return iD;
         }
         static void AgregarUsuario()

@@ -54,7 +54,7 @@ namespace ProgIIFinalProject
         {
             get { return _fechaNacimiento; }
             set {
-                CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("es-LA");
+                CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("es-ES");
                 _fechaNacimiento = value; }
 
         }

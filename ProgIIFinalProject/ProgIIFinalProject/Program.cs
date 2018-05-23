@@ -458,13 +458,15 @@ namespace ProgIIFinalProject
                     Console.ReadKey();
                     Menu();
                 }
+                
+            }
                 if (aux == false)
                 {
-                    Console.WriteLine("El ID ingresado no coincide con ninguno de los usuarios agregados");
-                    Menu();
+                Console.Clear();
+                Console.WriteLine("El ID ingresado no coincide con ninguno de los usuarios agregados");
+                Console.ReadKey();
+                Menu();
                 }
-            }
-
         }
         static void EliminarUsuario(String id)
         {

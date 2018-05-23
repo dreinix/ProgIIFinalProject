@@ -53,7 +53,7 @@ namespace ProgIIFinalProject
                     EditarUsuario(iD);
                     break;
                 case 5:
-                    Console.WriteLine("Ingrese el ID del usuario al que desea modificar algun dato: \n");
+                    Console.WriteLine("Ingrese el ID del usuario al que desea eliminar: \n");
                     iD = Console.ReadLine();
                     EliminarUsuario(iD);
                     break;
@@ -126,7 +126,13 @@ namespace ProgIIFinalProject
             gotoXY("-Fecha de nacimiento dd/mm/yyyy: ", xPosition, 2);
             xPosition += 33;
             Console.SetCursorPosition(xPosition, 2);
-            fechaNacimiento = DateTime.Parse(Console.ReadLine());
+            try { fechaNacimiento = DateTime.Parse(Console.ReadLine()); }
+            catch (Exception)
+            {
+               fechaNacimiento = Convert.ToDateTime("01/01/1999");
+                Console.WriteLine("Formato de fecha invalidoSe. Se establecera una fecha predeterminada");
+                Console.ReadKey();
+            }
             xPosition += fechaNacimiento.ToString().Length + 1;
 
             Console.Clear();
@@ -310,7 +316,7 @@ namespace ProgIIFinalProject
                     }
                     Console.Clear();
                     Console.WriteLine("Ingrese el nuevo valor del atributo que desea modificar: \n");
-                    Console.WriteLine("1. Nombre \n 2. Apellido \n 3. ID \n 4. Carrera \n 5. Identificador \n 6. Fecha de nacimiento \n 7. Residencia nacional 8. Estado del usuario");
+                    
                     switch (opcion)
                     {
                         case 1:
@@ -345,8 +351,21 @@ namespace ProgIIFinalProject
                             break;
                         case 6:
                             Console.WriteLine("-Fecha de nacimiento dd/mm/yyyy: ");
-                            DateTime fechaNacimiento = DateTime.Parse(Console.ReadLine());
-                            estudent.fechaNacimiento = fechaNacimiento;
+
+
+                            DateTime fechaNacimiento;
+
+                            try
+                            {
+                                fechaNacimiento = DateTime.Parse(Console.ReadLine());
+                                estudent.fechaNacimiento = fechaNacimiento;
+                            }
+                            catch (Exception)
+                            {
+                                fechaNacimiento = Convert.ToDateTime("01/01/1999");
+                                Console.WriteLine("Formato de fecha invalido. Se establecera una fecha predeterminada");
+                                Console.ReadKey();
+                            }
                             ;
                             break;
                         case 7:
@@ -426,7 +445,7 @@ namespace ProgIIFinalProject
 
                     }
                     Console.Clear();
-                    gotoXY ("Atributo modificado correctamente",0,6);
+                    gotoXY ("Atributo modificado correctamente",0,0);
                     Console.ReadKey();
                     Menu();
                 }

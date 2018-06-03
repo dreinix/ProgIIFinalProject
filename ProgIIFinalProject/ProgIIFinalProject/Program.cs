@@ -10,8 +10,10 @@ namespace ProgIIFinalProject
 {
     class Program
     {
-        
+        static string yearIdentiffier = DateTime.Today.Year.ToString();
+        static string currentId = yearIdentiffier[2] +"0"+ yearIdentiffier[3];
         static List<User> userList = new List<User>();
+        static List<string> idList = new List<string>();
         static void Menu()
         {
             
@@ -53,15 +55,16 @@ namespace ProgIIFinalProject
                     EditarUsuario(iD);
                     break;
                 case 5:
-                    Console.WriteLine("Ingrese el ID del usuario al que desea modificar algun dato: \n");
+                    Console.WriteLine("Ingrese el ID del usuario al que desea eliminar: \n");
                     iD = Console.ReadLine();
                     EliminarUsuario(iD);
                     break;
                 case 6:
                     Console.Clear();
                     Console.WriteLine("Gracias por utilizar nuestros servicios");
-                    Console.ReadKey();
-                    return;
+                    Environment.Exit(0);
+                    //Console.ReadKey();
+                    break;
                 default:
                     Console.WriteLine("Opcion invalida,intente de nuevo");
                     Console.ReadKey();
@@ -85,12 +88,27 @@ namespace ProgIIFinalProject
             Console.SetCursorPosition(x, y);
             Console.WriteLine(word);
         }
+        static string GenerarID()
+        {   
+            string iD = "";
+            Random r1 = new Random();
+            iD = currentId + "" + r1.Next(0, 10000);
+            foreach (string cid in idList)
+            {
+                if (cid == iD)
+                {
+                    GenerarID();
+                    break;
+                }
+            }
+            return iD;
+        }
         static void AgregarUsuario()
         {
             int xPosition = 0,option;
             Console.Clear();
             User usuario = new User();
-            String nombre, apellido, estado, ID, carrera, identificador;
+            String nombre, apellido, estado, ID="000000", carrera, identificador;
             bool extrangero;
             DateTime fechaNacimiento;
             gotoXY("-Nombre: ", xPosition, 1);
@@ -105,11 +123,7 @@ namespace ProgIIFinalProject
             apellido = Console.ReadLine();
             xPosition += apellido.Length + 1;
 
-            gotoXY("-ID: ", xPosition, 1);
-            xPosition += 5;
-            Console.SetCursorPosition(xPosition, 1);
-            ID = Console.ReadLine();
-            xPosition += ID.Length + 1;
+            ID = GenerarID();
 
             gotoXY("-Carrera: ", xPosition, 1);
             xPosition += 9;
@@ -126,7 +140,13 @@ namespace ProgIIFinalProject
             gotoXY("-Fecha de nacimiento dd/mm/yyyy: ", xPosition, 2);
             xPosition += 33;
             Console.SetCursorPosition(xPosition, 2);
-            fechaNacimiento = DateTime.Parse(Console.ReadLine());
+            try { fechaNacimiento = DateTime.Parse(Console.ReadLine()); }
+            catch (Exception)
+            {
+               fechaNacimiento = Convert.ToDateTime("01/01/1999");
+                Console.WriteLine("Formato de fecha invalido. Se establecera una fecha predeterminada");
+                Console.ReadKey();
+            }
             xPosition += fechaNacimiento.ToString().Length + 1;
 
             Console.Clear();
@@ -146,7 +166,7 @@ namespace ProgIIFinalProject
                         extrangero = false;
                         break;
                     default:
-                        Console.WriteLine("Error al seleccionar la opcion, el usuario será puesto como extrangero");
+                        gotoXY("Error en la selección. El usuario será identificado como extranjero", 0, 6);
                         extrangero = true;
                         Console.ReadKey();
                         break;
@@ -154,7 +174,7 @@ namespace ProgIIFinalProject
             }
             catch
             {
-                Console.WriteLine("Error en la selección. El usuario será identificado como extrangero");
+                gotoXY("Error en la selección. El usuario será identificado como extranjero", 0, 6);
                 extrangero = true;
                 Console.ReadKey();
             }
@@ -186,7 +206,8 @@ namespace ProgIIFinalProject
                         estado = "APA";
                         break;
                     default:
-                        Console.WriteLine("Error al seleccionar la opcion, el usuario será puesto como incompleto");
+                        gotoXY("Error al seleccionar la opcion, el usuario será puesto como incompleto", 0, 6);
+                           
                         estado = "Incompleto";
                         Console.ReadKey();
                         break;
@@ -194,7 +215,7 @@ namespace ProgIIFinalProject
             }
             catch
             {
-                Console.WriteLine("Error al seleccionar la opcion, el usuario será puesto como incompleto");
+                gotoXY("Error al seleccionar la opcion, el usuario será puesto como incompleto", 0, 6);
                 estado = "Incompleto";
                 Console.ReadKey();
             }
@@ -207,7 +228,7 @@ namespace ProgIIFinalProject
                 usuario.carrera = carrera;
                 usuario.estado = estado;
                 usuario.fechaNacimiento = fechaNacimiento;
-                usuario.ID = ID;
+                usuario.ID = int.Parse(ID);
                 usuario.identificadorPersonal = identificador;
                 usuario.extrangero = extrangero;
                 userList.Add(usuario);
@@ -235,7 +256,7 @@ namespace ProgIIFinalProject
             {
                 gotoXY(estudent.nombre, 0, i);
                 gotoXY(estudent.apellido, 20, i);
-                gotoXY(estudent.ID, 40, i);
+                gotoXY(estudent.ID.ToString(), 40, i);
                 gotoXY(estudent.carrera, 51, i);
                 gotoXY(estudent.identificadorPersonal, 70, i);
                 gotoXY(estudent.fechaNacimiento.ToShortDateString(), 95, i);
@@ -256,7 +277,7 @@ namespace ProgIIFinalProject
             bool aux = false;
             foreach (User estudent in userList)
             {
-                if ((estudent.ID == id)|| (estudent.identificadorPersonal == id)) 
+                if ((estudent.ID.ToString() == id)|| (estudent.identificadorPersonal == id)) 
                 {
                     aux = true;
                     gotoXY("-Nombre: ", 0, 0);
@@ -269,7 +290,7 @@ namespace ProgIIFinalProject
                     gotoXY("-Estado", 165, 0);
                     gotoXY(estudent.nombre, 0, i);
                     gotoXY(estudent.apellido, 30, i);
-                    gotoXY(estudent.ID, 60, i);
+                    gotoXY(estudent.ID.ToString(), 60, i);
                     gotoXY(estudent.carrera, 73, i);
                     gotoXY(estudent.identificadorPersonal, 95, i);
                     gotoXY(estudent.fechaNacimiento.ToShortDateString(), 125, i);
@@ -296,10 +317,10 @@ namespace ProgIIFinalProject
             string newInput;
             foreach (User estudent in userList)
             {
-                if (estudent.ID == id)
+                if (estudent.ID == int.Parse(id))
                 {
                     aux = true;
-                    Console.WriteLine("Seleccione el atributo que desee modificar: \n 1. Nombre \n 2. Apellido \n 3. ID \n 4. Carrera \n 5. Identificador nacional \n 6. Fecha de nacimiento \n 7. Nacionalidad \n 8. Estado del usuario ");
+                    Console.WriteLine("Seleccione el atributo que desee modificar: \n 1. Nombre \n 2. Apellido \n 3. Carrera \n 4. Identificador nacional \n 5. Fecha de nacimiento \n 6. Nacionalidad \n 7. Estado del usuario ");
                     try
                     {
                         opcion = byte.Parse(Console.ReadLine());
@@ -310,11 +331,13 @@ namespace ProgIIFinalProject
                     }
                     Console.Clear();
                     Console.WriteLine("Ingrese el nuevo valor del atributo que desea modificar: \n");
-                   // Console.WriteLine("1. Nombre \n 2. Apellido \n 3. ID \n 4. Carrera \n 5. Identificador \n 6. Fecha de nacimiento \n 7. Residencia nacional 8. Estado del usuario");
+                    
                     switch (opcion)
                     {
                         case 1:
                             Console.WriteLine("-Nombre: ");
+
+                            Console.SetCursorPosition(8, 2);
                             newInput = Console.ReadLine();
                             estudent.nombre = newInput;
                             
@@ -322,34 +345,45 @@ namespace ProgIIFinalProject
                         break;
                         case 2:
                             Console.WriteLine("-Apellido: ");
+                            Console.SetCursorPosition(10, 2);
                             newInput = Console.ReadLine();
                             estudent.apellido = newInput;
                             break;
                         case 3:
-                            Console.WriteLine("-ID: ");
-                            newInput = Console.ReadLine();
-                            estudent.ID = newInput;
-                            ;
-                            break;
-                        case 4:
                             Console.WriteLine("-Carrera: ");
+                            Console.SetCursorPosition(9, 2);
                             newInput = Console.ReadLine();
                             estudent.carrera = newInput;
                             ;
                             break;
-                        case 5:
+                        case 4:
                             Console.WriteLine("-Iddentificador nacional: ");
+                            Console.SetCursorPosition(26, 2);
                             newInput = Console.ReadLine();
                             estudent.identificadorPersonal = newInput;
                             ;
                             break;
-                        case 6:
+                        case 5:
                             Console.WriteLine("-Fecha de nacimiento dd/mm/yyyy: ");
-                            DateTime fechaNacimiento = DateTime.Parse(Console.ReadLine());
-                            estudent.fechaNacimiento = fechaNacimiento;
+
+
+                            DateTime fechaNacimiento;
+
+                            try
+                            {
+                                Console.SetCursorPosition(33, 2);
+                                fechaNacimiento = DateTime.Parse(Console.ReadLine());
+                                estudent.fechaNacimiento = fechaNacimiento;
+                            }
+                            catch (Exception)
+                            {
+                                fechaNacimiento = Convert.ToDateTime("01/01/1999");
+                                Console.WriteLine("Formato de fecha invalido. Se establecera una fecha predeterminada");
+                                Console.ReadKey();
+                            }
                             ;
                             break;
-                        case 7:
+                        case 6:
                             gotoXY("-Nacionalidad dominicana? \n" +
                             "1.Si \n" +
                             "2.No", 0, 2);
@@ -366,7 +400,7 @@ namespace ProgIIFinalProject
                                         estudent.extrangero = false;
                                         break;
                                     default:
-                                        Console.WriteLine("Error al seleccionar la opcion, el usuario será puesto como extrangero");
+                                        gotoXY("Error en la selección. El usuario será identificado como extranjero", 0, 6);
                                         estudent.extrangero = true;
                                         Console.ReadKey();
                                         Menu();
@@ -375,14 +409,15 @@ namespace ProgIIFinalProject
                             }
                             catch
                             {
-                                Console.WriteLine("Error en la selección. El usuario será identificado como extrangero");
+                                gotoXY("Error en la selección. El usuario será identificado como extranjero", 0, 6);
+                                
                                 estudent.extrangero = true;
                                 Console.ReadKey();
                                 Menu();
                             }
                             ;
                             break;
-                        case 8:
+                        case 7:
                             gotoXY("-Estados del usuario: \n" +
                             "1. Incompleto \n" +
                             "2. Activo \n" +
@@ -408,7 +443,7 @@ namespace ProgIIFinalProject
                                         estudent.estado = "APA";
                                         break;
                                     default:
-                                        Console.WriteLine("Error al seleccionar la opcion, el usuario será puesto como incompleto");
+                                        gotoXY("Error al seleccionar la opcion, el usuario será puesto como incompleto", 0, 7);
                                         estudent.estado = "Incompleto";
                                         Console.ReadKey();
                                         Menu();
@@ -417,7 +452,7 @@ namespace ProgIIFinalProject
                             }
                             catch
                             {
-                                Console.WriteLine("Error al seleccionar la opcion, el usuario será puesto como incompleto");
+                                gotoXY("Error al seleccionar la opcion, el usuario será puesto como incompleto", 0, 7);
                                 estudent.estado = "Incompleto";
                                 Console.ReadKey();
                                 Menu();
@@ -426,23 +461,25 @@ namespace ProgIIFinalProject
 
                     }
                     Console.Clear();
-                    gotoXY ("Atributo modificado correctamente",0,6);
+                    gotoXY ("Atributo modificado correctamente",0,0);
                     Console.ReadKey();
                     Menu();
                 }
+                
+            }
                 if (aux == false)
                 {
-                    Console.WriteLine("El ID ingresado no coincide con ninguno de los usuarios agregados");
-                    Menu();
+                Console.Clear();
+                Console.WriteLine("El ID ingresado no coincide con ninguno de los usuarios agregados");
+                Console.ReadKey();
+                Menu();
                 }
-            }
-
         }
         static void EliminarUsuario(String id)
         {
             foreach (User estudent in userList)
             {
-                if (estudent.ID == id)
+                if (estudent.ID.ToString() == id)
                 {
                     userList.Remove(estudent);
                     break;

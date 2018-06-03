@@ -310,7 +310,7 @@ namespace ProgIIFinalProject
                     }
                     Console.Clear();
                     Console.WriteLine("Ingrese el nuevo valor del atributo que desea modificar: \n");
-                    Console.WriteLine("1. Nombre \n 2. Apellido \n 3. ID \n 4. Carrera \n 5. Identificador \n 6. Fecha de nacimiento \n 7. Residencia nacional 8. Estado del usuario");
+                   // Console.WriteLine("1. Nombre \n 2. Apellido \n 3. ID \n 4. Carrera \n 5. Identificador \n 6. Fecha de nacimiento \n 7. Residencia nacional 8. Estado del usuario");
                     switch (opcion)
                     {
                         case 1:

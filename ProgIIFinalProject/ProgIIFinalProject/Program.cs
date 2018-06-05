@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.Sql;
 using System.Data.SqlClient;
 using System.Globalization;
+using System.IO;
 
 namespace ProgIIFinalProject
 {
@@ -18,7 +19,13 @@ namespace ProgIIFinalProject
 
         static void DBConnect()
         {
-           String path = @"Data Source=localhost\inix;Initial Catalog=ProgIIDB;Integrated Security=SSPI;";
+            try
+            {
+                con.Close();
+            } catch (Exception) { };
+            
+           string cPath = System.IO.Path.GetFullPath(@"..\..\")+"ProgIIDB.mdf";
+           String path = @"Data source = (localDB)\MSSQLLocalDB ; AttachDbFilename="+cPath+";Integrated Security=SSPI";
            con.ConnectionString = path;
            con.Open();
         }
@@ -26,11 +33,24 @@ namespace ProgIIFinalProject
         static void AddAlumnsToDataBase(int id,string idNacional, string nombre,string apellido,string estado,string carrera,string extran,string fecha)
         {
             DBConnect();
-            String query = "Insert into Alumnos values("+ id + "," + "'" + idNacional + "'," + "'" + nombre + "'," + "'" + apellido + "'," +
-                "'" + estado + "'," + "'" + carrera + "'," + "'" + extran + "'," + "'" + fecha + "')";
-            cmd.CommandText = query;
-            cmd.Connection = con;
-            cmd.ExecuteNonQuery();
+            using (SqlCommand cmd = new SqlCommand("Insert into Alumnos VALUES (" +
+                       "@ID,@identificador,@nombre,@apellido,@estado,@carrera,@extran,@fecha)", con))
+            {
+                cmd.Parameters.AddWithValue("@ID", id);
+                cmd.Parameters.AddWithValue("@identificador", idNacional);
+                cmd.Parameters.AddWithValue("@nombre", nombre);
+                cmd.Parameters.AddWithValue("@apellido", apellido);
+                cmd.Parameters.AddWithValue("@estado",estado);
+                cmd.Parameters.AddWithValue("@carrera", carrera);
+                cmd.Parameters.AddWithValue("@extran", extran);
+                cmd.Parameters.AddWithValue("@fecha", fecha);
+
+
+                int changes = cmd.ExecuteNonQuery();
+            }
+
+          /*      String query = "Insert into Alumnos values("+ id + "," + "'" + idNacional + "'," + "'" + nombre + "'," + "'" + apellido + "'," +
+                "'" + estado + "'," + "'" + carrera + "'," + "'" + extran + "'," + "'" + fecha + "')";*/
             con.Close();
         }
 
@@ -95,12 +115,13 @@ namespace ProgIIFinalProject
             Console.ReadKey();
         }
         static void Main(string[] args)
-        {
+        {   
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("es-ES");
             Console.SetWindowSize(Convert.ToInt32(Console.LargestWindowWidth), Convert.ToInt32(Console.LargestWindowHeight));
             Console.WindowTop = 0;
             Console.SetWindowPosition(0, 0);
             Menu();
+
         }
         static void gotoXY(string word,int x,int y)
         {
@@ -111,7 +132,7 @@ namespace ProgIIFinalProject
         {   
             string iD = "";
             Random r1 = new Random();
-            iD = currentId + "" + r1.Next(0, 10000);
+            iD = currentId + "" + r1.Next(1001, 10000);
             foreach (string cid in idList)
             {
                 if (cid == iD)
@@ -250,7 +271,6 @@ namespace ProgIIFinalProject
                 usuario.ID = int.Parse(ID);
                 usuario.identificadorPersonal = identificador;
                 usuario.extrangero = extrangero;
-
                 AddAlumnsToDataBase(usuario.ID, identificador, nombre, apellido, estado, carrera, extrangero.ToString(), fechaNacimiento.ToShortDateString());
                 Console.WriteLine("Usuario agregado con exito");
             }catch(Exception)
@@ -363,219 +383,251 @@ namespace ProgIIFinalProject
         }
         static void EditarUsuario(String id)
         {
-            Console.Clear();
-            bool aux = false;
-            byte opcion;
-            string newInput;
+            int found=(0);
             try
             {
                 DBConnect();
-                aux = true;
-                Console.WriteLine("Seleccione el atributo que desee modificar: \n 1. Nombre \n 2. Apellido \n 3. Carrera \n 4. Identificador nacional \n 5. Fecha de nacimiento \n 6. Nacionalidad \n 7. Estado del usuario ");
+                using (cmd = new SqlCommand("select [ID] from Alumnos where [ID] = @id", con))
+                {
+                    cmd.Parameters.AddWithValue("@id", int.Parse(id));
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        found += 1;
+                    }
+                }
+            }
+            catch
+            {
+                Console.WriteLine("Database error");
+            }
+
+            if (found > 0)
+            {
+                Console.Clear();
+                byte opcion;
+                string newInput;
                 try
                 {
-                    opcion = byte.Parse(Console.ReadLine());
+                    DBConnect();
+                    Console.WriteLine("Seleccione el atributo que desee modificar: \n 1. Nombre \n 2. Apellido \n 3. Carrera \n 4. Identificador nacional \n 5. Fecha de nacimiento \n 6. Nacionalidad \n 7. Estado del usuario ");
+                    try
+                    {
+                        opcion = byte.Parse(Console.ReadLine());
+                    }
+                    catch (Exception)
+                    {
+                        opcion = 0;
+                    }
+
+                    Console.Clear();
+                    Console.WriteLine("Ingrese el nuevo valor del atributo que desea modificar: \n");
+
+                    switch (opcion)
+                    {
+                        case 1:
+                            Console.WriteLine("-Nombre: ");
+
+                            Console.SetCursorPosition(8, 2);
+                            newInput = Console.ReadLine();
+                            cmd.CommandText = "update Alumnos set Nombre=" + "'" + newInput + "'" + " where ID=" + int.Parse(id) + "";
+                            cmd.Connection = con;
+                            cmd.ExecuteNonQuery();
+                            break;
+                        case 2:
+                            Console.WriteLine("-Apellido: ");
+                            Console.SetCursorPosition(10, 2);
+                            newInput = Console.ReadLine();
+                            cmd.CommandText = "update Alumnos set Apellido=" + "'" + newInput + "'" + " where ID=" + int.Parse(id) + "";
+                            cmd.Connection = con;
+                            cmd.ExecuteNonQuery();
+                            break;
+                        case 3:
+                            Console.WriteLine("-Carrera: ");
+                            Console.SetCursorPosition(9, 2);
+                            newInput = Console.ReadLine();
+                            cmd.CommandText = "update Alumnos set Carrera=" + "'" + newInput + "'" + " where ID=" + int.Parse(id) + "";
+                            cmd.Connection = con;
+                            cmd.ExecuteNonQuery();
+                            break;
+                        case 4:
+                            Console.WriteLine("-Iddentificador nacional: ");
+                            Console.SetCursorPosition(26, 2);
+                            newInput = Console.ReadLine();
+                            cmd.CommandText = "update Alumnos set Identificador=" + "'" + newInput + "'" + " where ID=" + int.Parse(id) + "";
+                            cmd.Connection = con;
+                            cmd.ExecuteNonQuery();
+                            break;
+                        case 5:
+                            Console.WriteLine("-Fecha de nacimiento dd/mm/yyyy: ");
+
+
+                            DateTime fechaNacimiento;
+
+                            try
+                            {
+                                Console.SetCursorPosition(33, 2);
+                                fechaNacimiento = DateTime.Parse(Console.ReadLine());
+                                cmd.CommandText = "update Alumnos set Fecha=" + "'" + fechaNacimiento.ToShortDateString() + "'" + " where ID=" + int.Parse(id) + "";
+                                cmd.Connection = con;
+                                cmd.ExecuteNonQuery();
+
+                            }
+                            catch (Exception)
+                            {
+                                cmd.CommandText = "update Alumnos set Fecha=" + "'01/01/1999'" + " where ID=" + int.Parse(id) + "";
+                                cmd.Connection = con;
+                                cmd.ExecuteNonQuery();
+                                Console.WriteLine("Formato de fecha invalido. Se establecera una fecha predeterminada");
+                            }
+                            ;
+                            break;
+                        case 6:
+                            gotoXY("-Nacionalidad dominicana? \n" +
+                            "1.Si \n" +
+                            "2.No", 0, 2);
+                            Console.SetCursorPosition(27, 2);
+                            try
+                            {
+                                newInput = Console.ReadLine();
+                                switch (newInput)
+                                {
+                                    case "1":
+                                        cmd.CommandText = "update Alumnos set Extranjero=" + "'si'" + " where ID=" + int.Parse(id) + "";
+                                        cmd.Connection = con;
+                                        cmd.ExecuteNonQuery();
+                                        break;
+                                    case "2":
+                                        cmd.CommandText = "update Alumnos set Extranjero=" + "'no'" + " where ID=" + int.Parse(id) + "";
+                                        cmd.Connection = con;
+                                        cmd.ExecuteNonQuery();
+                                        break;
+                                    default:
+                                        gotoXY("Error en la selección. El usuario será identificado como extranjero", 0, 6);
+                                        cmd.CommandText = "update Alumnos set Extranjero=" + "'si'" + " where ID=" + int.Parse(id) + "";
+                                        cmd.Connection = con;
+                                        cmd.ExecuteNonQuery();
+                                        break;
+                                }
+                            }
+                            catch
+                            {
+                                gotoXY("Error en la selección. El usuario será identificado como extranjero", 0, 6);
+
+                                cmd.CommandText = "update Alumnos set Extranjero=" + "'si'" + " where ID=" + int.Parse(id) + "";
+                                cmd.Connection = con;
+                                cmd.ExecuteNonQuery();
+                            }
+                            ;
+                            break;
+                        case 7:
+                            gotoXY("-Estados del usuario: \n" +
+                            "1. Incompleto \n" +
+                            "2. Activo \n" +
+                            "3. Inactivo \n" +
+                            "4. AP ", 0, 2);
+                            Console.SetCursorPosition(24, 2);
+
+                            try
+                            {
+                                newInput = Console.ReadLine();
+                                switch (newInput)
+                                {
+                                    case "1":
+                                        cmd.CommandText = "update Alumnos set Estado=" + "'Incompleto'" + " where ID=" + int.Parse(id) + "";
+                                        cmd.Connection = con;
+                                        cmd.ExecuteNonQuery();
+                                        Console.ReadKey();
+                                        break;
+                                    case "2":
+                                        cmd.CommandText = "update Alumnos set Estado=" + "'ACTIVO'" + " where ID=" + int.Parse(id) + "";
+                                        cmd.Connection = con;
+                                        cmd.ExecuteNonQuery();
+                                        Console.ReadKey();
+                                        break;
+                                    case "3":
+                                        cmd.CommandText = "update Alumnos set Estado=" + "'INACTIVO'" + " where ID=" + int.Parse(id) + "";
+                                        cmd.Connection = con;
+                                        cmd.ExecuteNonQuery();
+                                        Console.ReadKey();
+                                        break;
+                                    case "4":
+                                        cmd.CommandText = "update Alumnos set Estado=" + "'APA'" + " where ID=" + int.Parse(id) + "";
+                                        cmd.Connection = con;
+                                        cmd.ExecuteNonQuery();
+                                        Console.ReadKey();
+                                        break;
+                                    default:
+                                        gotoXY("Error al seleccionar la opcion, el usuario será puesto como incompleto", 0, 7);
+                                        cmd.CommandText = "update Alumnos set Estado=" + "'Incompleto'" + " where ID=" + int.Parse(id) + "";
+                                        cmd.Connection = con;
+                                        cmd.ExecuteNonQuery();
+                                        Console.ReadKey();
+                                        Menu();
+                                        Console.ReadKey();
+                                        break;
+                                }
+                            }
+                            catch
+                            {
+                                gotoXY("Error al seleccionar la opcion, el usuario será puesto como incompleto", 0, 7);
+                                cmd.CommandText = "update Alumnos set Estado=" + "'Incompleto'" + " where ID=" + int.Parse(id) + "";
+                                cmd.Connection = con;
+                                cmd.ExecuteNonQuery();
+                            }
+                            break;
+
+                    }
+
+                    Console.Clear();
+                    gotoXY("Atributo modificado correctamente", 0, 0);
+                    Console.ReadKey();
+                    con.Close();
+                    Menu();
                 }
                 catch (Exception)
                 {
-                    opcion = 0;
+                    Console.WriteLine("El usuario no pudo ser modificado" +
+                        "");
+                    Console.WriteLine("Presione cualquier tecla para continuar...");
+                    Console.ReadKey();
                 }
-
-                Console.Clear();
-                Console.WriteLine("Ingrese el nuevo valor del atributo que desea modificar: \n");
-
-                switch (opcion)
-                {
-                    case 1:
-                        Console.WriteLine("-Nombre: ");
-
-                        Console.SetCursorPosition(8, 2);
-                        newInput = Console.ReadLine();
-                        cmd.CommandText = "update Alumnos set Nombre=" + "'" + newInput + "'" + " where ID=" + int.Parse(id) + "";
-                        cmd.Connection = con;
-                        cmd.ExecuteNonQuery();
-                        break;
-                    case 2:
-                        Console.WriteLine("-Apellido: ");
-                        Console.SetCursorPosition(10, 2);
-                        newInput = Console.ReadLine();
-                        cmd.CommandText = "update Alumnos set Apellido=" + "'" + newInput + "'" + " where ID=" + int.Parse(id) + "";
-                        cmd.Connection = con;
-                        cmd.ExecuteNonQuery();
-                        break;
-                    case 3:
-                        Console.WriteLine("-Carrera: ");
-                        Console.SetCursorPosition(9, 2);
-                        newInput = Console.ReadLine();
-                        cmd.CommandText = "update Alumnos set Carrera=" + "'" + newInput + "'" + " where ID=" + int.Parse(id) + "";
-                        cmd.Connection = con;
-                        cmd.ExecuteNonQuery();
-                        break;
-                    case 4:
-                        Console.WriteLine("-Iddentificador nacional: ");
-                        Console.SetCursorPosition(26, 2);
-                        newInput = Console.ReadLine();
-                        cmd.CommandText = "update Alumnos set Identificador=" + "'" + newInput + "'" + " where ID=" + int.Parse(id) + "";
-                        cmd.Connection = con;
-                        cmd.ExecuteNonQuery();
-                        break;
-                    case 5:
-                        Console.WriteLine("-Fecha de nacimiento dd/mm/yyyy: ");
-
-
-                        DateTime fechaNacimiento;
-
-                        try
-                        {
-                            Console.SetCursorPosition(33, 2);
-                            fechaNacimiento = DateTime.Parse(Console.ReadLine());
-                            cmd.CommandText = "update Alumnos set Fecha=" + "'" + fechaNacimiento.ToShortDateString() + "'" + " where ID=" + int.Parse(id) + "";
-                            cmd.Connection = con;
-                            cmd.ExecuteNonQuery();
-
-                        }
-                        catch (Exception)
-                        {
-                            cmd.CommandText = "update Alumnos set Fecha=" + "'01/01/1999'" + " where ID=" + int.Parse(id) + "";
-                            cmd.Connection = con;
-                            cmd.ExecuteNonQuery();
-                            Console.WriteLine("Formato de fecha invalido. Se establecera una fecha predeterminada");
-                        }
-                        ;
-                        break;
-                    case 6:
-                        gotoXY("-Nacionalidad dominicana? \n" +
-                        "1.Si \n" +
-                        "2.No", 0, 2);
-                        Console.SetCursorPosition(27, 2);
-                        try
-                        {
-                            newInput = Console.ReadLine();
-                            switch (newInput)
-                            {
-                                case "1":
-                                    cmd.CommandText = "update Alumnos set Extranjero=" + "'si'" + " where ID=" + int.Parse(id) + "";
-                                    cmd.Connection = con;
-                                    cmd.ExecuteNonQuery();
-                                    break;
-                                case "2":
-                                    cmd.CommandText = "update Alumnos set Extranjero=" + "'no'" + " where ID=" + int.Parse(id) + "";
-                                    cmd.Connection = con;
-                                    cmd.ExecuteNonQuery();
-                                    break;
-                                default:
-                                    gotoXY("Error en la selección. El usuario será identificado como extranjero", 0, 6);
-                                    cmd.CommandText = "update Alumnos set Extranjero=" + "'si'" + " where ID=" + int.Parse(id) + "";
-                                    cmd.Connection = con;
-                                    cmd.ExecuteNonQuery();
-                                    break;
-                            }
-                        }
-                        catch
-                        {
-                            gotoXY("Error en la selección. El usuario será identificado como extranjero", 0, 6);
-
-                            cmd.CommandText = "update Alumnos set Extranjero=" + "'si'" + " where ID=" + int.Parse(id) + "";
-                            cmd.Connection = con;
-                            cmd.ExecuteNonQuery();
-                        }
-                        ;
-                        break;
-                    case 7:
-                        gotoXY("-Estados del usuario: \n" +
-                        "1. Incompleto \n" +
-                        "2. Activo \n" +
-                        "3. Inactivo \n" +
-                        "4. AP ", 0, 2);
-                        Console.SetCursorPosition(24, 2);
-
-                        try
-                        {
-                            newInput = Console.ReadLine();
-                            switch (newInput)
-                            {   
-                                case "1":
-                                    cmd.CommandText = "update Alumnos set Estado=" + "'Incompleto'" + " where ID=" + int.Parse(id) + "";
-                                    cmd.Connection = con;
-                                    cmd.ExecuteNonQuery();
-                                    Console.ReadKey();
-                                    break;
-                                case "2":
-                                    cmd.CommandText = "update Alumnos set Estado=" + "'ACTIVO'" + " where ID=" + int.Parse(id) + "";
-                                    cmd.Connection = con;
-                                    cmd.ExecuteNonQuery();
-                                    Console.ReadKey();
-                                    break;
-                                case "3":
-                                    cmd.CommandText = "update Alumnos set Estado=" + "'INACTIVO'" + " where ID=" + int.Parse(id) + "";
-                                    cmd.Connection = con;
-                                    cmd.ExecuteNonQuery();
-                                    Console.ReadKey();
-                                    break;
-                                case "4":
-                                    cmd.CommandText = "update Alumnos set Estado=" + "'APA'" + " where ID=" + int.Parse(id) + "";
-                                    cmd.Connection = con;
-                                    cmd.ExecuteNonQuery();
-                                    Console.ReadKey();
-                                    break;
-                                default:
-                                    gotoXY("Error al seleccionar la opcion, el usuario será puesto como incompleto", 0, 7);
-                                    cmd.CommandText = "update Alumnos set Estado=" + "'Incompleto'" + " where ID=" + int.Parse(id) + "";
-                                    cmd.Connection = con;
-                                    cmd.ExecuteNonQuery();
-                                    Console.ReadKey();
-                                    Menu();
-                                    Console.ReadKey();
-                                    break;
-                            }
-                        }
-                        catch
-                        {
-                            gotoXY("Error al seleccionar la opcion, el usuario será puesto como incompleto", 0, 7);
-                            cmd.CommandText = "update Alumnos set Estado=" + "'Incompleto'" + " where ID=" + int.Parse(id) + "";
-                            cmd.Connection = con;
-                            cmd.ExecuteNonQuery();
-                        }
-                        break;
-
-                }
-
-                Console.Clear();
-                gotoXY("Atributo modificado correctamente", 0, 0);
-                Console.ReadKey();
-                con.Close();
-                Menu();
             }
-            catch (Exception)
+            else
             {
-                Console.WriteLine("El usuario no pudo ser modificado" +
-                    "");
-                Console.WriteLine("Presione cualquier tecla para continuar...");
-                Console.ReadKey();
-            }
-                if (aux == false)
-                {
-                Console.Clear();
                 Console.WriteLine("El ID ingresado no coincide con ninguno de los usuarios agregados");
                 Console.ReadKey();
                 con.Close();
                 Menu();
-                }
+            }
+            
+            
         }
         static void EliminarUsuario(String id)
         {
             try
             {
+                int found = 0;
                 DBConnect();
-                string query = "delete from Alumnos where ID=" + int.Parse(id) + "";
-                cmd.CommandText = query;
-                cmd.Connection = con;
-                cmd.ExecuteNonQuery();
-                con.Close();
-                Console.WriteLine("Usuario eliminado con exito");
-                Console.WriteLine("Presione cualquier tecla para continuar...");
+                using (cmd = new SqlCommand("delete from Alumnos where ID = @id", con))
+                {
+                    cmd.Parameters.AddWithValue("@id", id);
+                    found = cmd.ExecuteNonQuery();
+                }
+                if (found > 0)
+                {
+                    Console.WriteLine("Usuario eliminado con exito");
+                    Console.WriteLine("Presione cualquier tecla para continuar...");
+                }
+                else
+                {
+                    Console.WriteLine("El usuario no existente");
+                    Console.WriteLine("Presione cualquier tecla para continuar...");
+                }
+                
                 Console.ReadKey();
             }
+            
             catch (Exception)
             {
                 Console.WriteLine("El usuario no pudo ser eliminado");
@@ -583,6 +635,7 @@ namespace ProgIIFinalProject
                 Console.ReadKey();
             }
             
+            con.Close();
             Menu();
         }
     }

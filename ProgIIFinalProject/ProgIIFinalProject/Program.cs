@@ -516,7 +516,9 @@ namespace ProgIIFinalProject
             }
             catch (Exception)
             {
-                Console.WriteLine("Error en la creación");
+                gotoXY("Error en la creación",0,8);
+                Console.ReadKey();
+                MenuMaterias();
             }
             
              
@@ -570,8 +572,8 @@ namespace ProgIIFinalProject
             Console.Clear();
             gotoXY("-ID: ", 0, 0);
             gotoXY("-Nombre: ", 16, 0);
-            gotoXY("-Codigo: ", 26, 0);
-            gotoXY("-Area: ", 35, 0);
+            gotoXY("-Codigo: ", 46, 0);
+            gotoXY("-Area: ", 55, 0);
             int i = 1;
             DBConnect();
             string query = "select * from Materias";
@@ -586,8 +588,8 @@ namespace ProgIIFinalProject
                 string area = reader["Area"].ToString();
                 gotoXY(id, 0, i);
                 gotoXY(nombre, 16, i);
-                gotoXY(code, 26, i);
-                gotoXY(area, 35, i);
+                gotoXY(code, 46, i);
+                gotoXY(area, 55, i);
                 i++;
             }
             con.Close();
@@ -605,7 +607,7 @@ namespace ProgIIFinalProject
                 int i = 1;
                 bool aux = false;
                 DBConnect();
-                string query = "select * from Alumnos where ID=" + int.Parse(id) + "";
+                string query = "select * from Alumnos where ID=" + int.Parse(id) + "or [Nombre]="+""+id+"";
                 cmd.CommandText = query;
                 cmd.Connection = con;
                 SqlDataReader reader = cmd.ExecuteReader();
@@ -656,32 +658,39 @@ namespace ProgIIFinalProject
         static void BuscarMateria(string id)
         {
             Console.Clear();
+            try
+            {
+                int i = 1;
+                DBConnect();
 
-            int i = 1;
-            DBConnect();
+                string query = "select * from Materias where [ID]=" + int.Parse(id) + " or [Code]=" + "'" + (id.ToString() + "'");
+                cmd.CommandText = query;
+                cmd.Connection = con;
+                SqlDataReader reader = cmd.ExecuteReader();
 
-            string query = "select * from Materias where [ID]="+int.Parse(id)+" or [Code]="+"'"+(id.ToString()+"'");
-            cmd.CommandText = query;
-            cmd.Connection = con;
-            SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    gotoXY("-ID: ", 0, 0);
+                    gotoXY("-Nombre: ", 16, 0);
+                    gotoXY("-Codigo: ", 46, 0);
+                    gotoXY("-Area: ", 55, 0);
+                    string cid = reader["ID"].ToString();
+                    string nombre = reader["Nombre"].ToString();
+                    string code = reader["Code"].ToString();
+                    string area = reader["Area"].ToString();
+                    gotoXY(cid, 0, i);
+                    gotoXY(nombre, 16, i);
+                    gotoXY(code, 46, i);
+                    gotoXY(area, 55, i);
+                    i++;
 
-            while (reader.Read())
-            {   
-                gotoXY("-ID: ", 0, 0);
-                gotoXY("-Nombre: ", 16, 0);
-                gotoXY("-Codigo: ", 26, 0);
-                gotoXY("-Area: ", 35, 0);
-                string cid = reader["ID"].ToString();
-                string nombre = reader["Nombre"].ToString();
-                string code = reader["Code"].ToString();
-                string area = reader["Area"].ToString();
-                gotoXY(cid, 0, i);
-                gotoXY(nombre, 16, i);
-                gotoXY(code, 26, i);
-                gotoXY(area, 35, i);
-                i++;
-
+                }
             }
+            catch
+            {
+                Console.WriteLine("Error en la base de datos");
+            }
+            
 
             con.Close();
             Console.WriteLine("Presione cualquier tecla para continuar...");
@@ -1011,8 +1020,8 @@ namespace ProgIIFinalProject
                 }
                 catch (Exception)
                 {
-                    Console.WriteLine("El usuario no pudo ser modificado");
-                    Console.WriteLine("Presione cualquier tecla para continuar...");
+                    gotoXY("El usuario no pudo ser modificado",0,8);
+                    gotoXY("Presione cualquier tecla para continuar...", 0,9);
                     Console.ReadKey();
                     con.Close();
                     MenuMaterias();
@@ -1076,12 +1085,12 @@ namespace ProgIIFinalProject
                 }
                 if (found > 0)
                 {
-                    Console.WriteLine("Usuario eliminado con exito");
+                    Console.WriteLine("Materia eliminada con exito");
                     Console.WriteLine("Presione cualquier tecla para continuar...");
                 }
                 else
                 {
-                    Console.WriteLine("El usuario no existente");
+                    Console.WriteLine("Materia no existente");
                     Console.WriteLine("Presione cualquier tecla para continuar...");
                 }
 
@@ -1090,7 +1099,7 @@ namespace ProgIIFinalProject
 
             catch (Exception)
             {
-                Console.WriteLine("El usuario no pudo ser eliminado");
+                Console.WriteLine("La materia no pudo ser eliminada");
                 Console.WriteLine("Presione cualquier tecla para continuar...");
                 Console.ReadKey();
             }

@@ -27,7 +27,7 @@ namespace ProgIIFinalProject
         }
         static List<string> ListaAreas = new List<string>()
         {
-            "Ingeneria","Ciencias Basicas"
+            "Ingeneria","Ciencias Basicas Y Ambientales","Ciencias de la Salud", "Ciencias Sociales y Humanidades", "Economía y Negocios"
         };
         static void AddAlumnsToDataBase(int id,string idNacional, string nombre,string apellido,string estado,string carrera,string extran,string fecha)
         {
@@ -70,6 +70,7 @@ namespace ProgIIFinalProject
                   "'" + estado + "'," + "'" + carrera + "'," + "'" + extran + "'," + "'" + fecha + "')";*/
             con.Close();
         }
+
         static int GenerarIDMateria(MateriasCS materia)
         {
             materia.GenerarID();
@@ -147,6 +148,7 @@ namespace ProgIIFinalProject
             return id;
             
         }
+
         static void MenuGeneral()
         {
             byte opcion;
@@ -298,6 +300,7 @@ namespace ProgIIFinalProject
             }
             Console.ReadKey();
         }
+
         static void Main(string[] args)
         {   
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("es-ES");
@@ -309,11 +312,13 @@ namespace ProgIIFinalProject
 
 
         }
+
         static void gotoXY(string word,int x,int y)
         {
             Console.SetCursorPosition(x, y);
             Console.WriteLine(word);
         }
+
         static void AgregarUsuario()
         {
             int xPosition = 0,option;
@@ -455,7 +460,6 @@ namespace ProgIIFinalProject
         {
             try
             {
-
                 int xPosition = 0, option;
                 Console.Clear();
                 MateriasCS materia = new MateriasCS();
@@ -503,17 +507,20 @@ namespace ProgIIFinalProject
                 materia.codigo = GenerarCodigoMateria(materia);
 
                 AddMateriasToDataBase(materia.ID, materia.codigo, nombre, materia.area);
+                Console.Clear();
+                Console.WriteLine("Materia agregada con exito");
+                Console.ReadKey();
+                MenuMaterias();
+
             }
             catch (Exception)
             {
                 Console.WriteLine("Error en la creación");
             }
             
-            Console.WriteLine("Materia agregada con exito");
-            Console.ReadKey();
-            MenuMaterias();
              
         }
+
         static void RevisarUsuarios()
         {
             
@@ -587,6 +594,7 @@ namespace ProgIIFinalProject
             Console.ReadKey();
             MenuMaterias();
         }           
+
         static void BuscarUsuario(String id)
         {
             
@@ -679,6 +687,7 @@ namespace ProgIIFinalProject
             Console.ReadKey();
             MenuMaterias();
         }
+
         static void EditarUsuario(String id)
         {
             int found=(0);
@@ -1016,6 +1025,7 @@ namespace ProgIIFinalProject
                 MenuMaterias();
             }
         }
+
         static void EliminarUsuario(String id)
         {
             try

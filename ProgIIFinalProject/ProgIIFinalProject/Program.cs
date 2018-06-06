@@ -214,17 +214,17 @@ namespace ProgIIFinalProject
                     RevisarMaterias();
                     break;
                 case 3:
-                    Console.WriteLine("Ingrese el ID de la materia: ");
+                    Console.WriteLine("Ingrese el nombre o el area de la materia: ");
                     iD = Console.ReadLine();
                     BuscarMateria(iD);
                     break;
                 case 4:
-                    Console.WriteLine("Ingrese el ID de la materia al que desea modificar algun dato: \n");
+                    Console.WriteLine("Ingrese el ID o el codigo de la materia al que desea modificar algun dato: \n");
                     iD = Console.ReadLine();
                     EditarMateria(iD);
                     break;
                 case 5:
-                    Console.WriteLine("Ingrese el ID de la materia que desea eliminar: \n");
+                    Console.WriteLine("Ingrese el ID o el codigo de la materia que desea eliminar: \n");
                     iD = Console.ReadLine();
                     EliminarMateria(iD);
                     break;
@@ -274,7 +274,7 @@ namespace ProgIIFinalProject
                     RevisarUsuarios();
                     break;
                 case 3:
-                    Console.WriteLine("Ingrese el ID o el identificador nacional del usuario: ");
+                    Console.WriteLine("Ingrese el nombre o el identificador nacional del usuario: ");
                     iD = Console.ReadLine();
                     BuscarUsuario(iD);
                     break;
@@ -607,7 +607,7 @@ namespace ProgIIFinalProject
                 int i = 1;
                 bool aux = false;
                 DBConnect();
-                string query = "select * from Alumnos where ID=" + int.Parse(id) + "or [Nombre]="+""+id+"";
+                string query = "select * from Alumnos where [Identificador]= '" +id + "' or [Nombre]="+"'"+id+"';";
                 cmd.CommandText = query;
                 cmd.Connection = con;
                 SqlDataReader reader = cmd.ExecuteReader();
@@ -656,14 +656,14 @@ namespace ProgIIFinalProject
             MenuAlumnos();
         }
         static void BuscarMateria(string id)
-        {
+        {   
             Console.Clear();
             try
-            {
+            {   
                 int i = 1;
                 DBConnect();
 
-                string query = "select * from Materias where [ID]=" + int.Parse(id) + " or [Code]=" + "'" + (id.ToString() + "'");
+                string query = "select * from Materias where [Area]='" + id + "' or [Nombre]=" + "'" + (id.ToString() + "'");
                 cmd.CommandText = query;
                 cmd.Connection = con;
                 SqlDataReader reader = cmd.ExecuteReader();
@@ -881,7 +881,6 @@ namespace ProgIIFinalProject
                                         cmd.ExecuteNonQuery();
                                         Console.ReadKey();
                                         MenuAlumnos();
-                                        Console.ReadKey();
                                         break;
                                 }
                             }
@@ -1079,7 +1078,7 @@ namespace ProgIIFinalProject
                 DBConnect();
                 using (cmd = new SqlCommand("delete from Materias where ID = @id or [Code] = @code", con))
                 {
-                    cmd.Parameters.AddWithValue("@id", int.Parse(id));
+                    cmd.Parameters.AddWithValue("@id", id);
                     cmd.Parameters.AddWithValue("@code", id.ToString());
                     found = cmd.ExecuteNonQuery();
                 }

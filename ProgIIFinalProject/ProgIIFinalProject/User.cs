@@ -64,5 +64,14 @@ namespace ProgIIFinalProject
             get { return _extrangero; }
             set { _extrangero = value; }
         }
+
+        public void GenerarID()
+        {
+            string yearIdentiffier = DateTime.Today.Year.ToString(), currentId = yearIdentiffier[2] + "0" + yearIdentiffier[3];
+            string iD = "";
+            Random r1 = new Random();
+            iD = currentId + "" + r1.Next(1001, 10000);
+            _ID = int.Parse(iD);
+        }
     }
 }

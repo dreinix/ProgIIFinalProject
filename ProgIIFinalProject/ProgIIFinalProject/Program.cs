@@ -12,6 +12,7 @@ namespace ProgIIFinalProject
     class Program
     {
         static SqlConnection con = new SqlConnection();
+
         static SqlCommand cmd = new SqlCommand();
         static void DBConnect()
         {
@@ -213,17 +214,17 @@ namespace ProgIIFinalProject
                     RevisarMaterias();
                     break;
                 case 3:
-                    Console.WriteLine("Ingrese el ID o el identificador nacional del usuario: ");
+                    Console.WriteLine("Ingrese el ID de la materia: ");
                     iD = Console.ReadLine();
                     BuscarMateria(iD);
                     break;
                 case 4:
-                    Console.WriteLine("Ingrese el ID del usuario al que desea modificar algun dato: \n");
+                    Console.WriteLine("Ingrese el ID de la materia al que desea modificar algun dato: \n");
                     iD = Console.ReadLine();
                     EditarMateria(iD);
                     break;
                 case 5:
-                    Console.WriteLine("Ingrese el ID del usuario al que desea eliminar: \n");
+                    Console.WriteLine("Ingrese el ID de la materia que desea eliminar: \n");
                     iD = Console.ReadLine();
                     EliminarMateria(iD);
                     break;

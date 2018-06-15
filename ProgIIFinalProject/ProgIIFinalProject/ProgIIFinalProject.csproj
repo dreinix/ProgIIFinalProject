@@ -67,8 +67,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Horario.cs" />
     <Compile Include="MateriasCS.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Programaciones.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="User.cs" />
   </ItemGroup>

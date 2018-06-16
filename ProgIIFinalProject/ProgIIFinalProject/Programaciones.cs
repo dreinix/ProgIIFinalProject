@@ -10,7 +10,7 @@ namespace ProgIIFinalProject
     {
 
         private MateriasCS _materia;
-        private String _estudiante;
+        private User _estudiante;
         private Horario _horario;
         private String _trimestre;
         private String _aula;
@@ -30,7 +30,7 @@ namespace ProgIIFinalProject
         }
 
 
-        public string estudiante
+        public User estudiante
         {
             get { return _estudiante; }
             set { _estudiante = value; }

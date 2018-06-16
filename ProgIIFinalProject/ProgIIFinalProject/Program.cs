@@ -157,8 +157,8 @@ namespace ProgIIFinalProject
             Console.SetCursorPosition(5, 0);
             Console.WriteLine("*****Menú*****");
             Console.WriteLine("1. Menu Materias \n" +
-                "2. Menu alumnos \n"+
-                "3. Salir");
+                "2. Menu alumnos \n" + "3. Menu Programaciones \n" +
+                "4. Salir");
             try
             {
                 opcion = byte.Parse(Console.ReadLine());
@@ -176,6 +176,9 @@ namespace ProgIIFinalProject
                     MenuAlumnos();
                 break;
                 case 3:
+                    MenuProgramaciones();
+                    break;
+                case 4:
                     Console.Clear();
                     Console.WriteLine("Gracias por utilizar nuestros servicios");
                     Console.ReadKey();
@@ -300,6 +303,66 @@ namespace ProgIIFinalProject
                     break;
             }
             Console.ReadKey();
+        }
+        static void MenuProgramaciones()
+        {
+            byte opcion;
+            string iD;
+            Console.Clear();
+            Console.SetCursorPosition(5, 0);
+            Console.WriteLine("*****Menú*****");
+            Console.WriteLine("1. Agregar programacion \n" +
+                "2. Editar programacion \n" +
+                "3. Eliminar programacion \n" +
+                "4. Listar programacion \n" +
+                "5. Buscar  \n" +
+                "6. Salir \n");
+            try
+            {
+                opcion = byte.Parse(Console.ReadLine());
+            }
+            catch (Exception)
+            {
+                opcion = 0;
+            }
+            switch (opcion)
+            {
+                case 1:
+                    AgregarProgramacion();
+                    break;
+                case 2:
+                    RevisarMaterias();
+                    break;
+                case 3:
+                    Console.WriteLine("Ingrese el nombre o el area de la materia: ");
+                    iD = Console.ReadLine();
+                    BuscarMateria(iD);
+                    break;
+                case 4:
+                    Console.WriteLine("Ingrese el ID o el codigo de la materia al que desea modificar algun dato: \n");
+                    iD = Console.ReadLine();
+                    EditarMateria(iD);
+                    break;
+                case 5:
+                    Console.WriteLine("Ingrese el ID o el codigo de la materia que desea eliminar: \n");
+                    iD = Console.ReadLine();
+                    EliminarMateria(iD);
+                    break;
+                case 6:
+                    Console.Clear();
+                    MenuGeneral();
+                    
+                    break;
+                default:
+                    Console.WriteLine("Opcion invalida,intente de nuevo");
+                    Console.ReadKey();
+                    Console.Clear();
+                    MenuMaterias();
+                    break;
+            }
+            Console.ReadKey();
+
+
         }
 
         static void Main(string[] args)
@@ -522,6 +585,143 @@ namespace ProgIIFinalProject
             }
             
              
+        }
+        static void AgregarProgramacion()
+        {
+            string[] meridiano = new string[2] { "AM", "PM" };
+            string[] horas = new string[12] {"1:00", "2:00", "3:00", "4:00", "5:00", "6:00", "7:00", "8:00", "9:00", "10:00", "11:00", "12:00" };
+            string[] dias = new string[6] { "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" };
+            string[] trimestres = new string[4] {"Agosto / Octubre", "Noviembre / Enero", "Febrero / Abril","Mayo / Julio" };
+            int xPosition = 0, id;
+            Console.Clear();
+            Programaciones programacion = new Programaciones();
+            MateriasCS materia = new MateriasCS();
+            Horario horario = new Horario();
+            String trimestre, aula, profesor;
+
+            gotoXY("-ID de la materia: ", xPosition, 1);
+            xPosition += 18;
+            Console.SetCursorPosition(xPosition, 1);
+            id = Convert.ToInt32(Console.ReadLine());
+            xPosition += 7;
+            /*
+             foreach (MateriasCS asignatura in )
+             {
+
+
+             }*/
+
+            gotoXY("-Profesor: ", xPosition, 1);
+            xPosition += 10;
+            Console.SetCursorPosition(xPosition, 1);
+            profesor = Console.ReadLine();
+            xPosition += profesor.Length + 5;
+
+
+            gotoXY("-Trimestre: ", xPosition, 1);
+            xPosition += 12;
+            int i = 1, auxiliar =0;
+            foreach (string periodo in trimestres)
+            {                
+                gotoXY(i + ")" + periodo, xPosition, i);
+                i++;               
+            }
+            xPosition += 20;
+            Console.SetCursorPosition(xPosition, 1);
+            auxiliar = Convert.ToInt32(Console.ReadLine());
+            trimestre = trimestres[auxiliar - 1];
+
+            xPosition += 6;
+            gotoXY("-Aula: ", xPosition, 1);
+            Console.SetCursorPosition(xPosition+6, 1);
+            aula = Console.ReadLine();
+
+            Console.Clear();
+            xPosition = 0;
+
+            gotoXY("Cuantos dias a la semana se impartira la materia?" , xPosition, 1);
+            Console.SetCursorPosition(xPosition + 51, 1);
+            auxiliar = Convert.ToInt32(Console.ReadLine());
+
+            Console.Clear();
+            for (int aux = 0; aux < auxiliar; aux++) {
+                int aux2;
+                xPosition = 0;
+                gotoXY("Seleccione el dia numero " + (aux+1) + ": ", xPosition, 1);
+                xPosition = 28;
+                i = 1;
+                foreach (string dia in dias)
+                {
+                    gotoXY(i + ")" + dia, xPosition, i);
+                    i++;
+                }
+                xPosition += 8;
+                Console.SetCursorPosition(xPosition , 1);
+                aux2 = Convert.ToInt32(Console.ReadLine());
+                horario.dia = horario.dia + "\n" + dias[aux2-1];
+
+                xPosition =0;
+                gotoXY("Seleccione el horario para los " + dias[aux2-1] + ": ", xPosition, 10);
+                
+                gotoXY("-Desde las: ", xPosition, 14);
+                xPosition += 14;
+                i = 14;
+                foreach (string hora in horas)
+                {
+                    gotoXY((i-13) + ")" + hora, xPosition, i);
+                    i++;
+                }
+
+                xPosition += 9;
+                Console.SetCursorPosition(xPosition, 14);
+                i = Convert.ToInt32(Console.ReadLine());
+                horario.hora = horas[i - 1];
+                xPosition += 4;
+                gotoXY("1)AM", xPosition,14);
+                gotoXY("2)PM", xPosition, 15);
+                xPosition += 8;
+                Console.SetCursorPosition(xPosition, 14);
+                i = Convert.ToInt32(Console.ReadLine());
+                horario.hora = horario.hora + meridiano[i-1];
+                xPosition += 4;
+                gotoXY("-Hasta las: ", xPosition, 14);
+                xPosition += 14;
+                i = 14;
+                foreach (string hora in horas)
+                {
+                    gotoXY((i-13) + ")" + hora, xPosition, i);
+                    i++;
+                }
+                xPosition += 9;
+                Console.SetCursorPosition(xPosition, 14);
+                i = Convert.ToInt32(Console.ReadLine());
+                horario.hora =horario.hora +  " - " + horas[i - 1];
+                xPosition += 4;
+                gotoXY("1)AM", xPosition, 14);
+                gotoXY("2)PM", xPosition, 15);
+                xPosition += 8;
+                Console.SetCursorPosition(xPosition, 14);
+                i = Convert.ToInt32(Console.ReadLine());
+                horario.hora = horario.hora + meridiano[i-1] + "\n";
+                Console.Clear();
+
+            }
+            try
+            {
+
+                programacion.profesor = profesor;
+                programacion.horario = horario;
+                programacion.aula = aula;
+                programacion.trimestre = trimestre;
+
+                Console.WriteLine("Programacion agregada con exito");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("La progrmacion no ha sido agregada. Regresando al menú principal");
+            }
+            Console.ReadKey();
+            MenuAlumnos();
         }
 
         static void RevisarUsuarios()

@@ -9,15 +9,15 @@ namespace ProgIIFinalProject
     class Programaciones
     {
 
-        private MateriasCS _materia;
-        private User _estudiante;
+        private string _materia;
+        private string _estudiante;
         private Horario _horario;
-        private String _trimestre;
-        private String _aula;
-        private String _profesor;
-        private int _ID;
+        private String _trimestre="Enero/Marzo";
+        private String _aula="GC 214";
+        private String _profesor="XXXXXXX";
+        private int _ID=00000;
 
-        public MateriasCS materia
+        public string materia
         {
             get { return _materia; }
             set { _materia = value; }
@@ -30,7 +30,7 @@ namespace ProgIIFinalProject
         }
 
 
-        public User estudiante
+        public string estudiante
         {
             get { return _estudiante; }
             set { _estudiante = value; }

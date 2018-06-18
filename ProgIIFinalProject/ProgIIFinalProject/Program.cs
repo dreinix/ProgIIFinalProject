@@ -598,11 +598,25 @@ namespace ProgIIFinalProject
             MateriasCS materia = new MateriasCS();
             Horario horario = new Horario();
             String trimestre, aula, profesor;
+            bool good = false;
+            while (good)
+            {
+                gotoXY("-ID de la materia: ", xPosition, 1);
+                xPosition += 18;
 
-            gotoXY("-ID de la materia: ", xPosition, 1);
-            xPosition += 18;
-            Console.SetCursorPosition(xPosition, 1);
-            id = Convert.ToInt32(Console.ReadLine());
+                try
+                {
+                    id = Convert.ToInt32(Console.ReadLine());
+                    good = true;
+                }
+                catch
+                {
+                    Console.SetCursorPosition(xPosition, 1);
+                    Console.WriteLine("Error al registrar el ID, por favor utilizar numeros solamente");
+                }
+            }
+            
+            
             xPosition += 7;
             /*
              foreach (MateriasCS asignatura in )
@@ -633,7 +647,7 @@ namespace ProgIIFinalProject
 
             xPosition += 6;
             gotoXY("-Aula: ", xPosition, 1);
-            Console.SetCursorPosition(xPosition+6, 1);
+            Console.SetCursorPosition(xPosition + 6, 1);
             aula = Console.ReadLine();
 
             Console.Clear();
@@ -642,88 +656,162 @@ namespace ProgIIFinalProject
             gotoXY("Cuantos dias a la semana se impartira la materia?" , xPosition, 1);
             Console.SetCursorPosition(xPosition + 51, 1);
             auxiliar = Convert.ToInt32(Console.ReadLine());
-
             Console.Clear();
-            for (int aux = 0; aux < auxiliar; aux++) {
-                int aux2;
-                xPosition = 0;
-                gotoXY("Seleccione el dia numero " + (aux+1) + ": ", xPosition, 1);
-                xPosition = 28;
-                i = 1;
-                foreach (string dia in dias)
-                {
-                    gotoXY(i + ")" + dia, xPosition, i);
-                    i++;
-                }
-                xPosition += 8;
-                Console.SetCursorPosition(xPosition , 1);
-                aux2 = Convert.ToInt32(Console.ReadLine());
-                horario.dia = horario.dia + "\n" + dias[aux2-1];
-
-                xPosition =0;
-                gotoXY("Seleccione el horario para los " + dias[aux2-1] + ": ", xPosition, 10);
-                
-                gotoXY("-Desde las: ", xPosition, 14);
-                xPosition += 14;
-                i = 14;
-                foreach (string hora in horas)
-                {
-                    gotoXY((i-13) + ")" + hora, xPosition, i);
-                    i++;
-                }
-
-                xPosition += 9;
-                Console.SetCursorPosition(xPosition, 14);
-                i = Convert.ToInt32(Console.ReadLine());
-                horario.hora = horas[i - 1];
-                xPosition += 4;
-                gotoXY("1)AM", xPosition,14);
-                gotoXY("2)PM", xPosition, 15);
-                xPosition += 8;
-                Console.SetCursorPosition(xPosition, 14);
-                i = Convert.ToInt32(Console.ReadLine());
-                horario.hora = horario.hora + meridiano[i-1];
-                xPosition += 4;
-                gotoXY("-Hasta las: ", xPosition, 14);
-                xPosition += 14;
-                i = 14;
-                foreach (string hora in horas)
-                {
-                    gotoXY((i-13) + ")" + hora, xPosition, i);
-                    i++;
-                }
-                xPosition += 9;
-                Console.SetCursorPosition(xPosition, 14);
-                i = Convert.ToInt32(Console.ReadLine());
-                horario.hora =horario.hora +  " - " + horas[i - 1];
-                xPosition += 4;
-                gotoXY("1)AM", xPosition, 14);
-                gotoXY("2)PM", xPosition, 15);
-                xPosition += 8;
-                Console.SetCursorPosition(xPosition, 14);
-                i = Convert.ToInt32(Console.ReadLine());
-                horario.hora = horario.hora + meridiano[i-1] + "\n";
-                Console.Clear();
-
-            }
             try
             {
+                for (int aux = 0; aux < auxiliar; aux++)
+                {
+                    int aux2;
+                    xPosition = 0;
+                    gotoXY("Seleccione el dia numero " + (aux + 1) + ": ", xPosition, 1);
+                    xPosition = 28;
+                    i = 1;
+                    foreach (string dia in dias)
+                    {
+                        gotoXY(i + ")" + dia, xPosition, i);
+                        i++;
+                    }
+                    xPosition += 8;
+                    Console.SetCursorPosition(xPosition, 1);
+                    aux2 = Convert.ToInt32(Console.ReadLine());
+                    horario.dia = horario.dia + "\n" + dias[aux2 - 1];
 
+                    xPosition = 0;
+                    gotoXY("Seleccione el horario para los " + dias[aux2 - 1] + ": ", xPosition, 10);
+
+                    gotoXY("-Desde las: ", xPosition, 14);
+                    xPosition += 14;
+                    i = 14;
+                    foreach (string hora in horas)
+                    {
+                        gotoXY((i - 13) + ")" + hora, xPosition, i);
+                        i++;
+                    }
+
+                    xPosition += 9;
+                    Console.SetCursorPosition(xPosition, 14);
+                    i = Convert.ToInt32(Console.ReadLine());
+                    horario.hora = horas[i - 1];
+                    xPosition += 4;
+                    gotoXY("1)AM", xPosition, 14);
+                    gotoXY("2)PM", xPosition, 15);
+                    xPosition += 8;
+                    Console.SetCursorPosition(xPosition, 14);
+                    i = Convert.ToInt32(Console.ReadLine());
+                    horario.hora = horario.hora + meridiano[i - 1];
+                    xPosition += 4;
+                    gotoXY("-Hasta las: ", xPosition, 14);
+                    xPosition += 14;
+                    i = 14;
+                    foreach (string hora in horas)
+                    {
+                        gotoXY((i - 13) + ")" + hora, xPosition, i);
+                        i++;
+                    }
+                    xPosition += 9;
+                    Console.SetCursorPosition(xPosition, 14);
+                    i = Convert.ToInt32(Console.ReadLine());
+                    horario.hora = horario.hora + " - " + horas[i - 1];
+                    xPosition += 4;
+                    gotoXY("1)AM", xPosition, 14);
+                    gotoXY("2)PM", xPosition, 15);
+                    xPosition += 8;
+                    Console.SetCursorPosition(xPosition, 14);
+                    i = Convert.ToInt32(Console.ReadLine());
+                    horario.hora = horario.hora + meridiano[i - 1] + "\n";
+                    Console.Clear();
+
+                }
+            }
+            catch(Exception ex) { Console.WriteLine(ex.Message); }
+
+            try
+            {
+                DBConnect();
+                Console.Clear();
+                xPosition = 25;
+                Console.WriteLine("seleccione el ID de la materia: ");
+                using(cmd = new SqlCommand("select * from Materias", con))
+                {   
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    int index = 1;
+                    while (reader.Read())
+                    {   
+                        Console.SetCursorPosition(xPosition, index); 
+                        string Mid = reader["ID"].ToString();
+                        Console.WriteLine(Mid);
+                        xPosition += Mid.Length+2;
+                        Console.SetCursorPosition(xPosition, index);
+                        string NombreMateria = reader["Nombre"].ToString();
+                        Console.WriteLine(NombreMateria);
+                        xPosition = 25;
+                        index+=1;
+                    }
+                    con.Close();
+                }
+                bool select = false;
+                xPosition = 32;
+                DBConnect();
+                while (!select)
+                {
+                    Console.SetCursorPosition(xPosition, 0);
+                    string idMateriaProgramacion = Console.ReadLine();
+                    using (cmd = new SqlCommand("select * from Materias where [ID] = @id", con))
+                    {
+                        cmd.Parameters.AddWithValue("@id", idMateriaProgramacion);
+                        SqlDataReader reader = cmd.ExecuteReader();
+                        int index = 1;
+                        while (reader.Read())
+                        {
+                            programacion.materia = reader["Nombre"].ToString();
+                            select = true;
+                        }
+                        if (index == 0)
+                        {
+                            Console.WriteLine("La materia que seleccionó no existe");
+                        }
+                    }
+                }             
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.ReadKey();
+            }
+            con.Close();
+            try
+            {
                 programacion.profesor = profesor;
                 programacion.horario = horario;
+                programacion.GenerarID();
                 programacion.aula = aula;
                 programacion.trimestre = trimestre;
+                DBConnect();
+                using (cmd = new SqlCommand("Insert into Programacion values (@id,@trimestre,@materia,@dia,@hora,@aula,@maestro)", con))
+                {
+                    cmd.Parameters.AddWithValue("@id",programacion.ID.ToString());
+                    cmd.Parameters.AddWithValue("@trimestre", programacion.trimestre);
+                    cmd.Parameters.AddWithValue("@materia", programacion.materia);
+                    cmd.Parameters.AddWithValue("@dia", programacion.horario.dia.ToString());
+                    cmd.Parameters.AddWithValue("@hora", programacion.horario.hora.ToString());
+                    cmd.Parameters.AddWithValue("@aula", programacion.aula);
+                    cmd.Parameters.AddWithValue("@maestro", programacion.profesor);
+                    cmd.ExecuteNonQuery();
+                    con.Close();
+
+                }
 
                 Console.WriteLine("Programacion agregada con exito");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Console.WriteLine("La progrmacion no ha sido agregada. Regresando al menú principal");
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("La programacion no ha sido agregada. Regresando al menú principal");
             }
             Console.ReadKey();
-            MenuAlumnos();
+            MenuProgramaciones();
         }
-
+            
         static void RevisarUsuarios()
         {
             

@@ -636,7 +636,8 @@ namespace ProgIIFinalProject
             Console.Clear();
             try
             {
-                for (int aux = 0; aux < auxiliar; aux++)
+               bool first = true;
+               for (int aux = 0; aux < auxiliar; aux++)
                 {
                     int aux2;
                     xPosition = 0;
@@ -651,7 +652,7 @@ namespace ProgIIFinalProject
                     xPosition += 8;
                     Console.SetCursorPosition(xPosition, 1);
                     aux2 = Convert.ToInt32(Console.ReadLine());
-                    bool first = true;
+                    
                     if (first)
                     {
                         horario.dia = dias[aux2 - 1];

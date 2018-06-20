@@ -834,30 +834,31 @@ namespace ProgIIFinalProject
             gotoXY("-Estado", 133, 0);
             int i = 1;
             DBConnect();
-            string query = "select * from Alumnos";
-            cmd.CommandText = query;
-            cmd.Connection = con;
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
+            using(cmd = new SqlCommand("select * from Alumnos", con))
             {
-                string id = reader["ID"].ToString();
-                string nombre = reader["Nombre"].ToString();
-                string apellido = reader["Apellido"].ToString();
-                string carrera= reader["Carrera"].ToString();
-                string identificadorPersonal = reader["Identificador"].ToString();
-                string estado= reader["Estado"].ToString();
-                string fecha = reader["Fecha"].ToString();
-                string  extranjero= reader["Extranjero"].ToString();
-                gotoXY(nombre, 0, i);
-                gotoXY(apellido, 20, i);
-                gotoXY(id, 40, i);
-                gotoXY(carrera, 51, i);
-                gotoXY(identificadorPersonal, 70, i);
-                gotoXY(fecha, 95, i);
-                gotoXY(extranjero, 120, i);
-                gotoXY(estado, 133, i);
-                i++;
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    string id = reader["ID"].ToString();
+                    string nombre = reader["Nombre"].ToString();
+                    string apellido = reader["Apellido"].ToString();
+                    string carrera = reader["Carrera"].ToString();
+                    string identificadorPersonal = reader["Identificador"].ToString();
+                    string estado = reader["Estado"].ToString();
+                    string fecha = reader["Fecha"].ToString();
+                    string extranjero = reader["Extranjero"].ToString();
+                    gotoXY(nombre, 0, i);
+                    gotoXY(apellido, 20, i);
+                    gotoXY(id, 40, i);
+                    gotoXY(carrera, 51, i);
+                    gotoXY(identificadorPersonal, 70, i);
+                    gotoXY(fecha, 95, i);
+                    gotoXY(extranjero, 120, i);
+                    gotoXY(estado, 133, i);
+                    i++;
+                }
             }
+            
             con.Close();
             Console.WriteLine("Presione cualquier tecla para continuar...");
             Console.ReadKey();
@@ -964,36 +965,37 @@ namespace ProgIIFinalProject
                 {
                     cmd.Parameters.AddWithValue("@id", int.Parse(id));
                     cmd.ExecuteNonQuery();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        aux = true;
+                        gotoXY("-Nombre: ", 0, 0);
+                        gotoXY("-Apellido: ", 20, 0);
+                        gotoXY("-ID: ", 40, 0);
+                        gotoXY("-Carrera: ", 51, 0);
+                        gotoXY("-Identificador nacional: ", 70, 0);
+                        gotoXY("-Fecha de nacimiento ", 95, 0);
+                        gotoXY("-Dominicano?", 120, 0);
+                        gotoXY("-Estado", 133, 0);
+                        string nombre = reader["Nombre"].ToString();
+                        string apellido = reader["Apellido"].ToString();
+                        string carrera = reader["Carrera"].ToString();
+                        string identificadorPersonal = reader["Identificador"].ToString();
+                        string estado = reader["Estado"].ToString();
+                        string fecha = reader["Fecha"].ToString();
+                        string extranjero = reader["Extranjero"].ToString();
+                        gotoXY(nombre, 0, i);
+                        gotoXY(apellido, 20, i);
+                        gotoXY(id, 40, i);
+                        gotoXY(carrera, 51, i);
+                        gotoXY(identificadorPersonal, 70, i);
+                        gotoXY(fecha, 95, i);
+                        gotoXY(extranjero, 120, i);
+                        gotoXY(estado, 133, i);
+                        i++;
+                    }
                 }
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    aux = true;
-                    gotoXY("-Nombre: ", 0, 0);
-                    gotoXY("-Apellido: ", 20, 0);
-                    gotoXY("-ID: ", 40, 0);
-                    gotoXY("-Carrera: ", 51, 0);
-                    gotoXY("-Identificador nacional: ", 70, 0);
-                    gotoXY("-Fecha de nacimiento ", 95, 0);
-                    gotoXY("-Dominicano?", 120, 0);
-                    gotoXY("-Estado", 133, 0);
-                    string nombre = reader["Nombre"].ToString();
-                    string apellido = reader["Apellido"].ToString();
-                    string carrera = reader["Carrera"].ToString();
-                    string identificadorPersonal = reader["Identificador"].ToString();
-                    string estado = reader["Estado"].ToString();
-                    string fecha = reader["Fecha"].ToString();
-                    string extranjero = reader["Extranjero"].ToString();
-                    gotoXY(nombre, 0, i);
-                    gotoXY(apellido, 20, i);
-                    gotoXY(id, 40, i);
-                    gotoXY(carrera, 51, i);
-                    gotoXY(identificadorPersonal, 70, i);
-                    gotoXY(fecha, 95, i);
-                    gotoXY(extranjero, 120, i);
-                    gotoXY(estado, 133, i);
-                    i++;
-                }
+                
                 if (aux == false)
                 {
                     Console.WriteLine("El ID o Identificador nacional ingresado no coincide con ninguno de los usuarios agregados");
@@ -1017,29 +1019,31 @@ namespace ProgIIFinalProject
             {   
                 int i = 1;
                 DBConnect();
-
-                string query = "select * from Materias where [Area]='" + id + "' or [Nombre]=" + "'" + (id.ToString() + "'");
-                cmd.CommandText = query;
-                cmd.Connection = con;
-                SqlDataReader reader = cmd.ExecuteReader();
-
-                while (reader.Read())
+                using (cmd = new SqlCommand("select * from Materias where [Area]= @id or [Nombre]=@id", con))
                 {
-                    gotoXY("-ID: ", 0, 0);
-                    gotoXY("-Nombre: ", 16, 0);
-                    gotoXY("-Codigo: ", 46, 0);
-                    gotoXY("-Area: ", 55, 0);
-                    string cid = reader["ID"].ToString();
-                    string nombre = reader["Nombre"].ToString();
-                    string code = reader["Code"].ToString();
-                    string area = reader["Area"].ToString();
-                    gotoXY(cid, 0, i);
-                    gotoXY(nombre, 16, i);
-                    gotoXY(code, 46, i);
-                    gotoXY(area, 55, i);
-                    i++;
+                    cmd.Parameters.AddWithValue("@id", int.Parse(id));
+                    cmd.ExecuteNonQuery();
+                    SqlDataReader reader = cmd.ExecuteReader();
 
+                    while (reader.Read())
+                    {
+                        gotoXY("-ID: ", 0, 0);
+                        gotoXY("-Nombre: ", 16, 0);
+                        gotoXY("-Codigo: ", 46, 0);
+                        gotoXY("-Area: ", 55, 0);
+                        string cid = reader["ID"].ToString();
+                        string nombre = reader["Nombre"].ToString();
+                        string code = reader["Code"].ToString();
+                        string area = reader["Area"].ToString();
+                        gotoXY(cid, 0, i);
+                        gotoXY(nombre, 16, i);
+                        gotoXY(code, 46, i);
+                        gotoXY(area, 55, i);
+                        i++;
+
+                    }
                 }
+                
             }
             catch
             {

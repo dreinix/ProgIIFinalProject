@@ -344,9 +344,9 @@ namespace ProgIIFinalProject
                     RevisarProgramacion();
                     break;
                 case 5:
-                    Console.WriteLine("Ingrese el ID o el codigo de la materia que desea eliminar: \n");
+                    Console.WriteLine("Ingrese el ID del estudiante a bsucar \n");
                     iD = Console.ReadLine();
-                    EliminarMateria(iD);
+                    BuscarSeleccionUsuario(iD);
                     break;
                 case 6:
                     Console.Clear();
@@ -908,7 +908,7 @@ namespace ProgIIFinalProject
                 for (int aux =0; aux < arrayDia.Length-1; aux++)
                 {
                     
-                    gotoXY(arrayDia[aux+1], 0, i);
+                    gotoXY(arrayDia[aux], 0, i);
                     
                     if (aux < arrayHora.Length)
                     {
@@ -1030,6 +1030,7 @@ namespace ProgIIFinalProject
         }
          void BuscarSeleccionUsuario(string idAlumno)
          {
+            DBConnect();
             Console.Clear();
             Console.SetCursorPosition(33, 0);
             int found = 0;
@@ -1060,12 +1061,11 @@ namespace ProgIIFinalProject
             if (found > 0)
             {
                 Console.Clear();
-                gotoXY("ID Alumno", 0, 0);
-                gotoXY("Trimestre", 20, 0);
-                gotoXY("ID Materia", 40, 0);
-                gotoXY("Dia", 55, 0);
-                gotoXY("Hora", 65, 0);
-                gotoXY("Aula", 78, 0);
+                gotoXY("Trimestre", 20-20, 0);
+                gotoXY("ID Materia", 40 - 20, 0);
+                gotoXY("Dia", 55 - 20, 0);
+                gotoXY("Hora", 65 - 20, 0);
+                gotoXY("Aula", 78 - 20, 0);
                 int column = 1;
                 while ((column - 1) < found)
                 {
@@ -1078,15 +1078,25 @@ namespace ProgIIFinalProject
                         {
                             trimestre = reader["Trimestre"].ToString();
                             mat = reader["Materia"].ToString();
-                            dia = reader["Dia"].ToString();
-                            hora = reader["Hora"].ToString();
+                            string[] arrayDia = reader["dia"].ToString().Split('\n');
+                            string[] arrayHora = reader["hora"].ToString().Split('\n');
                             aula = reader["Aula"].ToString();
-                            gotoXY(idAlumno, 0, column);
-                            gotoXY(trimestre, 20, column);
-                            gotoXY(mat, 40, column);
-                            gotoXY(dia, 55, column);
-                            gotoXY(hora, 65, column);
-                            gotoXY(aula, 78, column);
+                            gotoXY(trimestre, 20 - 20, column);
+                            gotoXY(mat, 40 - 20, column);
+                            for (int aux = 0; aux < arrayDia.Length - 1; aux++)
+                            {
+
+                                gotoXY(arrayDia[aux], 55 - 20, column);
+
+                                if (aux < arrayHora.Length)
+                                {
+
+                                    gotoXY(arrayHora[aux], 65 - 20, column);
+                                }
+
+                                column++;
+                            }
+                            gotoXY(aula, 78 - 20, column);
                         }
                         reader.Close();
 
@@ -1101,7 +1111,10 @@ namespace ProgIIFinalProject
                 Console.ReadKey();
                 MenuProgramaciones();
             }
+            Console.ReadKey();
+            MenuProgramaciones();
          }
+
          void EditarUsuario(String id)
         {
             int found=(0);

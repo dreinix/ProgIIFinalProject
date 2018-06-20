@@ -589,6 +589,7 @@ namespace ProgIIFinalProject
         }
          void AgregarProgramacion()
         {
+
             string[] meridiano = new string[2] { "AM", "PM" };
             string[] horas = new string[12] {"1:00", "2:00", "3:00", "4:00", "5:00", "6:00", "7:00", "8:00", "9:00", "10:00", "11:00", "12:00" };
             string[] dias = new string[6] { "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado" };
@@ -629,13 +630,13 @@ namespace ProgIIFinalProject
 
             Console.Clear();
             xPosition = 0;
-
-            gotoXY("Cuantos dias a la semana se impartira la materia?" , xPosition, 1);
+            try
+            {
+                gotoXY("Cuantos dias a la semana se impartira la materia?" , xPosition, 1);
             Console.SetCursorPosition(xPosition + 51, 1);
             auxiliar = Convert.ToInt32(Console.ReadLine());
             Console.Clear();
-            try
-            {
+            
                bool first = true;
                for (int aux = 0; aux < auxiliar; aux++)
                 {
@@ -883,8 +884,8 @@ namespace ProgIIFinalProject
             gotoXY("-Aula: ", 81, 0);
             gotoXY("-Profesor: ", 90, 0);
             gotoXY("-Materia: ", 110, 0);
-            
-            int i = 1;
+            gotoXY("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------", 0, 1);
+            int i = 3;
             DBConnect();
             string query = "select * from Programacion";
             cmd.CommandText = query;
@@ -906,7 +907,7 @@ namespace ProgIIFinalProject
                 gotoXY(aula, 81, i);
                 gotoXY(maestro, 90, i);
                 gotoXY(materia, 110, i);
-                for (int aux =0; aux < arrayDia.Length-1; aux++)
+                for (int aux =0; aux <= arrayDia.Length-1; aux++)
                 {
                     
                     gotoXY(arrayDia[aux], 0, i);
@@ -919,8 +920,9 @@ namespace ProgIIFinalProject
                     
                     i++;
                 }
-                
-                i += + 1;
+
+                gotoXY("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------", 0, i+1);
+                i += + 3;
             }
             con.Close();
             Console.WriteLine("Presione cualquier tecla para continuar...");

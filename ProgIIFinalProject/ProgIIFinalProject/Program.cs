@@ -1028,7 +1028,80 @@ namespace ProgIIFinalProject
             Console.ReadKey();
             MenuMaterias();
         }
+         void BuscarSeleccionUsuario(string idAlumno)
+         {
+            Console.Clear();
+            Console.SetCursorPosition(33, 0);
+            int found = 0;
+            using (cmd = new SqlCommand("Select * from Seleccion where [IDAlumno]=@id", con))
+            {
+                cmd.Parameters.AddWithValue("@id", idAlumno);
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    found += 1;
+                }
+                reader.Close();
+            }
+            string[] programaciones = new string[found];
+            int a = 0;
+            using (cmd = new SqlCommand("Select * from Seleccion where [IDAlumno]=@id", con))
+            {
+                cmd.Parameters.AddWithValue("@id", idAlumno);
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    programaciones[a] = reader["IDProgramacion"].ToString();
+                    a++;
+                }
+                reader.Close();
 
+            }
+            if (found > 0)
+            {
+                Console.Clear();
+                gotoXY("ID Alumno", 0, 0);
+                gotoXY("Trimestre", 20, 0);
+                gotoXY("ID Materia", 40, 0);
+                gotoXY("Dia", 55, 0);
+                gotoXY("Hora", 65, 0);
+                gotoXY("Aula", 78, 0);
+                int column = 1;
+                while ((column - 1) < found)
+                {
+                    using (cmd = new SqlCommand("Select * from Programacion where [ID]=@progID ", con))
+                    {
+                        cmd.Parameters.AddWithValue("@progID", programaciones[column - 1]);
+                        SqlDataReader reader = cmd.ExecuteReader();
+                        string trimestre, mat, dia, hora, aula;
+                        while (reader.Read())
+                        {
+                            trimestre = reader["Trimestre"].ToString();
+                            mat = reader["Materia"].ToString();
+                            dia = reader["Dia"].ToString();
+                            hora = reader["Hora"].ToString();
+                            aula = reader["Aula"].ToString();
+                            gotoXY(idAlumno, 0, column);
+                            gotoXY(trimestre, 20, column);
+                            gotoXY(mat, 40, column);
+                            gotoXY(dia, 55, column);
+                            gotoXY(hora, 65, column);
+                            gotoXY(aula, 78, column);
+                        }
+                        reader.Close();
+
+                    }
+                    column++;
+                }
+
+            }
+            else
+            {
+                Console.WriteLine("El alumno no posee ninguna programacion asignada");
+                Console.ReadKey();
+                MenuProgramaciones();
+            }
+         }
          void EditarUsuario(String id)
         {
             int found=(0);
@@ -1498,13 +1571,24 @@ namespace ProgIIFinalProject
                         break;
                     case 2:
                         Console.Clear();
-                        Console.WriteLine("Ingrese el id del estudiante: ");
-                        Console.SetCursorPosition(33, 0);
                         found = 0;
-                        string idAlumno = Console.ReadLine();
-                        using (cmd = new SqlCommand("Select * from Seleccion where [IDAlumno]=@id", con))
+                        using (cmd = new SqlCommand("select * from Programacion where [ID] = @id", con))
                         {
-                            cmd.Parameters.AddWithValue("@id", idAlumno);
+                            cmd.Parameters.AddWithValue("@id", int.Parse(id));
+                            SqlDataReader reader = cmd.ExecuteReader();
+                            while (reader.Read())
+                            {
+                                idMateria = reader["Materia"].ToString();
+                                found += 1;
+
+                            }
+                            reader.Close();
+                        }
+                        Console.SetCursorPosition(33, 0);
+                        
+                        using (cmd = new SqlCommand("Select * from Seleccion where [IDProgramacion]=@id", con))
+                        {
+                            cmd.Parameters.AddWithValue("@id", id);
                             SqlDataReader reader = cmd.ExecuteReader();
                             while (reader.Read())
                             {
@@ -1512,56 +1596,44 @@ namespace ProgIIFinalProject
                             }
                             reader.Close();
                         }
-                        string[] programaciones = new string[found];
+                        string[] idAlumno = new string[found];
                         int a = 0;
-                        using (cmd = new SqlCommand("Select * from Seleccion where [IDAlumno]=@id", con))
+                        using (cmd = new SqlCommand("Select * from Seleccion where [IDProgramacion]=@id", con))
                         {
-                            cmd.Parameters.AddWithValue("@id", idAlumno);
+                            cmd.Parameters.AddWithValue("@id", id);
                             SqlDataReader reader = cmd.ExecuteReader();
                             while(reader.Read()){
-                                programaciones[a] = reader["IDProgramacion"].ToString();
+                                idAlumno[a] = reader["IDAlumno"].ToString();
                                 a++;
                             }
                             reader.Close();
                             
                         }
+                        a = 0;
                         if (found > 0)
                         {
                             Console.Clear();
                             gotoXY("ID Alumno", 0, 0);
-                            gotoXY("Trimestre", 20, 0);
-                            gotoXY("ID Materia", 40, 0);
-                            gotoXY("Dia", 55, 0);
-                            gotoXY("Hora", 65, 0);
-                            gotoXY("Aula", 78, 0);
+                            gotoXY("Nombre", 20, 0);
+                            gotoXY("Carrera", 55, 0);
                             int column = 1;
-                            while ((column-1)<found)
-                            {
-                                using (cmd = new SqlCommand("Select * from Programacion where [ID]=@progID ", con))
+
+                                using (cmd = new SqlCommand("Select * from Alumnos where [ID]=@AlumnID ", con))
                                 {
-                                    cmd.Parameters.AddWithValue("@progID", programaciones[column-1]);
+                                    cmd.Parameters.AddWithValue("@AlumnID", idAlumno[column-1]);
                                     SqlDataReader reader = cmd.ExecuteReader();
-                                    string trimestre, mat, dia, hora,aula;
+                                    string Nombre, Carrera;
                                     while (reader.Read())
                                     {
-                                        trimestre = reader["Trimestre"].ToString();
-                                        mat = reader["Materia"].ToString();
-                                        dia = reader["Dia"].ToString();
-                                        hora = reader["Hora"].ToString();
-                                        aula = reader["Aula"].ToString();
-                                        gotoXY(idAlumno, 0, column);
-                                        gotoXY(trimestre, 20, column);
-                                        gotoXY(mat, 40, column);
-                                        gotoXY(dia, 55, column);
-                                        gotoXY(hora, 65, column);
-                                        gotoXY(aula, 78, column);
+                                        Nombre = reader["Nombre"].ToString()+" "+ reader["Apellido"].ToString();
+                                        Carrera = reader["Carrera"].ToString();
+                                        gotoXY(idAlumno[column - 1], 0, column);
+                                        gotoXY(Nombre, 20, column);
+                                        gotoXY(Carrera, 55, column);
+                                         column++;
                                     }
                                     reader.Close();
-                                    
-                                }
-                                column++;
-                            }
-                            
+                                }  
                         }
                         else
                         {
@@ -1579,6 +1651,8 @@ namespace ProgIIFinalProject
                 Console.ReadKey();
                 MenuProgramaciones();
             }
+            Console.ReadKey();
+            MenuProgramaciones();
         }
 
          void EliminarUsuario(String id)

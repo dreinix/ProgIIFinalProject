@@ -370,8 +370,9 @@ namespace ProgIIFinalProject
                     }
                     }catch(Exception ex)
                     {
-                        
                         Console.WriteLine(ex.Message);
+                        Console.ReadKey();
+                        MenuProgramaciones();
                     }
                     
                     break;
@@ -734,7 +735,7 @@ namespace ProgIIFinalProject
 
                 }
             }
-            catch(Exception ex) { Console.WriteLine(ex.Message); }
+            catch(Exception ex) { Console.WriteLine(ex.Message); Console.ReadKey(); MenuProgramaciones(); }
 
             try
             {
@@ -1667,7 +1668,7 @@ namespace ProgIIFinalProject
             {
                 DBConnect();
                 byte op;
-                Console.WriteLine("1) Asignar alumno a la programación \n 2)Listar alumnos de la programación");
+                Console.WriteLine("1)Asignar alumno a la programación \n2)Listar alumnos de la programación");
                 op = byte.Parse(Console.ReadLine());
                 switch (op)
                 {

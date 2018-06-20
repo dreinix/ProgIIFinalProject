@@ -395,11 +395,9 @@ namespace ProgIIFinalProject
             // Console.ReadKey();
             Program p = new Program();
             p.MenuGeneral();
-
-
         }
 
-        static void gotoXY(string word,int x,int y)
+        void gotoXY(string word,int x,int y)
         {
             Console.SetCursorPosition(x, y);
             Console.WriteLine(word);

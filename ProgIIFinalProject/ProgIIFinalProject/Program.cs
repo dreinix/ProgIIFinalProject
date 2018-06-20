@@ -345,7 +345,7 @@ namespace ProgIIFinalProject
                     break;
                 case 5:
                     byte op;
-                    Console.WriteLine("1) Buscar seleccion del estudiante \n 2) Buscar secciones de una materia");
+                    Console.WriteLine("1)Buscar seleccion del estudiante \n2) Buscar secciones de una materia");
                     try { 
                     op = byte.Parse(Console.ReadLine());
                     switch (op)
@@ -644,11 +644,18 @@ namespace ProgIIFinalProject
                 gotoXY(i + ")" + periodo, xPosition, i);
                 i++;               
             }
-            xPosition += 20;
-            Console.SetCursorPosition(xPosition, 1);
-            try { 
-            auxiliar = Convert.ToInt32(Console.ReadLine());
-            trimestre = trimestres[auxiliar - 1];
+            try
+            {
+                xPosition += 20;
+                Console.SetCursorPosition(xPosition, 1);
+                auxiliar = Convert.ToInt32(Console.ReadLine());
+                trimestre = trimestres[auxiliar - 1];
+            }
+            catch
+            {
+                trimestre = trimestres[0];
+            }
+            
 
             xPosition += 6;
             gotoXY("-Aula: ", xPosition, 1);
@@ -657,8 +664,8 @@ namespace ProgIIFinalProject
 
             Console.Clear();
             xPosition = 0;
-            
-            
+            try
+            {
                 gotoXY("Cuantos dias a la semana se impartira la materia?" , xPosition, 1);
                 Console.SetCursorPosition(xPosition + 51, 1);
                 auxiliar = Convert.ToInt32(Console.ReadLine());
@@ -1124,7 +1131,7 @@ namespace ProgIIFinalProject
                             gotoXY(trimestre, 20 - 20, last);
                             gotoXY(mat, 40 - 20, last);
                             gotoXY(aula, 90 - 20, last);
-                            for (int aux = 0; aux < arrayDia.Length - 1; aux++)
+                            for (int aux = 0; aux <= arrayDia.Length - 1; aux++)
                             {
 
                                 gotoXY(arrayDia[aux], 35, last);
@@ -1204,7 +1211,7 @@ namespace ProgIIFinalProject
                             gotoXY(trimestre, 20 - 20, last);
                             gotoXY(ID, 40 - 20, last);
                             gotoXY(aula, 95 - 20, last);
-                            for (int aux = 0; aux < arrayDia.Length - 1; aux++)
+                            for (int aux = 0; aux <= arrayDia.Length - 1; aux++)
                             {
 
                                 gotoXY(arrayDia[aux], 40, last);

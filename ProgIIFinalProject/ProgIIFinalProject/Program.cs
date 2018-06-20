@@ -1063,18 +1063,20 @@ namespace ProgIIFinalProject
             {
                 Console.Clear();
                 gotoXY("Trimestre", 20-20, 0);
-                gotoXY("ID Materia", 40 - 20, 0);
+                gotoXY("Materia", 40 - 20, 0);
                 gotoXY("Dia", 55 - 20, 0);
                 gotoXY("Hora", 65 - 20, 0);
-                gotoXY("Aula", 78 - 20, 0);
+                gotoXY("Aula", 90 - 20, 0);
                 int column = 1;
+                int last = column;
                 while ((column - 1) < found)
                 {
+                    
                     using (cmd = new SqlCommand("Select * from Programacion where [ID]=@progID ", con))
                     {
                         cmd.Parameters.AddWithValue("@progID", programaciones[column - 1]);
                         SqlDataReader reader = cmd.ExecuteReader();
-                        string trimestre, mat, dia, hora, aula;
+                        string trimestre, mat, aula;
                         while (reader.Read())
                         {
                             trimestre = reader["Trimestre"].ToString();
@@ -1082,27 +1084,31 @@ namespace ProgIIFinalProject
                             string[] arrayDia = reader["dia"].ToString().Split('\n');
                             string[] arrayHora = reader["hora"].ToString().Split('\n');
                             aula = reader["Aula"].ToString();
-                            gotoXY(trimestre, 20 - 20, column);
-                            gotoXY(mat, 40 - 20, column);
+                            gotoXY(trimestre, 20 - 20, last);
+                            gotoXY(mat, 40 - 20, last);
+                            gotoXY(aula, 90 - 20, last);
                             for (int aux = 0; aux < arrayDia.Length - 1; aux++)
                             {
 
-                                gotoXY(arrayDia[aux], 55 - 20, column);
+                                gotoXY(arrayDia[aux], 35, last);
 
                                 if (aux < arrayHora.Length)
                                 {
 
-                                    gotoXY(arrayHora[aux], 65 - 20, column);
+                                    gotoXY(arrayHora[aux], 45, last);
                                 }
 
-                                column++;
+                                last++;
                             }
-                            gotoXY(aula, 78 - 20, column);
+                            
+                            last++;
                         }
+                        
                         reader.Close();
 
                     }
                     column++;
+                    last = column + 1;
                 }
 
             }

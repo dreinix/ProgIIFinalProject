@@ -336,9 +336,9 @@ namespace ProgIIFinalProject
                     EditarProgramacion(iD);
                     break;
                 case 3:
-                    Console.WriteLine("Ingrese el nombre o el area de la materia: ");
+                    Console.WriteLine("Ingrese el id de la programacion: ");
                     iD = Console.ReadLine();
-                    BuscarMateria(iD);
+                    EliminarProgramacion(iD);
                     break;
                 case 4:
                     RevisarProgramacion();
@@ -1726,5 +1726,42 @@ namespace ProgIIFinalProject
             con.Close();
             MenuMaterias();
         }
+         void EliminarProgramacion(String id)
+        {
+
+            try
+            {
+                int found = 0;
+                DBConnect();
+                using (cmd = new SqlCommand("delete from Programacion where ID = @id", con))
+                {
+                    cmd.Parameters.AddWithValue("@id", id);
+                    found = cmd.ExecuteNonQuery();
+                }
+                if (found > 0)
+                {
+                    Console.WriteLine("Programacion eliminada con exito");
+                    Console.WriteLine("Presione cualquier tecla para continuar...");
+                }
+                else
+                {
+                    Console.WriteLine("Programacion no existente");
+                    Console.WriteLine("Presione cualquier tecla para continuar...");
+                }
+
+                Console.ReadKey();
+            }
+
+            catch (Exception)
+            {
+                Console.WriteLine("La programacion no pudo ser eliminada");
+                Console.WriteLine("Presione cualquier tecla para continuar...");
+                Console.ReadKey();
+            }
+
+            con.Close();
+            MenuProgramaciones();
+
+        } 
     }
 }

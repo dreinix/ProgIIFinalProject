@@ -344,9 +344,30 @@ namespace ProgIIFinalProject
                     RevisarProgramacion();
                     break;
                 case 5:
-                    Console.WriteLine("Ingrese el ID del estudiante a bsucar \n");
-                    iD = Console.ReadLine();
-                    BuscarSeleccionUsuario(iD);
+                    byte op;
+                    Console.WriteLine("1) Buscar seleccion del estudiante \n 2) Buscar secciones de una materia");
+                    op = byte.Parse(Console.ReadLine());
+                    switch (op)
+                    {
+                        case 1:
+                            Console.WriteLine("Ingrese el ID del estudiante a buscar \n");
+                            iD = Console.ReadLine();
+                            BuscarSeleccionUsuario(iD);
+                            break;
+                        case 2:
+                            Console.WriteLine("Ingrese el nombre de la materia a buscar \n");
+                            iD = Console.ReadLine();
+                            BuscarSeccionesMateria(iD);
+                            break;
+                        default:
+                            Console.WriteLine("Opcion invalida");
+                            Console.ReadKey();
+                            Console.Clear();
+                            MenuMaterias();
+                            break;
+
+                    }
+                    
                     break;
                 case 6:
                     Console.Clear();
@@ -1070,10 +1091,10 @@ namespace ProgIIFinalProject
                 gotoXY("Hora", 65 - 20, 0);
                 gotoXY("Aula", 90 - 20, 0);
                 int column = 1;
-                int last = column;
+                int last = column+1;
                 while ((column - 1) < found)
                 {
-                    
+                    Console.WriteLine("-------------------------------------------------------------------------------------------");
                     using (cmd = new SqlCommand("Select * from Programacion where [ID]=@progID ", con))
                     {
                         cmd.Parameters.AddWithValue("@progID", programaciones[column - 1]);
@@ -1110,7 +1131,7 @@ namespace ProgIIFinalProject
 
                     }
                     column++;
-                    last = column + 1;
+                    last += column;
                 }
 
             }
@@ -1123,6 +1144,89 @@ namespace ProgIIFinalProject
             Console.ReadKey();
             MenuProgramaciones();
          }
+         void BuscarSeccionesMateria(string id)
+        {
+            Console.Clear();
+            int found = (0);
+            try
+            {
+                DBConnect();
+                using (cmd = new SqlCommand("select * from Programacion where [Materia]= @id", con))
+                {
+                    cmd.Parameters.AddWithValue("@id",id);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        found += 1;
+                    }
+                    con.Close();
+                }
+
+                if (found > 0)
+                {
+                    Console.Clear();
+                    gotoXY("Trimestre", 20 - 20, 0);
+                    gotoXY("ID Programacion", 40 - 20, 0);
+                    gotoXY("Dia", 60 - 20, 0);
+                    gotoXY("Hora", 70 - 20, 0);
+                    gotoXY("Aula", 95 - 20, 0);
+                    int column = 1;
+                    int last = column+1;
+                    DBConnect();
+                    
+                    using (cmd = new SqlCommand("Select * from Programacion where [Materia]=@progID ", con))
+                    {
+                        cmd.Parameters.AddWithValue("@progID", id);
+                        SqlDataReader reader = cmd.ExecuteReader();
+                        string trimestre, ID, aula;
+                        while (reader.Read())
+                        {
+                            Console.WriteLine("-------------------------------------------------------------------------------------------");
+                            trimestre = reader["Trimestre"].ToString();
+                            ID = reader["ID"].ToString();
+                            string[] arrayDia = reader["dia"].ToString().Split('\n');
+                            string[] arrayHora = reader["hora"].ToString().Split('\n');
+                            aula = reader["Aula"].ToString();
+                            gotoXY(trimestre, 20 - 20, last);
+                            gotoXY(ID, 40 - 20, last);
+                            gotoXY(aula, 95 - 20, last);
+                            for (int aux = 0; aux < arrayDia.Length - 1; aux++)
+                            {
+
+                                gotoXY(arrayDia[aux], 40, last);
+
+                                if (aux < arrayHora.Length)
+                                {
+
+                                    gotoXY(arrayHora[aux], 50, last);
+                                }
+
+                                last++;
+                            }
+
+                            last++;
+                        }
+
+                        reader.Close();
+
+                    }
+                    column++;
+                    last += column;
+                }
+
+                
+                else { Console.WriteLine("No existe esta materia o bien no tiene ninguna programacion"); }
+                con.Close();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                // Console.WriteLine("Database error");
+            }
+            Console.ReadKey();
+            MenuProgramaciones();
+
+        }
 
          void EditarUsuario(String id)
         {

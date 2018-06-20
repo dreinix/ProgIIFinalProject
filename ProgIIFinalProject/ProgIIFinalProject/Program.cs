@@ -386,7 +386,7 @@ namespace ProgIIFinalProject
 
         }
 
-        static void Main(string[] args)
+         static void Main(string[] args)
         {   
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("es-ES");
             Console.SetWindowSize(Convert.ToInt32(Console.LargestWindowWidth), Convert.ToInt32(Console.LargestWindowHeight));
@@ -397,13 +397,13 @@ namespace ProgIIFinalProject
             p.MenuGeneral();
         }
 
-        void gotoXY(string word,int x,int y)
+         void gotoXY(string word,int x,int y)
         {
             Console.SetCursorPosition(x, y);
             Console.WriteLine(word);
         }
 
-        void AgregarUsuario()
+         void AgregarUsuario()
         {
             int xPosition = 0,option;
             Console.Clear();
@@ -950,7 +950,7 @@ namespace ProgIIFinalProject
 
 
         }
-        //nada
+         //nada
          void BuscarUsuario(String id)
         {
             
@@ -960,9 +960,11 @@ namespace ProgIIFinalProject
                 int i = 1;
                 bool aux = false;
                 DBConnect();
-                string query = "select * from Alumnos where [Identificador]= '" +id + "' or [Nombre]="+"'"+id+"';";
-                cmd.CommandText = query;
-                cmd.Connection = con;
+                using (cmd = new SqlCommand("select * from Alumnos where [Identificador]= @id or [Nombre]=@id", con))
+                {
+                    cmd.Parameters.AddWithValue("@id", int.Parse(id));
+                    cmd.ExecuteNonQuery();
+                }
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
@@ -1275,33 +1277,45 @@ namespace ProgIIFinalProject
 
                             Console.SetCursorPosition(8, 2);
                             newInput = Console.ReadLine();
-                            cmd.CommandText = "update Alumnos set Nombre=" + "'" + newInput + "'" + " where ID=" + int.Parse(id) + "";
-                            cmd.Connection = con;
-                            cmd.ExecuteNonQuery();
+                            using (cmd = new SqlCommand("update Alumnos set Nombre= @value where ID= @id", con))
+                            {
+                                cmd.Parameters.AddWithValue("@value", newInput);
+                                cmd.Parameters.AddWithValue("@id", int.Parse(id));
+                                cmd.ExecuteNonQuery();
+                            }
                             break;
                         case 2:
                             Console.WriteLine("-Apellido: ");
                             Console.SetCursorPosition(10, 2);
                             newInput = Console.ReadLine();
-                            cmd.CommandText = "update Alumnos set Apellido=" + "'" + newInput + "'" + " where ID=" + int.Parse(id) + "";
-                            cmd.Connection = con;
-                            cmd.ExecuteNonQuery();
+                            using (cmd = new SqlCommand("update Alumnos set Apellido= @value where ID= @id", con))
+                            {
+                                cmd.Parameters.AddWithValue("@value", newInput);
+                                cmd.Parameters.AddWithValue("@id", int.Parse(id));
+                                cmd.ExecuteNonQuery();
+                            }
                             break;
                         case 3:
                             Console.WriteLine("-Carrera: ");
                             Console.SetCursorPosition(9, 2);
                             newInput = Console.ReadLine();
-                            cmd.CommandText = "update Alumnos set Carrera=" + "'" + newInput + "'" + " where ID=" + int.Parse(id) + "";
-                            cmd.Connection = con;
-                            cmd.ExecuteNonQuery();
+                            using (cmd = new SqlCommand("update Alumnos set Carrera= @value where ID= @id", con))
+                            {
+                                cmd.Parameters.AddWithValue("@value", newInput);
+                                cmd.Parameters.AddWithValue("@id", int.Parse(id));
+                                cmd.ExecuteNonQuery();
+                            }
                             break;
                         case 4:
                             Console.WriteLine("-Iddentificador nacional: ");
                             Console.SetCursorPosition(26, 2);
                             newInput = Console.ReadLine();
-                            cmd.CommandText = "update Alumnos set Identificador=" + "'" + newInput + "'" + " where ID=" + int.Parse(id) + "";
-                            cmd.Connection = con;
-                            cmd.ExecuteNonQuery();
+                            using (cmd = new SqlCommand("update Alumnos set Identificador= @value where ID= @id", con))
+                            {
+                                cmd.Parameters.AddWithValue("@value", newInput);
+                                cmd.Parameters.AddWithValue("@id", int.Parse(id));
+                                cmd.ExecuteNonQuery();
+                            }
                             break;
                         case 5:
                             Console.WriteLine("-Fecha de nacimiento dd/mm/yyyy: ");
@@ -1313,16 +1327,22 @@ namespace ProgIIFinalProject
                             {
                                 Console.SetCursorPosition(33, 2);
                                 fechaNacimiento = DateTime.Parse(Console.ReadLine());
-                                cmd.CommandText = "update Alumnos set Fecha=" + "'" + fechaNacimiento.ToShortDateString() + "'" + " where ID=" + int.Parse(id) + "";
-                                cmd.Connection = con;
-                                cmd.ExecuteNonQuery();
+                                using (cmd = new SqlCommand("update Alumnos set Fecha= @value where ID= @id", con))
+                                {
+                                    cmd.Parameters.AddWithValue("@value", fechaNacimiento.ToShortDateString());
+                                    cmd.Parameters.AddWithValue("@id", int.Parse(id));
+                                    cmd.ExecuteNonQuery();
+                                }
 
                             }
                             catch (Exception)
                             {
-                                cmd.CommandText = "update Alumnos set Fecha=" + "'01/01/1999'" + " where ID=" + int.Parse(id) + "";
-                                cmd.Connection = con;
-                                cmd.ExecuteNonQuery();
+                                using (cmd = new SqlCommand("update Alumnos set Fecha= @value where ID= @id", con))
+                                {
+                                    cmd.Parameters.AddWithValue("@value", "01/01/1999");
+                                    cmd.Parameters.AddWithValue("@id", int.Parse(id));
+                                    cmd.ExecuteNonQuery();
+                                }
                                 Console.WriteLine("Formato de fecha invalido. Se establecera una fecha predeterminada");
                             }
                             ;
@@ -1338,20 +1358,29 @@ namespace ProgIIFinalProject
                                 switch (newInput)
                                 {
                                     case "1":
-                                        cmd.CommandText = "update Alumnos set Extranjero=" + "'si'" + " where ID=" + int.Parse(id) + "";
-                                        cmd.Connection = con;
-                                        cmd.ExecuteNonQuery();
+                                        using (cmd = new SqlCommand("update Alumnos set Extranjero= @value where ID= @id", con))
+                                        {
+                                            cmd.Parameters.AddWithValue("@value", "si");
+                                            cmd.Parameters.AddWithValue("@id", int.Parse(id));
+                                            cmd.ExecuteNonQuery();
+                                        }
                                         break;
                                     case "2":
-                                        cmd.CommandText = "update Alumnos set Extranjero=" + "'no'" + " where ID=" + int.Parse(id) + "";
-                                        cmd.Connection = con;
-                                        cmd.ExecuteNonQuery();
+                                        using (cmd = new SqlCommand("update Alumnos set Extranjero= @value where ID= @id", con))
+                                        {
+                                            cmd.Parameters.AddWithValue("@value", "no");
+                                            cmd.Parameters.AddWithValue("@id", int.Parse(id));
+                                            cmd.ExecuteNonQuery();
+                                        }
                                         break;
                                     default:
                                         gotoXY("Error en la selección. El usuario será identificado como extranjero", 0, 6);
-                                        cmd.CommandText = "update Alumnos set Extranjero=" + "'si'" + " where ID=" + int.Parse(id) + "";
-                                        cmd.Connection = con;
-                                        cmd.ExecuteNonQuery();
+                                        using (cmd = new SqlCommand("update Alumnos set Extranjero= @value where ID= @id", con))
+                                        {
+                                            cmd.Parameters.AddWithValue("@value", "si");
+                                            cmd.Parameters.AddWithValue("@id", int.Parse(id));
+                                            cmd.ExecuteNonQuery();
+                                        }
                                         break;
                                 }
                             }
@@ -1359,9 +1388,12 @@ namespace ProgIIFinalProject
                             {
                                 gotoXY("Error en la selección. El usuario será identificado como extranjero", 0, 6);
 
-                                cmd.CommandText = "update Alumnos set Extranjero=" + "'si'" + " where ID=" + int.Parse(id) + "";
-                                cmd.Connection = con;
-                                cmd.ExecuteNonQuery();
+                                using (cmd = new SqlCommand("update Alumnos set Extranjero= @value where ID= @id", con))
+                                {
+                                    cmd.Parameters.AddWithValue("@value", "si");
+                                    cmd.Parameters.AddWithValue("@id", int.Parse(id));
+                                    cmd.ExecuteNonQuery();
+                                }
                             }
                             ;
                             break;
@@ -1379,34 +1411,49 @@ namespace ProgIIFinalProject
                                 switch (newInput)
                                 {
                                     case "1":
-                                        cmd.CommandText = "update Alumnos set Estado=" + "'Incompleto'" + " where ID=" + int.Parse(id) + "";
-                                        cmd.Connection = con;
-                                        cmd.ExecuteNonQuery();
+                                        using (cmd = new SqlCommand("update Alumnos set Estado= @value where ID= @id", con))
+                                        {
+                                            cmd.Parameters.AddWithValue("@value", "INCOMPLETO");
+                                            cmd.Parameters.AddWithValue("@id", int.Parse(id));
+                                            cmd.ExecuteNonQuery();
+                                        }
                                         Console.ReadKey();
                                         break;
                                     case "2":
-                                        cmd.CommandText = "update Alumnos set Estado=" + "'ACTIVO'" + " where ID=" + int.Parse(id) + "";
-                                        cmd.Connection = con;
-                                        cmd.ExecuteNonQuery();
+                                        using (cmd = new SqlCommand("update Alumnos set Estado= @value where ID= @id", con))
+                                        {
+                                            cmd.Parameters.AddWithValue("@value", "ACTIVO");
+                                            cmd.Parameters.AddWithValue("@id", int.Parse(id));
+                                            cmd.ExecuteNonQuery();
+                                        }
                                         Console.ReadKey();
                                         break;
                                     case "3":
-                                        cmd.CommandText = "update Alumnos set Estado=" + "'INACTIVO'" + " where ID=" + int.Parse(id) + "";
-                                        cmd.Connection = con;
-                                        cmd.ExecuteNonQuery();
+                                        using (cmd = new SqlCommand("update Alumnos set Estado= @value where ID= @id", con))
+                                        {
+                                            cmd.Parameters.AddWithValue("@value", "INACTIVO");
+                                            cmd.Parameters.AddWithValue("@id", int.Parse(id));
+                                            cmd.ExecuteNonQuery();
+                                        }
                                         Console.ReadKey();
                                         break;
                                     case "4":
-                                        cmd.CommandText = "update Alumnos set Estado=" + "'APA'" + " where ID=" + int.Parse(id) + "";
-                                        cmd.Connection = con;
-                                        cmd.ExecuteNonQuery();
+                                        using (cmd = new SqlCommand("update Alumnos set Estado= @value where ID= @id", con))
+                                        {
+                                            cmd.Parameters.AddWithValue("@value", "APA");
+                                            cmd.Parameters.AddWithValue("@id", int.Parse(id));
+                                            cmd.ExecuteNonQuery();
+                                        }
                                         Console.ReadKey();
                                         break;
                                     default:
                                         gotoXY("Error al seleccionar la opcion, el usuario será puesto como incompleto", 0, 7);
-                                        cmd.CommandText = "update Alumnos set Estado=" + "'Incompleto'" + " where ID=" + int.Parse(id) + "";
-                                        cmd.Connection = con;
-                                        cmd.ExecuteNonQuery();
+                                        using (cmd = new SqlCommand("update Alumnos set Estado= @value where ID= @id", con))
+                                        {
+                                            cmd.Parameters.AddWithValue("@value", "INCOMPLETO");
+                                            cmd.Parameters.AddWithValue("@id", int.Parse(id));
+                                            cmd.ExecuteNonQuery();
+                                        }
                                         Console.ReadKey();
                                         MenuAlumnos();
                                         break;
@@ -1415,9 +1462,12 @@ namespace ProgIIFinalProject
                             catch
                             {
                                 gotoXY("Error al seleccionar la opcion, el usuario será puesto como incompleto", 0, 7);
-                                cmd.CommandText = "update Alumnos set Estado=" + "'Incompleto'" + " where ID=" + int.Parse(id) + "";
-                                cmd.Connection = con;
-                                cmd.ExecuteNonQuery();
+                                using (cmd = new SqlCommand("update Alumnos set Estado= @value where ID= @id", con))
+                                {
+                                    cmd.Parameters.AddWithValue("@value", "INCOMPLETO");
+                                    cmd.Parameters.AddWithValue("@id", int.Parse(id));
+                                    cmd.ExecuteNonQuery();
+                                }
                             }
                             break;
 

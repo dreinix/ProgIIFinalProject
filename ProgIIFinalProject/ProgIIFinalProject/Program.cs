@@ -646,6 +646,7 @@ namespace ProgIIFinalProject
             }
             xPosition += 20;
             Console.SetCursorPosition(xPosition, 1);
+            try { 
             auxiliar = Convert.ToInt32(Console.ReadLine());
             trimestre = trimestres[auxiliar - 1];
 
@@ -656,8 +657,8 @@ namespace ProgIIFinalProject
 
             Console.Clear();
             xPosition = 0;
-            try
-            {
+            
+            
                 gotoXY("Cuantos dias a la semana se impartira la materia?" , xPosition, 1);
                 Console.SetCursorPosition(xPosition + 51, 1);
                 auxiliar = Convert.ToInt32(Console.ReadLine());

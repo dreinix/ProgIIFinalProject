@@ -346,6 +346,7 @@ namespace ProgIIFinalProject
                 case 5:
                     byte op;
                     Console.WriteLine("1) Buscar seleccion del estudiante \n 2) Buscar secciones de una materia");
+                    try { 
                     op = byte.Parse(Console.ReadLine());
                     switch (op)
                     {
@@ -363,9 +364,14 @@ namespace ProgIIFinalProject
                             Console.WriteLine("Opcion invalida");
                             Console.ReadKey();
                             Console.Clear();
-                            MenuMaterias();
+                            MenuProgramaciones();
                             break;
 
+                    }
+                    }catch(Exception ex)
+                    {
+                        
+                        Console.WriteLine(ex.Message);
                     }
                     
                     break;
@@ -378,7 +384,7 @@ namespace ProgIIFinalProject
                     Console.WriteLine("Opcion invalida,intente de nuevo");
                     Console.ReadKey();
                     Console.Clear();
-                    MenuMaterias();
+                    MenuProgramaciones();
                     break;
             }
             Console.ReadKey();

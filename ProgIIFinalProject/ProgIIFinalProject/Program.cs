@@ -6,6 +6,9 @@ using System.Data.Sql;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.IO;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+
 
 namespace ProgIIFinalProject
 {
@@ -157,8 +160,8 @@ namespace ProgIIFinalProject
             Console.SetCursorPosition(5, 0);
             Console.WriteLine("*****Menú*****");
             Console.WriteLine("1. Menu Materias \n" +
-                "2. Menu alumnos \n" + "3. Menu Programaciones \n" +
-                "4. Salir");
+                "2. Menu alumnos \n" + "3. Menu Programaciones \n" + "4. Menu reportes \n" + "5. Menu integracion \n" +
+                "6. Salir");
             try
             {
                 opcion = byte.Parse(Console.ReadLine());
@@ -179,6 +182,12 @@ namespace ProgIIFinalProject
                     MenuProgramaciones();
                     break;
                 case 4:
+                    MenuReportes();
+                    break;
+                case 5:
+                    
+                    break;
+                case 6:
                     Console.Clear();
                     Console.WriteLine("Gracias por utilizar nuestros servicios");
                     Console.ReadKey();
@@ -254,11 +263,11 @@ namespace ProgIIFinalProject
             Console.Clear();
             Console.SetCursorPosition(5, 0);
             Console.WriteLine("*****Menú*****");
-            Console.WriteLine("1. Agregar usuarios \n" +
-                "2. Visualizar usuarios \n" +
+            Console.WriteLine("1. Agregar alummnos \n" +
+                "2. Visualizar alumnos \n" +
                 "3. Buscar \n" +
-                "4. Modificar usuario \n" +
-                "5. Eliminar usuarios \n" +
+                "4. Modificar alumnos \n" +
+                "5. Eliminar alumnos \n" +
                 "6. Salir \n");
             try
             {
@@ -390,6 +399,266 @@ namespace ProgIIFinalProject
             }
             Console.ReadKey();
 
+
+        }
+         void MenuReportes()
+        {
+            byte opcion;
+            string iD;
+            Console.Clear();
+            Console.SetCursorPosition(5, 0);
+            Console.WriteLine("*****Menú*****");
+            Console.WriteLine("1.Crear reporte \n2.Salir");
+            try
+            {
+                opcion = byte.Parse(Console.ReadLine());
+            }
+            catch (Exception)
+            {
+                opcion = 0;
+            }
+            switch (opcion)
+            {
+                case 1:
+                    
+                    Console.Clear();
+                    Console.WriteLine("Seleccione el formato en el que desee generar el reporte: \n1.PDF\n2.Excel\n3.CSV\n");
+                    try
+                    {
+                        opcion = byte.Parse(Console.ReadLine());
+                    }
+                    catch (Exception)
+                    {
+                        opcion = 0;
+                    }
+                    Console.WriteLine("Ingrese el ID de la programacion de la cual desea generar un reporte: ");
+                    iD = Console.ReadLine();
+                    switch (opcion)
+                    {
+                        case 1:
+                            generarReportePDF(iD);
+                            
+                            
+                            MenuReportes();
+                            break;
+                        case 2:
+
+                            break;
+                        case 3:
+
+                            break;
+                        default:
+                            Console.WriteLine("Opcion invalida,intente de nuevo");
+                            Console.ReadKey();
+                            Console.Clear();
+                            MenuReportes();
+                            break;
+
+                    }
+                    break;
+                    case 2:
+                    MenuGeneral();
+                        break;
+
+                default:
+                    Console.WriteLine("Opcion invalida,intente de nuevo");
+                    Console.ReadKey();
+                    Console.Clear();
+                    MenuReportes();
+                    break;
+
+
+
+            }
+            Console.ReadKey();
+        }
+         void MenuIntegracion()
+        {
+            Console.Clear();
+            Console.SetCursorPosition(5, 0);
+            Console.WriteLine("*****Menú*****");
+            Console.WriteLine("1. Agregar usuarios \n" +
+                "2. Visualizar usuarios \n" +
+                "3. Buscar \n" +
+                "4. Modificar usuario \n" +
+                "5. Eliminar usuarios \n" +
+                "6. Salir \n");
+        }   
+
+         void generarReportePDF(string id)
+        {
+            DBConnect();
+
+            int found = (0);
+            try
+            {
+                DBConnect();
+                using (cmd = new SqlCommand("select * from Programacion where [ID]= @id", con))
+                {
+                    cmd.Parameters.AddWithValue("@id", id);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        found += 1;
+                    }
+                    con.Close();
+                }
+            }
+            catch
+            {
+                Console.WriteLine("Database error");
+            }
+
+            if (found > 0)
+            {
+                DBConnect();
+                string materia = "", maestro = "", aula = "";
+                
+             /*   using (cmd = new SqlCommand("select * from Programacion where [ID] = @id", con))
+                {
+                    cmd.Parameters.AddWithValue("@id", id);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    materia = reader["Materia"].ToString();
+                    maestro = reader["Maestro"].ToString();
+                    aula = reader["Aula"].ToString();*/
+                  //reader.Close();
+                //}
+               
+                Document reporte = new Document(PageSize.LETTER);
+                PdfWriter writer = PdfWriter.GetInstance(reporte, new FileStream("Reporte - " + id + ".pdf", FileMode.Create));
+
+                reporte.AddTitle("Reporte - " + id);
+                reporte.Open();
+
+                iTextSharp.text.Font font = new iTextSharp.text.Font(iTextSharp.text.Font.FontFamily.TIMES_ROMAN, 10, iTextSharp.text.Font.NORMAL, BaseColor.BLACK);
+                reporte.Add(new Paragraph("INSTITUTO TECNOLÓGICO DE SANTO DOMINGO\nDirección de registro\nAsistencia a Estudiantes\n\n" + "Asignatura:" + materia + "\nProfesor(a):"+ maestro + "\nHorario:" + "\nAula:" + aula));
+                reporte.Add(Chunk.NEWLINE);
+
+                PdfPTable tblProgramacion = new PdfPTable(6);
+                tblProgramacion.WidthPercentage = 100;
+
+                PdfPCell clID = new PdfPCell(new Phrase("ID", font));
+                clID.BorderWidth = 0;
+                clID.BorderWidthBottom = 0.75f;
+                PdfPCell clMatricula = new PdfPCell(new Phrase("Matrícula", font));
+                clID.BorderWidth = 0;
+                clID.BorderWidthBottom = 0.75f;
+                PdfPCell clPrograma = new PdfPCell(new Phrase("Programa", font));
+                clID.BorderWidth = 0;
+                clID.BorderWidthBottom = 0.75f;
+                PdfPCell clNombre = new PdfPCell(new Phrase("Nombre", font));
+                clID.BorderWidth = 0;
+                clID.BorderWidthBottom = 0.75f;
+                PdfPCell clAusencias = new PdfPCell(new Phrase("Ausencias", font));
+                clID.BorderWidth = 0;
+                clID.BorderWidthBottom = 0.75f;
+                PdfPCell clTotal = new PdfPCell(new Phrase("Total", font));
+                clID.BorderWidth = 0;
+                clID.BorderWidthBottom = 0.75f;
+
+                tblProgramacion.AddCell(clID);
+                tblProgramacion.AddCell(clMatricula);
+                tblProgramacion.AddCell(clPrograma);
+                tblProgramacion.AddCell(clNombre);
+                tblProgramacion.AddCell(clAusencias);
+                tblProgramacion.AddCell(clTotal);
+
+                found = 0;
+                using (cmd = new SqlCommand("select * from Programacion where [ID] = @id", con))
+                {
+                    cmd.Parameters.AddWithValue("@id", id);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        found += 1;
+                    }
+                    reader.Close();
+                }
+                found = 0;
+                using (cmd = new SqlCommand("Select * from Seleccion where [IDProgramacion]=@id", con))
+                {
+                    cmd.Parameters.AddWithValue("@id", id);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        found += 1;
+                    }
+                    reader.Close();
+                }
+
+                string[] idAlumno = new string[found + 1];
+                int a = 0;
+                using (cmd = new SqlCommand("Select * from Seleccion where [IDProgramacion]=@id", con))
+                {
+                    cmd.Parameters.AddWithValue("@id", id);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        idAlumno[a] = reader["IDAlumno"].ToString();
+                        a++;
+                    }
+                    reader.Close();
+
+                }
+
+                a = 0;
+                if (found > 0)
+                {
+                    int column = 1;
+                    while ((column - 1) < found)
+                    {
+                        using (cmd = new SqlCommand("Select * from Alumnos where [ID]=@AlumnID ", con))
+                        {
+                            cmd.Parameters.AddWithValue("@AlumnID", idAlumno[(column - 1)]);
+                            SqlDataReader reader = cmd.ExecuteReader();
+                            string Nombre, Carrera;
+
+                            while (reader.Read())
+                            {
+                                Nombre = reader["Nombre"].ToString() + " " + reader["Apellido"].ToString();
+                                Carrera = reader["Carrera"].ToString();
+
+                                clID = new PdfPCell(new Phrase(idAlumno[column - 1], font));
+                                clID.BorderWidth = 0;
+                                clMatricula = new PdfPCell(new Phrase("", font));
+                                clMatricula.BorderWidth = 0;
+                                clPrograma = new PdfPCell(new Phrase(Carrera, font));
+                                clPrograma.BorderWidth = 0;
+                                clNombre = new PdfPCell(new Phrase(Nombre, font));
+                                clNombre.BorderWidth = 0;
+                                clAusencias = new PdfPCell(new Phrase("", font));
+                                clAusencias.BorderWidth = 0;
+                                clTotal = new PdfPCell(new Phrase("", font));
+                                clTotal.BorderWidth = 0;
+
+                                tblProgramacion.AddCell(clID);
+                                tblProgramacion.AddCell(clMatricula);
+                                tblProgramacion.AddCell(clPrograma);
+                                tblProgramacion.AddCell(clNombre);
+                                tblProgramacion.AddCell(clAusencias);
+                                tblProgramacion.AddCell(clTotal);
+
+                                
+                            }
+                            reader.Close();
+                        }
+                        column++;
+                    }
+                    reporte.Add(tblProgramacion);
+                    reporte.Close();
+                    writer.Close();
+                }
+            }
+            else
+            {
+                Console.WriteLine("Programación no encontrada");
+                Console.ReadKey();
+                MenuReportes();
+            }
+            Console.Clear();
+            Console.WriteLine("Reporte creado exitosamente");
+            Console.ReadKey();
+            MenuReportes();
 
         }
 
@@ -968,7 +1237,7 @@ namespace ProgIIFinalProject
 
 
         }
-         //nada
+         
          void BuscarUsuario(String id)
         {
             

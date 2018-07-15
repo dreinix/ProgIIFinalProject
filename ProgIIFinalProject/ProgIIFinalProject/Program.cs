@@ -11,6 +11,8 @@ using iTextSharp.text.pdf;
 using System.Threading;
 using Newtonsoft.Json;
 using System.Windows.Forms;
+using OfficeOpenXml;
+
 namespace ProgIIFinalProject
 {
     class Program
@@ -448,12 +450,11 @@ namespace ProgIIFinalProject
                     {
                         case 1:
                             generarReportePDF(iD);
-
-
                             MenuReportes();
                             break;
                         case 2:
-
+                            generarReporteExcel(iD);
+                            MenuReportes();
                             break;
                         case 3:
                             generarReporteCVS(iD);
@@ -978,14 +979,49 @@ namespace ProgIIFinalProject
             MenuReportes();
 
         }
-        void generarReporteExcel()
+        void generarReporteExcel(string id)
         {
+           
+            FileInfo reporte = new FileInfo("Reporte - " + id + ".xlsx");
+            using (ExcelPackage excel = new ExcelPackage(reporte))
+            {
+                
+                var workbook = excel.Workbook;
+                
+                var programacionWorksheet = workbook.Worksheets.Add("Programacion - "+id);
+                var titleCell = programacionWorksheet.Cells["A1:E1"]; 
+                titleCell.Merge = true;                                
+                titleCell.Value = "INSTITUTO TECNOLÓGICO DE SANTO DOMINGO";
 
+                var titleCell2 = programacionWorksheet.Cells["A2:C2"];
+                titleCell2.Merge = true;
+                titleCell2.Value = "Dirección de registro";
+
+                var titleCell3 = programacionWorksheet.Cells["A3:C3"];
+                titleCell3.Merge = true;
+                titleCell3.Value = "Asistencia a Estudiantes";
+
+                programacionWorksheet.Cells["A5"].Value = "Asignatura:";
+                programacionWorksheet.Cells["A6"].Value = "Profesor(a):";
+                programacionWorksheet.Cells["A7"].Value = "Horario:";
+
+                programacionWorksheet.Cells["A9"].Value = "ID";
+                programacionWorksheet.Cells["B9"].Value = "Matrícula";
+                programacionWorksheet.Cells["C9"].Value = "Programa";
+                programacionWorksheet.Cells["D9"].Value = "Nombre";
+                programacionWorksheet.Cells["E9"].Value = "Ausencias";
+                programacionWorksheet.Cells["F9"].Value = "Total";
+                programacionWorksheet.Cells["A9:F9"].Style.Font.Bold = true;
+                programacionWorksheet.SelectedRange("A1", "B2")
+
+
+                excel.Save();
+            }
 
 
         }
 
-        void ExportarAlumnoJson()
+            void ExportarAlumnoJson()
         {
             List<AlumnoCS> AlumData = new List<AlumnoCS>();
 

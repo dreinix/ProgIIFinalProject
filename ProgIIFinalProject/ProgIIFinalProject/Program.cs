@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
+using OfficeOpenXml;
 
 namespace ProgIIFinalProject
 {
@@ -459,7 +460,8 @@ namespace ProgIIFinalProject
                             MenuReportes();
                             break;
                         case 2:
-
+                            generarReporteExcel(iD);
+                            MenuReportes();
                             break;
                         case 3:
                             generarReporteCVS(iD);
@@ -1055,6 +1057,189 @@ namespace ProgIIFinalProject
             MenuReportes();
 
         }
+        void generarReporteExcel(string id)
+        {
+
+            FileInfo reporte = new FileInfo("Reporte - " + id + ".xlsx");
+            using (ExcelPackage excel = new ExcelPackage(reporte))
+            {
+                DBConnect();
+                int found = (0);
+                try
+                {
+                    DBConnect();
+                    using (cmd = new SqlCommand("select * from Programacion where [ID] = @id", con))
+                    {
+                        cmd.Parameters.AddWithValue("@id", id);
+                        SqlDataReader reader = cmd.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            found += 1;
+                        }
+                        con.Close();
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine("Database error");
+                }
+
+                if (found > 0)
+                {
+                    DBConnect();
+                    string materia = "", maestro = "", aula = "", horario = "";
+                    string[] arrayHora = new string[20];
+                    string[] arrayDia = new string[20];
+
+                    using (cmd = new SqlCommand("select * from Programacion where [ID] = @id", con))
+                    {
+                        cmd.Parameters.AddWithValue("@id", id);
+                        SqlDataReader reader = cmd.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            materia = reader["Materia"].ToString();
+                            maestro = reader["Maestro"].ToString();
+                            aula = reader["Aula"].ToString();
+                            arrayHora = reader["hora"].ToString().Split('\n');
+                            arrayDia = reader["dia"].ToString().Split('\n');
+                        }
+                        reader.Close();
+                    }
+
+
+                    var workbook = excel.Workbook;
+
+                    var programacionWorksheet = workbook.Worksheets.Add("Programacion - " + id);
+
+
+                    for (int aux = 0; aux <= arrayDia.Length - 1; aux++)
+                    {
+
+                        horario += arrayDia[aux] + ": ";
+                        if (aux < arrayHora.Length)
+                        {
+                            horario += arrayHora[aux] + "|";
+                        }
+
+                    }
+                    programacionWorksheet.Cells["B8"].Value = horario;
+
+                    var titleCell = programacionWorksheet.Cells["A1:E1"];
+                    titleCell.Merge = true;
+                    titleCell.Value = "INSTITUTO TECNOLÓGICO DE SANTO DOMINGO";
+
+                    var titleCell2 = programacionWorksheet.Cells["A2:C2"];
+                    titleCell2.Merge = true;
+                    titleCell2.Value = "Dirección de registro";
+
+                    var titleCell3 = programacionWorksheet.Cells["A3:C3"];
+                    titleCell3.Merge = true;
+                    titleCell3.Value = "Asistencia a Estudiantes";
+
+                    programacionWorksheet.Cells["A5"].Value = "Asignatura:";
+                    programacionWorksheet.Cells["B5"].Value = materia;
+                    programacionWorksheet.Cells["A6"].Value = "Aula:";
+                    programacionWorksheet.Cells["B6"].Value = aula;
+                    programacionWorksheet.Cells["A7"].Value = "Profesor(a):";
+                    programacionWorksheet.Cells["B7"].Value = maestro;
+                    programacionWorksheet.Cells["A8"].Value = "Horario:";
+                    programacionWorksheet.Cells["A8"].Style.Font.Bold = true;
+                    programacionWorksheet.Cells["A10"].Value = "ID";
+                    programacionWorksheet.Cells["B10"].Value = "Matrícula";
+                    programacionWorksheet.Cells["C10"].Value = "Programa";
+                    programacionWorksheet.Cells["D10"].Value = "Nombre";
+                    programacionWorksheet.Cells["E10"].Value = "Ausencias";
+                    programacionWorksheet.Cells["F10"].Value = "Total";
+                    programacionWorksheet.Cells["A10:F10"].Style.Font.Bold = true;
+
+                    found = 0;
+                    using (cmd = new SqlCommand("select * from Programacion where [ID] = @id", con))
+                    {
+                        cmd.Parameters.AddWithValue("@id", id);
+                        SqlDataReader reader = cmd.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            found += 1;
+                        }
+                        reader.Close();
+                    }
+                    found = 0;
+                    using (cmd = new SqlCommand("Select * from Seleccion where [IDProgramacion]=@id", con))
+                    {
+                        cmd.Parameters.AddWithValue("@id", id);
+                        SqlDataReader reader = cmd.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            found += 1;
+                        }
+                        reader.Close();
+                    }
+
+                    string[] idAlumno = new string[found + 1];
+                    int a = 0;
+                    using (cmd = new SqlCommand("Select * from Seleccion where [IDProgramacion]=@id", con))
+                    {
+                        cmd.Parameters.AddWithValue("@id", id);
+                        SqlDataReader reader = cmd.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            idAlumno[a] = reader["IDAlumno"].ToString();
+                            a++;
+                        }
+                        reader.Close();
+
+                    }
+
+                    a = 0;
+                    if (found > 0)
+                    {
+                        int cell = 11;
+                        int column = 1;
+                        while ((column - 1) < found)
+                        {
+                            using (cmd = new SqlCommand("Select * from Alumnos where [ID]=@AlumnID ", con))
+                            {
+                                cmd.Parameters.AddWithValue("@AlumnID", idAlumno[(column - 1)]);
+                                SqlDataReader reader = cmd.ExecuteReader();
+                                string Nombre, Carrera;
+
+                                while (reader.Read())
+                                {
+                                    Nombre = reader["Nombre"].ToString() + " " + reader["Apellido"].ToString();
+                                    Carrera = reader["Carrera"].ToString();
+
+                                    programacionWorksheet.Cells["A" + cell].Value = idAlumno[column - 1];
+                                    programacionWorksheet.Cells["C" + cell].Value = Carrera;
+                                    programacionWorksheet.Cells["D" + cell].Value = Nombre;
+
+
+
+
+                                }
+                                reader.Close();
+                            }
+                            column++;
+                            cell++;
+                        }
+                        excel.Save();
+                       
+
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Programación no encontrada");
+                    Console.ReadKey();
+                    MenuReportes();
+                }
+                Console.Clear();
+                Console.WriteLine("Reporte creado exitosamente");
+                Console.ReadKey();
+                MenuReportes();
+            }
+
+        }
+
         //Exportar
 
         void ExportarAlumnoJson()

@@ -625,15 +625,23 @@ namespace ProgIIFinalProject
                 */
                 reporte.Add(Chunk.NEWLINE);
 
-                PdfPTable tblProgramacion = new PdfPTable(6);
+                PdfPTable tblProgramacion = new PdfPTable(25);
                 tblProgramacion.WidthPercentage = 100;
+                float[] widths = new float[] { 1.1f, 1.2f, 1.2f, 2f, 0.4f, 0.4f, 0.4f, 0.4f, 0.4f, 0.4f, 0.4f, 0.4f, 0.4f, 0.4f, 0.4f, 0.4f, 0.4f, 0.4f, 0.4f, 0.4f, 0.4f, 0.4f, 0.4f, 0.4f, 0.7f };
+
+                tblProgramacion.SetWidths(widths);
 
                 PdfPCell clID = new PdfPCell(new Phrase("ID", font));
                 clID.BorderWidth = 0;
+                clID.BorderWidthRight = 0;
                 clID.BorderWidthBottom = 0.75f;
+                clID.BorderWidthTop = 0.75f;
+                clID.BorderWidthLeft = 0.75f;
                 PdfPCell clMatricula = new PdfPCell(new Phrase("Matrícula", font));
-                clID.BorderWidth = 0;
-                clID.BorderWidthBottom = 0.75f;
+                clMatricula.BorderWidth = 0;
+                clMatricula.BorderWidthTop = 0.75f;
+                clMatricula.BorderWidthBottom = 0.75f;
+                clMatricula.BorderWidthLeft = 0.75f;
                 PdfPCell clPrograma = new PdfPCell(new Phrase("Programa", font));
                 clID.BorderWidth = 0;
                 clID.BorderWidthBottom = 0.75f;
@@ -651,6 +659,8 @@ namespace ProgIIFinalProject
                 tblProgramacion.AddCell(clMatricula);
                 tblProgramacion.AddCell(clPrograma);
                 tblProgramacion.AddCell(clNombre);
+                clAusencias.Colspan = 20;
+                clAusencias.HorizontalAlignment = 1;
                 tblProgramacion.AddCell(clAusencias);
                 tblProgramacion.AddCell(clTotal);
 
@@ -711,22 +721,43 @@ namespace ProgIIFinalProject
 
                                 clID = new PdfPCell(new Phrase(idAlumno[column - 1], font));
                                 clID.BorderWidth = 0;
+                                clID.BorderWidthBottom = 0.75f;
+                                clID.BorderWidthRight = 0.75f;
+                                clID.BorderWidthLeft = 0.75f;
                                 clMatricula = new PdfPCell(new Phrase("", font));
                                 clMatricula.BorderWidth = 0;
+                                clMatricula.BorderWidthBottom = 0.75f;
+                                clMatricula.BorderWidthRight = 0.75f;
+
                                 clPrograma = new PdfPCell(new Phrase(Carrera, font));
                                 clPrograma.BorderWidth = 0;
+                                clPrograma.BorderWidthBottom = 0.75f;
+                                clPrograma.BorderWidthRight = 0.75f;
+
                                 clNombre = new PdfPCell(new Phrase(Nombre, font));
                                 clNombre.BorderWidth = 0;
+                                clNombre.BorderWidthBottom = 0.75f;
+                                clNombre.BorderWidthRight = 0.75f;
+
                                 clAusencias = new PdfPCell(new Phrase("", font));
                                 clAusencias.BorderWidth = 0;
+                                clAusencias.BorderWidthBottom = 0.75f;
+                                clAusencias.BorderWidthRight = 0.75f;
+
                                 clTotal = new PdfPCell(new Phrase("", font));
                                 clTotal.BorderWidth = 0;
+                                clTotal.BorderWidthBottom = 0.75f;
+                                clTotal.BorderWidthRight = 0.75f;
+
 
                                 tblProgramacion.AddCell(clID);
                                 tblProgramacion.AddCell(clMatricula);
                                 tblProgramacion.AddCell(clPrograma);
                                 tblProgramacion.AddCell(clNombre);
-                                tblProgramacion.AddCell(clAusencias);
+                                for (int i = 0; i < 20; i++)
+                                {
+                                    tblProgramacion.AddCell(clAusencias);
+                                }
                                 tblProgramacion.AddCell(clTotal);
 
 

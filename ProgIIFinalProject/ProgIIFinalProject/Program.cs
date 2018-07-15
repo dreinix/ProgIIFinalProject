@@ -8,7 +8,7 @@ using System.Globalization;
 using System.IO;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
-
+using System.Threading;
 
 namespace ProgIIFinalProject
 {
@@ -444,10 +444,10 @@ namespace ProgIIFinalProject
                             MenuReportes();
                             break;
                         case 2:
-
+                            
                             break;
                         case 3:
-
+                            generarReporteCVS(iD);
                             break;
                         default:
                             Console.WriteLine("Opcion invalida,intente de nuevo");
@@ -707,11 +707,206 @@ namespace ProgIIFinalProject
             MenuReportes();
 
         }
+        void generarReporteCVS(string id)
+        {
+            DBConnect();
+
+            int found = (0);
+            try
+            {
+                DBConnect();
+                using (cmd = new SqlCommand("select * from Programacion where [ID] = @id", con))
+                {
+                    cmd.Parameters.AddWithValue("@id", id);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        found += 1;
+                    }
+                    con.Close();
+                }
+            }
+            catch
+            {
+                Console.WriteLine("Database error");
+            }
+
+            if (found > 0)
+            {
+                DBConnect();
+                string materia = "", maestro = "", aula = "", horario = "";
+                string[] arrayHora = new string[20];
+                string[] arrayDia = new string[20];
+                using (cmd = new SqlCommand("select * from Programacion where [ID] = @id", con))
+                {
+                    cmd.Parameters.AddWithValue("@id", id);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        materia = reader["Materia"].ToString();
+                        maestro = reader["Maestro"].ToString();
+                        aula = reader["Aula"].ToString();
+                        arrayHora = reader["hora"].ToString().Split('\n');
+                        arrayDia = reader["dia"].ToString().Split('\n');
+                    }
+                    reader.Close();
+                }
+                File.Create("Report - " + id + ".csv").Dispose();
+                using(var csvFile = new StreamWriter("Report - " + id + ".csv"))
+                {
+                    csvFile.WriteLine("Reporte - " + id+",");
+
+                    iTextSharp.text.Font font = new iTextSharp.text.Font(iTextSharp.text.Font.FontFamily.TIMES_ROMAN, 10, iTextSharp.text.Font.NORMAL, BaseColor.BLACK);
+
+                    csvFile.WriteLine(("INSTITUTO TECNOLOGICO DE SANTO DOMINGO,\nDireccion de registro,\nAsistencia a Estudiantes,\n\n" + "Asignatura:, " + materia + ",\nProfesor(a):, " + maestro + ","));
+                    csvFile.WriteLine(("Horario:, "));
+                    for (int aux = 0; aux <= arrayDia.Length - 1; aux++)
+                    {
+
+                        horario = arrayDia[aux] + ":, ";
+                        if (aux < arrayHora.Length)
+                        {
+                            horario += arrayHora[aux]+",";
+                        }
+                        csvFile.WriteLine((horario));
+                    }
+
+                    csvFile.WriteLine(("Aula:, " + aula+","));
+                    /*reporte.Add(("Horario: \t \t \t \t \t \t \t \t \t \t " + "Aula: " + aula + "\n Lunes\t \t Martes \t \t Miercoles \t \t Jueves \t \t Viernes"));
+                    Dictionary<String, int> DayValue = new Dictionary<string, int>();
+                    DayValue.Add("Lunes", 1);
+                    DayValue.Add("Martes", 2);
+                    DayValue.Add("Miercoles", 3);
+                    DayValue.Add("Jueves", 4);
+                    DayValue.Add("Viernes", 5);
+                    DayValue.Add("Sabado", 6);
+                    horario += "\t";
+                    for (int aux = 0; aux <= arrayDia.Length - 1; aux++)
+                    {
+                        int number = DayValue[arrayDia[aux]];
+                        for (int c = 0; c < number; c++)
+                        {
+                            horario += "\t";
+                        }
+                        if (aux < arrayHora.Length)
+                        {
+                            horario += arrayHora[aux];
+                        }
+
+                    }
+                    reporte.Add((horario));
+                    */
+                    csvFile.WriteLine(Chunk.NEWLINE);
+
+                    csvFile.Write("ID"+",");
+                    csvFile.Write("Matricula" + ",");
+                    csvFile.Write("Programa" + ",");
+                    csvFile.Write("Nombre" + ",");
+                    for(int c = 0; c < 10; c++)
+                    {
+                        csvFile.Write(",");
+                    }
+                    csvFile.Write("Ausencias" + ",");
+                    for (int c = 0; c < 9; c++)
+                    {
+                        csvFile.Write(",");
+                    }
+                    csvFile.Write("Total" + ",");
+
+                    found = 0;
+                    using (cmd = new SqlCommand("select * from Programacion where [ID] = @id", con))
+                    {
+                        cmd.Parameters.AddWithValue("@id", id);
+                        SqlDataReader reader = cmd.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            found += 1;
+                        }
+                        reader.Close();
+                    }
+                    found = 0;
+                    using (cmd = new SqlCommand("Select * from Seleccion where [IDProgramacion]=@id", con))
+                    {
+                        cmd.Parameters.AddWithValue("@id", id);
+                        SqlDataReader reader = cmd.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            found += 1;
+                        }
+                        reader.Close();
+                    }
+
+                    string[] idAlumno = new string[found + 1];
+                    int a = 0;
+                    using (cmd = new SqlCommand("Select * from Seleccion where [IDProgramacion]=@id", con))
+                    {
+                        cmd.Parameters.AddWithValue("@id", id);
+                        SqlDataReader reader = cmd.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            idAlumno[a] = reader["IDAlumno"].ToString();
+                            a++;
+                        }
+                        reader.Close();
+
+                    }
+
+                    a = 0;
+                    if (found > 0)
+                    {
+                        int column = 1;
+                        while ((column - 1) < found)
+                        {
+                            using (cmd = new SqlCommand("Select * from Alumnos where [ID]=@AlumnID ", con))
+                            {
+                                cmd.Parameters.AddWithValue("@AlumnID", idAlumno[(column - 1)]);
+                                SqlDataReader reader = cmd.ExecuteReader();
+                                string Nombre, Carrera;
+
+                                while (reader.Read())
+                                {
+                                    csvFile.WriteLine("");
+                                    Nombre = reader["Nombre"].ToString() + " " + reader["Apellido"].ToString();
+                                    Carrera = reader["Carrera"].ToString();
+
+                                    csvFile.Write(idAlumno[column - 1]+",");
+                                    csvFile.Write(",");
+                                    csvFile.Write(Carrera + ",");
+                                    csvFile.Write(Nombre + ",");
+                                    for(int c = 0; c < 19; c++)
+                                    {
+                                        csvFile.Write(",");
+                                    }
+                                    csvFile.Write(",");
+
+
+                                }
+                                reader.Close();
+                            }
+                            column++;
+                        }
+                    }
+                }
+          
+            }
+            else
+            {
+                Console.WriteLine("Programación no encontrada");
+                Console.ReadKey();
+                MenuReportes();
+            }
+            Console.Clear();
+            Console.WriteLine("Reporte creado exitosamente");
+            Console.ReadKey();
+            MenuReportes();
+
+        }
+
 
         static void Main(string[] args)
         {   
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("es-ES");
             Console.SetWindowSize(Convert.ToInt32(Console.LargestWindowWidth), Convert.ToInt32(Console.LargestWindowHeight));
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("es-ES");
             Console.WindowTop = 0;
             Console.SetWindowPosition(0, 0);
             // Console.ReadKey();

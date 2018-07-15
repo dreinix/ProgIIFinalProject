@@ -9,7 +9,7 @@ using System.Data.Sql;
 
 namespace ProgIIFinalProject
 {
-    class AlumnoCS
+    public class AlumnoCS
     {
         
         private String _nombre;
@@ -22,39 +22,47 @@ namespace ProgIIFinalProject
         private string _fechaNacimiento;
         
 
-        public string nombre
+        public string Nombre
         {
             get { return _nombre; }
+            set { _nombre = value; }
         }
-        public string apellido
+        public string Apellido
         {
             get { return _apellido; }
+            set { _apellido = value; }
         }
         public int ID
         {
             get { return _ID; }
             set { _ID = value; }
         }
-        public string identificadorPersonal
+        public string IdentificadorPersonal
         {
             get { return _identificadorPersonal; }
+            set { _identificadorPersonal = value; }
+
         }
-        public string estado
+        public string Estado
         {
             get { return _estado; }
+            set { _estado = value; }
         }
         public string carrera
         {
             get { return _carrera; }
+            set { _carrera = value; }
         }
-        public bool extrangero
+        public bool Extrangero
         {
             get { return _extrangero; }
+            set { _extrangero = value; }
         }
  
-        public string fechaNacimiento
+        public string FechaNacimiento
         {
             get { return _fechaNacimiento; }
+            set { _fechaNacimiento = value; }
 
         }
         

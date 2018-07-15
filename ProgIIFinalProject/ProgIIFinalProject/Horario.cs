@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ProgIIFinalProject
 {
-    class Horario
+    public class Horario
     {
 
         private String _dia;

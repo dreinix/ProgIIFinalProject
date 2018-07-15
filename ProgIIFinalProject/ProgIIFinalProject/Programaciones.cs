@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ProgIIFinalProject
 {
-    class Programaciones
+    public class Programaciones
     {
 
         private string _materia;
@@ -23,7 +23,7 @@ namespace ProgIIFinalProject
             set { _materia = value; }
         }
 
-        public Horario horario
+        public Horario Horario
         {
             get { return _horario; }
             set { _horario = value; }

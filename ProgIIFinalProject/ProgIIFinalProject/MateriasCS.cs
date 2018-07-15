@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ProgIIFinalProject
 {
-    class MateriasCS
+    public class MateriasCS
     {
         private String _nombre;
         private String _codigo;
@@ -14,11 +14,12 @@ namespace ProgIIFinalProject
         private String _area;
 
 
-        public string nombre
+        public string Nombre
         {
             get { return _nombre; }
+            set { _nombre = value; }
         }
-        public string codigo
+        public string Codigo
         {
             get { return _codigo; }
             set { _codigo = value; }
@@ -28,9 +29,10 @@ namespace ProgIIFinalProject
             get { return _ID; }
             set { _ID = value; }
         }
-        public string area
+        public string Area
         {
             get { return _area; }
+            set { _area = value; }
         }
 
         public MateriasCS(string nombre, string codigo, int ID, string area)

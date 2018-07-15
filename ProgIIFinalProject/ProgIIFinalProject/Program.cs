@@ -11,6 +11,9 @@ using iTextSharp.text.pdf;
 using System.Threading;
 using Newtonsoft.Json;
 using System.Windows.Forms;
+using System.Xml;
+using System.Xml.Serialization;
+
 namespace ProgIIFinalProject
 {
     class Program
@@ -166,104 +169,107 @@ namespace ProgIIFinalProject
 
         void MenuGeneral()
         {
-            byte opcion;
-            Console.Clear();
-            Console.SetCursorPosition(5, 0);
-            Console.WriteLine("*****Menú*****");
-            Console.WriteLine("1. Menu Materias \n" +
-                "2. Menu alumnos \n" + "3. Menu Programaciones \n" + "4. Menu reportes \n" + "5. Menu integracion \n" +
-                "6. Salir");
-            try
+            byte opcion=0;
+            while (opcion != 6)
             {
-                opcion = byte.Parse(Console.ReadLine());
+                Console.Clear();
+                Console.SetCursorPosition(5, 0);
+                Console.WriteLine("*****Menú*****");
+                Console.WriteLine("1. Menu Materias \n" +
+                    "2. Menu alumnos \n" + "3. Menu Programaciones \n" + "4. Menu reportes \n" + "5. Menu integracion \n" +
+                    "6. Salir");
+                try
+                {
+                    opcion = byte.Parse(Console.ReadLine());
+                }
+                catch (Exception)
+                {
+                    opcion = 0;
+                }
+                switch (opcion)
+                {
+                    case 1:
+                        MenuMaterias();
+                        break;
+                    case 2:
+                        MenuAlumnos();
+                        break;
+                    case 3:
+                        MenuProgramaciones();
+                        break;
+                    case 4:
+                        MenuReportes();
+                        break;
+                    case 5:
+                        MenuIntegracion();
+                        break;
+                    case 6:
+                        Console.Clear();
+                        Console.WriteLine("Gracias por utilizar nuestros servicios");
+                        Console.ReadKey();
+                        Environment.Exit(0);
+                        break;
+                }
             }
-            catch (Exception)
-            {
-                opcion = 0;
-            }
-            switch (opcion)
-            {
-                case 1:
-                    MenuMaterias();
-                    break;
-                case 2:
-                    MenuAlumnos();
-                    break;
-                case 3:
-                    MenuProgramaciones();
-                    break;
-                case 4:
-                    MenuReportes();
-                    break;
-                case 5:
-                    MenuIntegracion();
-                    break;
-                case 6:
-                    Console.Clear();
-                    Console.WriteLine("Gracias por utilizar nuestros servicios");
-                    Console.ReadKey();
-                    Environment.Exit(0);
-                    break;
-            }
-
+            
         }
         void MenuMaterias()
         {
-            byte opcion;
-            string iD;
-            Console.Clear();
-            Console.SetCursorPosition(5, 0);
-            Console.WriteLine("*****Menú*****");
-            Console.WriteLine("1. Agregar materias \n" +
-                "2. Visualizar materias \n" +
-                "3. Buscar materias \n" +
-                "4. Modificar materias \n" +
-                "5. Eliminar materias \n" +
-                "6. Salir \n");
-            try
+            byte opcion=0;
+            while (opcion != 6)
             {
-                opcion = byte.Parse(Console.ReadLine());
-            }
-            catch (Exception)
-            {
-                opcion = 0;
-            }
-            switch (opcion)
-            {
-                case 1:
-                    AgregarMateria();
-                    break;
-                case 2:
-                    RevisarMaterias();
-                    break;
-                case 3:
-                    Console.WriteLine("Ingrese el nombre o el area de la materia: ");
-                    iD = Console.ReadLine();
-                    BuscarMateria(iD);
-                    break;
-                case 4:
-                    Console.WriteLine("Ingrese el ID o el codigo de la materia al que desea modificar algun dato: \n");
-                    iD = Console.ReadLine();
-                    EditarMateria(iD);
-                    break;
-                case 5:
-                    Console.WriteLine("Ingrese el ID o el codigo de la materia que desea eliminar: \n");
-                    iD = Console.ReadLine();
-                    EliminarMateria(iD);
-                    break;
-                case 6:
-                    Console.Clear();
-                    MenuGeneral();
-                    //Console.ReadKey();
-                    break;
-                default:
-                    Console.WriteLine("Opcion invalida,intente de nuevo");
-                    Console.ReadKey();
-                    Console.Clear();
-                    MenuMaterias();
-                    break;
-            }
-            Console.ReadKey();
+                string iD;
+                Console.Clear();
+                Console.SetCursorPosition(5, 0);
+                Console.WriteLine("*****Menú*****");
+                Console.WriteLine("1. Agregar materias \n" +
+                    "2. Visualizar materias \n" +
+                    "3. Buscar materias \n" +
+                    "4. Modificar materias \n" +
+                    "5. Eliminar materias \n" +
+                    "6. Salir \n");
+                try
+                {
+                    opcion = byte.Parse(Console.ReadLine());
+                }
+                catch (Exception)
+                {
+                    opcion = 0;
+                }
+                switch (opcion)
+                {
+                    case 1:
+                        AgregarMateria();
+                        break;
+                    case 2:
+                        RevisarMaterias();
+                        break;
+                    case 3:
+                        Console.WriteLine("Ingrese el nombre o el area de la materia: ");
+                        iD = Console.ReadLine();
+                        BuscarMateria(iD);
+                        break;
+                    case 4:
+                        Console.WriteLine("Ingrese el ID o el codigo de la materia al que desea modificar algun dato: \n");
+                        iD = Console.ReadLine();
+                        EditarMateria(iD);
+                        break;
+                    case 5:
+                        Console.WriteLine("Ingrese el ID o el codigo de la materia que desea eliminar: \n");
+                        iD = Console.ReadLine();
+                        EliminarMateria(iD);
+                        break;
+                    case 6:
+                        //Console.ReadKey();
+                        break;
+                    default:
+                        Console.WriteLine("Opcion invalida,intente de nuevo");
+                        Console.ReadKey();
+                        Console.Clear();
+                        break;
+                }
+                Console.ReadKey();
+            }   
 
         }
         void MenuAlumnos()
@@ -485,9 +491,10 @@ namespace ProgIIFinalProject
         }
         void MenuIntegracion()
         {
-            byte opcion = 0;
+            byte opcion = 0, op2 = 0;
             while (opcion != 5)
             {
+                
                 Console.Clear();
                 Console.SetCursorPosition(5, 0);
                 Console.WriteLine("*****Menú*****");
@@ -507,18 +514,89 @@ namespace ProgIIFinalProject
                 switch (opcion)
                 {
                     case 1:
-
+                        Console.Clear();
+                        Console.WriteLine("1. Json \n" +
+                            "2. XML \n"+
+                            "3. Atras");
+                        op2 = byte.Parse(Console.ReadLine());
+                        switch (op2)
+                        {
+                            case 1:
+                                ImportarAlumnoJson();
+                                break;
+                            case 2:
+                                ImportarAlumnoXML();
+                                break;
+                            case 3:
+                                break;
+                            default:
+                                break;
+                        }
                         Console.ReadKey();
                         break;
                     case 2:
-                        ExportarAlumnoJson();
+                        Console.Clear();
+                        Console.WriteLine("1. Json \n" +
+                            "2. XML \n" +
+                            "3. Atras");
+                        op2 = byte.Parse(Console.ReadLine());
+                        switch (op2)
+                        {
+                            case 1:
+                                ExportarAlumnoJson();
+
+                                break;
+                            case 2:
+                                ExportarAlumnoXML();
+                                break;
+                            case 3:
+                                break;
+                            default:
+                                break;
+                        }
                         Console.ReadKey();
                         break;
                     case 3:
+                        Console.Clear();
+                        Console.WriteLine("1. Json \n" +
+                            "2. XML \n" +
+                            "3. Atras");
+                        op2 = byte.Parse(Console.ReadLine());
+                        switch (op2)
+                        {
+                            case 1:
+                                ImportarMateriaJson();
+                                break;
+                            case 2:
+                                ImportarMateriaXML();
+                                break;
+                            case 3:
+                                break;
+                            default:
+                                break;
+                        }
                         Console.ReadKey();
                         break;
                     case 4:
-                        ExportarMateriasJson();
+                        Console.Clear();
+                        Console.WriteLine("1. Json \n" +
+                            "2. XML \n" +
+                            "3. Atras");
+                        op2 = byte.Parse(Console.ReadLine());
+                        switch (op2)
+                        {
+                            case 1:
+                                ExportarMateriasJson();
+                                break;
+                            case 2:
+                                ExportarMateriasXML();
+                                break;
+                            case 3:
+                                break;
+                            default:
+                                break;
+                        }
+                        
                         Console.ReadKey();
                         break;
                     case 5:
@@ -977,6 +1055,7 @@ namespace ProgIIFinalProject
             MenuReportes();
 
         }
+        //Exportar
 
         void ExportarAlumnoJson()
         {
@@ -994,7 +1073,7 @@ namespace ProgIIFinalProject
 
                     AlumData.Add(alumno);
                 }
-                using (StreamWriter file = File.CreateText(@"Json Export-Alumnos.Json"))
+                using (StreamWriter file = File.CreateText("Json Export-Alumnos.Json"))
                 {
                     JsonSerializer serializer = new JsonSerializer();
                     //serialize object directly into file stream
@@ -1004,32 +1083,40 @@ namespace ProgIIFinalProject
             con.Close();
 
         }
-        class TempMat
+        void ExportarAlumnoXML()
         {
-            private string _area;
-            private string _code;
-            private String _nombre;
+            try
+            {
+                List<AlumnoCS> AlumData = new List<AlumnoCS>();
 
-            public string Area
-            {
-                get { return _area; }
+                DBConnect();
+                using (cmd = new SqlCommand("select * from Alumnos", con))
+                {
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        AlumnoCS alumno = new AlumnoCS(reader["Nombre"].ToString(), reader["Apellido"].ToString(), int.Parse(reader["ID"].ToString())
+                            , reader["Identificador"].ToString(), reader["Estado"].ToString(), (bool.Parse(reader["Extranjero"].ToString()))
+                            , reader["Carrera"].ToString(), (DateTime.Parse(reader["Fecha"].ToString()).ToShortDateString()));
+
+                        AlumData.Add(alumno);
+                    }
+                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<AlumnoCS>));
+                    using (StreamWriter Write = File.CreateText("XML export - Alumnos.xml"))
+                    {
+                        writer.Serialize(Write, AlumData);
+                    }
+                }
             }
-            public string Code
+            catch (Exception ex)
             {
-                get { return _code; }
+                MessageBox.Show(ex.Message);
             }
-            public string Nombre
-            {
-                get { return _nombre; }
-            }
-            public TempMat(string area, string code, string nombre)
-            {
-                _area = area;
-                _code = code;
-                _nombre = nombre;
-            }
-           
-        };
+
+            con.Close();
+
+        }
         void ExportarMateriasJson()
         {
             try
@@ -1061,6 +1148,142 @@ namespace ProgIIFinalProject
             con.Close();
 
         }
+        void ExportarMateriasXML()
+        {
+            try
+            {
+                List<TempMat> MatData = new List<TempMat>();
+
+                DBConnect();
+                using (cmd = new SqlCommand("select * from Materias", con))
+                {
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        TempMat materia = new TempMat(reader["Area"].ToString(), reader["Code"].ToString(), reader["Nombre"].ToString());
+                        MatData.Add(materia);
+                    }
+                    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(List<TempMat>));
+                    using (StreamWriter Write = File.CreateText("XML export - Materias.xml"))
+                    {
+                        writer.Serialize(Write, MatData);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            con.Close();
+
+        }
+
+        //Importar
+        void ImportarAlumnoJson()
+        {
+            try
+            {
+                List<AlumnoCS> AlumData = new List<AlumnoCS>();
+
+                
+                Console.WriteLine("Ingrese la ruta");
+                string path = "Json Export-Alumnos.Json";
+
+                //List<AlumnoCS> UserList = JsonConvert.DeserializeObject<List<AlumnoCS>>(path);
+                using (StreamReader r = new StreamReader(path))
+                {
+                    string json = r.ReadToEnd();
+                    AlumData = JsonConvert.DeserializeObject<List<AlumnoCS>>(json);
+                }
+                DBConnect();
+                foreach (AlumnoCS alumno in AlumData)
+                {
+                    AddAlumnsToDataBase(alumno.ID, alumno.IdentificadorPersonal, alumno.Nombre, alumno.Apellido, alumno.Estado, alumno.carrera,
+                        alumno.Extrangero.ToString(), alumno.FechaNacimiento);
+                }
+                con.Close();
+            }
+            catch(Exception ex) { MessageBox.Show(ex.Message); }
+        }
+        void ImportarAlumnoXML()
+        {
+            try
+            {
+                List<AlumnoCS> AlumData = new List<AlumnoCS>();
+
+
+                Console.WriteLine("Ingrese la ruta");
+                string path = "XML export - Alumnos.xml";
+
+                //List<AlumnoCS> UserList = JsonConvert.DeserializeObject<List<AlumnoCS>>(path);
+                using (StreamReader xmlReader = new StreamReader(path))
+                {
+                    XmlSerializer serializer = new XmlSerializer(typeof(List<AlumnoCS>));
+                    AlumData = (List<AlumnoCS>) serializer.Deserialize(xmlReader);
+                }
+                DBConnect();
+                foreach (AlumnoCS alumno in AlumData)
+                {
+                    AddAlumnsToDataBase(alumno.ID, alumno.IdentificadorPersonal, alumno.Nombre, alumno.Apellido, alumno.Estado, alumno.carrera,
+                        alumno.Extrangero.ToString(), alumno.FechaNacimiento);
+                }
+                con.Close();
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+
+        }
+        void ImportarMateriaJson()
+        {
+            try
+            {
+                List<TempMat> MatData = new List<TempMat>();
+
+
+                Console.WriteLine("Ingrese la ruta");
+                string path = "Json Export-Materias.Json";
+
+                //List<AlumnoCS> UserList = JsonConvert.DeserializeObject<List<AlumnoCS>>(path);
+                using (StreamReader r = new StreamReader(path))
+                {
+                    string json = r.ReadToEnd();
+                    MatData = JsonConvert.DeserializeObject<List<TempMat>>(json);
+                }
+                DBConnect();
+                foreach (TempMat materia in MatData)
+                {
+                    AddMateriasToDataBase(GenerarIDMateria(),materia.Codigo, materia.Nombre, materia.Area);
+                }
+                con.Close();
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+        }
+        void ImportarMateriaXML()
+        {
+            try
+            {
+                List<TempMat> MatData = new List<TempMat>();
+
+
+                Console.WriteLine("Ingrese la ruta");
+                string path = "XML export - Materias.xml";
+
+                //List<AlumnoCS> UserList = JsonConvert.DeserializeObject<List<AlumnoCS>>(path);
+                using (StreamReader xmlReader = new StreamReader(path))
+                {
+                    XmlSerializer serializer = new XmlSerializer(typeof(List<TempMat>));
+                    MatData = (List<TempMat>)serializer.Deserialize(xmlReader);
+                }
+                DBConnect();
+                foreach (TempMat materia in MatData)
+                {
+                    AddMateriasToDataBase(GenerarIDMateria(), materia.Codigo, materia.Nombre, materia.Area);
+                }
+                con.Close();
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+        }
+
 
         static void Main(string[] args)
         {   
@@ -1256,7 +1479,7 @@ namespace ProgIIFinalProject
                 option = int.Parse(Console.ReadLine());
                 
                 MateriasCS materia = new MateriasCS(nombre, GenerarCodigoMateria(codes[option]), GenerarIDMateria(),materiasT[option]);
-                AddMateriasToDataBase(materia.ID, materia.codigo, nombre, materia.area);
+                AddMateriasToDataBase(materia.ID, materia.Codigo, nombre, materia.Area);
                 Console.Clear();
                 Console.WriteLine("Materia agregada con exito");
                 Console.ReadKey();
@@ -1463,7 +1686,7 @@ namespace ProgIIFinalProject
             try
             {
                 programacion.profesor = profesor;
-                programacion.horario = horario;
+                programacion.Horario = horario;
                 programacion.GenerarID();
                 programacion.aula = aula;
                 programacion.trimestre = trimestre;
@@ -1473,8 +1696,8 @@ namespace ProgIIFinalProject
                     cmd.Parameters.AddWithValue("@id",programacion.ID.ToString());
                     cmd.Parameters.AddWithValue("@trimestre", programacion.trimestre);
                     cmd.Parameters.AddWithValue("@materia", programacion.materia);
-                    cmd.Parameters.AddWithValue("@dia", programacion.horario.dia.ToString());
-                    cmd.Parameters.AddWithValue("@hora", programacion.horario.hora.ToString());
+                    cmd.Parameters.AddWithValue("@dia", programacion.Horario.dia.ToString());
+                    cmd.Parameters.AddWithValue("@hora", programacion.Horario.hora.ToString());
                     cmd.Parameters.AddWithValue("@aula", programacion.aula);
                     cmd.Parameters.AddWithValue("@maestro", programacion.profesor);
                     cmd.Parameters.AddWithValue("@idMat", idMateria);

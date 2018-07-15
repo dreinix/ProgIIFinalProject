@@ -83,6 +83,7 @@
     <Compile Include="Programaciones.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AlumnoCS.cs" />
+    <Compile Include="TempMat.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -9,7 +9,8 @@ using System.IO;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System.Threading;
-
+using Newtonsoft.Json;
+using System.Windows.Forms;
 namespace ProgIIFinalProject
 {
     class Program
@@ -23,11 +24,18 @@ namespace ProgIIFinalProject
             {
                 con.Close();
             } catch (Exception) { };
+            try
+            {
+                string cPath = System.IO.Path.GetFullPath(@"..\..\") + "ProgIIDB.mdf";
+                String path = @"Data source = (localDB)\MSSQLLocalDB ; AttachDbFilename=" + cPath + ";Integrated Security=SSPI";
+                con.ConnectionString = path;
+                con.Open();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
 
-            string cPath = System.IO.Path.GetFullPath(@"..\..\") + "ProgIIDB.mdf";
-            String path = @"Data source = (localDB)\MSSQLLocalDB ; AttachDbFilename=" + cPath + ";Integrated Security=SSPI";
-            con.ConnectionString = path;
-            con.Open();
         }
 
         List<string> ListaAreas = new List<string>()
@@ -35,7 +43,7 @@ namespace ProgIIFinalProject
             "Ingeneria","Ciencias Basicas Y Ambientales","Ciencias de la Salud", "Ciencias Sociales y Humanidades", "Economía y Negocios"
         };
 
-        void AddAlumnsToDataBase(int id,string idNacional, string nombre,string apellido,string estado,string carrera,string extran,string fecha)
+        void AddAlumnsToDataBase(int id, string idNacional, string nombre, string apellido, string estado, string carrera, string extran, string fecha)
         {
             DBConnect();
             using (SqlCommand cmd = new SqlCommand("Insert into Alumnos VALUES (" +
@@ -45,7 +53,7 @@ namespace ProgIIFinalProject
                 cmd.Parameters.AddWithValue("@identificador", idNacional);
                 cmd.Parameters.AddWithValue("@nombre", nombre);
                 cmd.Parameters.AddWithValue("@apellido", apellido);
-                cmd.Parameters.AddWithValue("@estado",estado);
+                cmd.Parameters.AddWithValue("@estado", estado);
                 cmd.Parameters.AddWithValue("@carrera", carrera);
                 cmd.Parameters.AddWithValue("@extran", extran);
                 cmd.Parameters.AddWithValue("@fecha", fecha);
@@ -54,8 +62,8 @@ namespace ProgIIFinalProject
                 int changes = cmd.ExecuteNonQuery();
             }
 
-          /*      String query = "Insert into Alumnos values("+ id + "," + "'" + idNacional + "'," + "'" + nombre + "'," + "'" + apellido + "'," +
-                "'" + estado + "'," + "'" + carrera + "'," + "'" + extran + "'," + "'" + fecha + "')";*/
+            /*      String query = "Insert into Alumnos values("+ id + "," + "'" + idNacional + "'," + "'" + nombre + "'," + "'" + apellido + "'," +
+                  "'" + estado + "'," + "'" + carrera + "'," + "'" + extran + "'," + "'" + fecha + "')";*/
             con.Close();
         }
         void AddMateriasToDataBase(int id, string code, string nombre, string area)
@@ -77,21 +85,21 @@ namespace ProgIIFinalProject
             con.Close();
         }
 
-        int GenerarIDMateria(MateriasCS materia)
+        int GenerarIDMateria()
         {
-            materia.GenerarID();
-            int id = 0000000;
-            id = materia.ID;
+            string iD = "";
+            Random r1 = new Random();
+            iD = "" + r1.Next(0000, 10000);
             try
             {
                 DBConnect();
                 using (cmd = new SqlCommand("select [ID] from Materias where [ID] = @id", con))
                 {
-                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.Parameters.AddWithValue("@id", int.Parse(iD));
                     SqlDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
-                        GenerarIDMateria(materia);
+                        GenerarIDMateria();
                     }
                 }
             }
@@ -100,14 +108,15 @@ namespace ProgIIFinalProject
                 Console.WriteLine("ID error");
             }
             con.Close();
-            return id;
+            return int.Parse(iD);
 
         }
-        string GenerarCodigoMateria(MateriasCS materia)
+        string GenerarCodigoMateria(string _areaCode)
         {
-            materia.GenerarCodigo();
+            string prefix = _areaCode;
             string code = "";
-            code = materia.codigo;
+            Random r1 = new Random();
+            code = prefix + "" + r1.Next(0, 1000);
             try
             {
                 DBConnect();
@@ -117,7 +126,7 @@ namespace ProgIIFinalProject
                     SqlDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
-                        GenerarCodigoMateria(materia);
+                        GenerarCodigoMateria(_areaCode);
                     }
                 }
             }
@@ -129,7 +138,7 @@ namespace ProgIIFinalProject
             return code;
 
         }
-        int GenerarIDAlumno(User usuario)
+        int GenerarIDAlumno(AlumnoCS usuario)
         {
             usuario.GenerarID();
             int id = 0000000;
@@ -152,7 +161,7 @@ namespace ProgIIFinalProject
                 Console.WriteLine("Database error");
             }
             return id;
-            
+
         }
 
         void MenuGeneral()
@@ -172,14 +181,14 @@ namespace ProgIIFinalProject
             {
                 opcion = 0;
             }
-            switch(opcion)
+            switch (opcion)
             {
                 case 1:
                     MenuMaterias();
-                break;
+                    break;
                 case 2:
                     MenuAlumnos();
-                break;
+                    break;
                 case 3:
                     MenuProgramaciones();
                     break;
@@ -187,14 +196,14 @@ namespace ProgIIFinalProject
                     MenuReportes();
                     break;
                 case 5:
-                    
+                    MenuIntegracion();
                     break;
                 case 6:
                     Console.Clear();
                     Console.WriteLine("Gracias por utilizar nuestros servicios");
                     Console.ReadKey();
                     Environment.Exit(0);
-                break;
+                    break;
             }
 
         }
@@ -252,14 +261,14 @@ namespace ProgIIFinalProject
                     Console.ReadKey();
                     Console.Clear();
                     MenuMaterias();
-                break;
+                    break;
             }
             Console.ReadKey();
 
         }
         void MenuAlumnos()
         {
-            
+
             byte opcion;
             string iD;
             Console.Clear();
@@ -316,7 +325,7 @@ namespace ProgIIFinalProject
             Console.ReadKey();
         }
         void MenuProgramaciones()
-        {   
+        {
             byte opcion;
             string iD;
             Console.Clear();
@@ -357,40 +366,40 @@ namespace ProgIIFinalProject
                 case 5:
                     byte op;
                     Console.WriteLine("1)Buscar seleccion del estudiante \n2) Buscar secciones de una materia");
-                    try { 
-                    op = byte.Parse(Console.ReadLine());
-                    switch (op)
-                    {
-                        case 1:
-                            Console.WriteLine("Ingrese el ID del estudiante a buscar \n");
-                            iD = Console.ReadLine();
-                            BuscarSeleccionUsuario(iD);
-                            break;
-                        case 2:
-                            Console.WriteLine("Ingrese el ID de la materia a buscar \n");
-                            iD = Console.ReadLine();
-                            BuscarSeccionesMateria(iD);
-                            break;
-                        default:
-                            Console.WriteLine("Opcion invalida");
-                            Console.ReadKey();
-                            Console.Clear();
-                            MenuProgramaciones();
-                            break;
+                    try {
+                        op = byte.Parse(Console.ReadLine());
+                        switch (op)
+                        {
+                            case 1:
+                                Console.WriteLine("Ingrese el ID del estudiante a buscar \n");
+                                iD = Console.ReadLine();
+                                BuscarSeleccionUsuario(iD);
+                                break;
+                            case 2:
+                                Console.WriteLine("Ingrese el ID de la materia a buscar \n");
+                                iD = Console.ReadLine();
+                                BuscarSeccionesMateria(iD);
+                                break;
+                            default:
+                                Console.WriteLine("Opcion invalida");
+                                Console.ReadKey();
+                                Console.Clear();
+                                MenuProgramaciones();
+                                break;
 
-                    }
-                    }catch(Exception ex)
+                        }
+                    } catch (Exception ex)
                     {
                         Console.WriteLine(ex.Message);
                         Console.ReadKey();
                         MenuProgramaciones();
                     }
-                    
+
                     break;
                 case 6:
                     Console.Clear();
                     MenuGeneral();
-                    
+
                     break;
                 default:
                     Console.WriteLine("Opcion invalida,intente de nuevo");
@@ -422,7 +431,7 @@ namespace ProgIIFinalProject
             switch (opcion)
             {
                 case 1:
-                    
+
                     Console.Clear();
                     Console.WriteLine("Seleccione el formato en el que desee generar el reporte: \n1.PDF\n2.Excel\n3.CSV\n");
                     try
@@ -439,12 +448,12 @@ namespace ProgIIFinalProject
                     {
                         case 1:
                             generarReportePDF(iD);
-                            
-                            
+
+
                             MenuReportes();
                             break;
                         case 2:
-                            
+
                             break;
                         case 3:
                             generarReporteCVS(iD);
@@ -458,9 +467,9 @@ namespace ProgIIFinalProject
 
                     }
                     break;
-                    case 2:
+                case 2:
                     MenuGeneral();
-                        break;
+                    break;
 
                 default:
                     Console.WriteLine("Opcion invalida,intente de nuevo");
@@ -476,16 +485,52 @@ namespace ProgIIFinalProject
         }
         void MenuIntegracion()
         {
-            Console.Clear();
-            Console.SetCursorPosition(5, 0);
-            Console.WriteLine("*****Menú*****");
-            Console.WriteLine("1. Agregar usuarios \n" +
-                "2. Visualizar usuarios \n" +
-                "3. Buscar \n" +
-                "4. Modificar usuario \n" +
-                "5. Eliminar usuarios \n" +
-                "6. Salir \n");
-        }   
+            byte opcion = 0;
+            while (opcion != 5)
+            {
+                Console.Clear();
+                Console.SetCursorPosition(5, 0);
+                Console.WriteLine("*****Menú*****");
+                Console.WriteLine("1. Importar alumnos \n" +
+                    "2. Exportar alumnos \n" +
+                    "3. Importar materias \n" +
+                    "4. Exportar materias \n"+
+                    "5. Salir");
+                try
+                {
+                    opcion = byte.Parse(Console.ReadLine());
+                }
+                catch (Exception)
+                {
+                    opcion = 0;
+                }
+                switch (opcion)
+                {
+                    case 1:
+
+                        Console.ReadKey();
+                        break;
+                    case 2:
+                        ExportarAlumnoJson();
+                        Console.ReadKey();
+                        break;
+                    case 3:
+                        Console.ReadKey();
+                        break;
+                    case 4:
+                        ExportarMateriasJson();
+                        Console.ReadKey();
+                        break;
+                    case 5:
+
+                        break;
+                    default:
+                        break;
+                }
+                
+            }
+
+        }
 
         void generarReportePDF(string id)
         {
@@ -531,7 +576,7 @@ namespace ProgIIFinalProject
                     }
                     reader.Close();
                 }
-               
+
                 Document reporte = new Document(PageSize.LETTER);
                 PdfWriter writer = PdfWriter.GetInstance(reporte, new FileStream("Reporte - " + id + ".pdf", FileMode.Create));
 
@@ -539,13 +584,13 @@ namespace ProgIIFinalProject
                 reporte.Open();
 
                 iTextSharp.text.Font font = new iTextSharp.text.Font(iTextSharp.text.Font.FontFamily.TIMES_ROMAN, 10, iTextSharp.text.Font.NORMAL, BaseColor.BLACK);
-                
+
                 reporte.Add(new Paragraph("INSTITUTO TECNOLÓGICO DE SANTO DOMINGO\nDirección de registro\nAsistencia a Estudiantes\n\n" + "Asignatura: " + materia + "\nProfesor(a): " + maestro));
                 reporte.Add(new Paragraph("Horario: "));
                 for (int aux = 0; aux <= arrayDia.Length - 1; aux++)
                 {
 
-                    horario = arrayDia[aux]+": ";
+                    horario = arrayDia[aux] + ": ";
                     if (aux < arrayHora.Length)
                     {
                         horario += arrayHora[aux];
@@ -676,7 +721,7 @@ namespace ProgIIFinalProject
                                 clAusencias.BorderWidth = 0;
                                 clTotal = new PdfPCell(new Phrase("", font));
                                 clTotal.BorderWidth = 0;
-                                
+
                                 tblProgramacion.AddCell(clID);
                                 tblProgramacion.AddCell(clMatricula);
                                 tblProgramacion.AddCell(clPrograma);
@@ -684,7 +729,7 @@ namespace ProgIIFinalProject
                                 tblProgramacion.AddCell(clAusencias);
                                 tblProgramacion.AddCell(clTotal);
 
-                                
+
                             }
                             reader.Close();
                         }
@@ -752,9 +797,9 @@ namespace ProgIIFinalProject
                     reader.Close();
                 }
                 File.Create("Report - " + id + ".csv").Dispose();
-                using(var csvFile = new StreamWriter("Report - " + id + ".csv"))
+                using (var csvFile = new StreamWriter("Report - " + id + ".csv"))
                 {
-                    csvFile.WriteLine("Reporte - " + id+",");
+                    csvFile.WriteLine("Reporte - " + id + ",");
 
                     iTextSharp.text.Font font = new iTextSharp.text.Font(iTextSharp.text.Font.FontFamily.TIMES_ROMAN, 10, iTextSharp.text.Font.NORMAL, BaseColor.BLACK);
 
@@ -766,12 +811,12 @@ namespace ProgIIFinalProject
                         horario = arrayDia[aux] + ":, ";
                         if (aux < arrayHora.Length)
                         {
-                            horario += arrayHora[aux]+",";
+                            horario += arrayHora[aux] + ",";
                         }
                         csvFile.WriteLine((horario));
                     }
 
-                    csvFile.WriteLine(("Aula:, " + aula+","));
+                    csvFile.WriteLine(("Aula:, " + aula + ","));
                     /*reporte.Add(("Horario: \t \t \t \t \t \t \t \t \t \t " + "Aula: " + aula + "\n Lunes\t \t Martes \t \t Miercoles \t \t Jueves \t \t Viernes"));
                     Dictionary<String, int> DayValue = new Dictionary<string, int>();
                     DayValue.Add("Lunes", 1);
@@ -798,11 +843,11 @@ namespace ProgIIFinalProject
                     */
                     csvFile.WriteLine(Chunk.NEWLINE);
 
-                    csvFile.Write("ID"+",");
+                    csvFile.Write("ID" + ",");
                     csvFile.Write("Matricula" + ",");
                     csvFile.Write("Programa" + ",");
                     csvFile.Write("Nombre" + ",");
-                    for(int c = 0; c < 10; c++)
+                    for (int c = 0; c < 10; c++)
                     {
                         csvFile.Write(",");
                     }
@@ -869,11 +914,11 @@ namespace ProgIIFinalProject
                                     Nombre = reader["Nombre"].ToString() + " " + reader["Apellido"].ToString();
                                     Carrera = reader["Carrera"].ToString();
 
-                                    csvFile.Write(idAlumno[column - 1]+",");
+                                    csvFile.Write(idAlumno[column - 1] + ",");
                                     csvFile.Write(",");
                                     csvFile.Write(Carrera + ",");
                                     csvFile.Write(Nombre + ",");
-                                    for(int c = 0; c < 19; c++)
+                                    for (int c = 0; c < 19; c++)
                                     {
                                         csvFile.Write(",");
                                     }
@@ -887,7 +932,7 @@ namespace ProgIIFinalProject
                         }
                     }
                 }
-          
+
             }
             else
             {
@@ -902,6 +947,89 @@ namespace ProgIIFinalProject
 
         }
 
+        void ExportarAlumnoJson()
+        {
+            List<AlumnoCS> AlumData = new List<AlumnoCS>();
+
+            DBConnect();
+            using (cmd = new SqlCommand("select * from Alumnos", con))
+            {
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    AlumnoCS alumno = new AlumnoCS(reader["Nombre"].ToString(), reader["Apellido"].ToString(), int.Parse(reader["ID"].ToString())
+                        , reader["Identificador"].ToString(), reader["Estado"].ToString(), (bool.Parse(reader["Extranjero"].ToString()))
+                        , reader["Carrera"].ToString(), (DateTime.Parse(reader["Fecha"].ToString()).ToShortDateString()));
+
+                    AlumData.Add(alumno);
+                }
+                using (StreamWriter file = File.CreateText(@"Json Export-Alumnos.Json"))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    //serialize object directly into file stream
+                    serializer.Serialize(file, AlumData);
+                }
+            }
+            con.Close();
+
+        }
+        class TempMat
+        {
+            private string _area;
+            private string _code;
+            private String _nombre;
+
+            public string Area
+            {
+                get { return _area; }
+            }
+            public string Code
+            {
+                get { return _code; }
+            }
+            public string Nombre
+            {
+                get { return _nombre; }
+            }
+            public TempMat(string area, string code, string nombre)
+            {
+                _area = area;
+                _code = code;
+                _nombre = nombre;
+            }
+           
+        };
+        void ExportarMateriasJson()
+        {
+            try
+            {
+                List<TempMat> MatData = new List<TempMat>();
+
+                DBConnect();
+                using (cmd = new SqlCommand("select * from Materias", con))
+                {
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        TempMat materia = new TempMat(reader["Area"].ToString(), reader["Code"].ToString(), reader["Nombre"].ToString());
+                        MatData.Add(materia);
+                    }
+                    using (StreamWriter file = File.CreateText(@"Json Export-Materias.Json"))
+                    {
+                        JsonSerializer serializer = new JsonSerializer();
+                        //serialize object directly into file stream
+                        serializer.Serialize(file, MatData);
+                    }
+                }
+                
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            con.Close();
+
+        }
 
         static void Main(string[] args)
         {   
@@ -924,7 +1052,7 @@ namespace ProgIIFinalProject
         {
             int xPosition = 0,option;
             Console.Clear();
-            User usuario = new User();
+            AlumnoCS usuario = new AlumnoCS();
             String nombre, apellido, estado, carrera, identificador;
             bool extrangero;
             DateTime fechaNacimiento;
@@ -1040,13 +1168,6 @@ namespace ProgIIFinalProject
             Console.Clear();
             try
             {   
-                usuario.nombre = nombre;
-                usuario.apellido = apellido;
-                usuario.carrera = carrera;
-                usuario.estado = estado;
-                usuario.fechaNacimiento = fechaNacimiento;
-                usuario.identificadorPersonal = identificador;
-                usuario.extrangero = extrangero;
                 AddAlumnsToDataBase(usuario.ID, identificador, nombre, apellido, estado, carrera, extrangero.ToString(), fechaNacimiento.ToShortDateString());
                 Console.WriteLine("Usuario agregado con exito");
             }catch(Exception)
@@ -1063,7 +1184,7 @@ namespace ProgIIFinalProject
             {
                 int xPosition = 0, option;
                 Console.Clear();
-                MateriasCS materia = new MateriasCS();
+                
                 String nombre;
                 GotoXY("-Nombre: ", xPosition, 1);
                 xPosition += 8;
@@ -1102,11 +1223,8 @@ namespace ProgIIFinalProject
                 xPosition += 8;
                 Console.SetCursorPosition(xPosition, 1);
                 option = int.Parse(Console.ReadLine());
-                materia.area = materiasT[option];
-                materia.areaCode = codes[option];
-                materia.ID = GenerarIDMateria(materia);
-                materia.codigo = GenerarCodigoMateria(materia);
-
+                
+                MateriasCS materia = new MateriasCS(nombre, GenerarCodigoMateria(codes[option]), GenerarIDMateria(),materiasT[option]);
                 AddMateriasToDataBase(materia.ID, materia.codigo, nombre, materia.area);
                 Console.Clear();
                 Console.WriteLine("Materia agregada con exito");
@@ -1133,7 +1251,6 @@ namespace ProgIIFinalProject
             int xPosition = 0;
             Console.Clear();
             Programaciones programacion = new Programaciones();
-            MateriasCS materia = new MateriasCS();
             Horario horario = new Horario();
             String trimestre, aula, profesor;
             

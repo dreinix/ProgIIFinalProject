@@ -554,6 +554,30 @@ namespace ProgIIFinalProject
                 }
 
                 reporte.Add(new Paragraph("Aula: " + aula));
+                /*reporte.Add(new Paragraph("Horario: \t \t \t \t \t \t \t \t \t \t " + "Aula: " + aula + "\n Lunes\t \t Martes \t \t Miercoles \t \t Jueves \t \t Viernes"));
+                Dictionary<String, int> DayValue = new Dictionary<string, int>();
+                DayValue.Add("Lunes", 1);
+                DayValue.Add("Martes", 2);
+                DayValue.Add("Miercoles", 3);
+                DayValue.Add("Jueves", 4);
+                DayValue.Add("Viernes", 5);
+                DayValue.Add("Sabado", 6);
+                horario += "\t";
+                for (int aux = 0; aux <= arrayDia.Length - 1; aux++)
+                {
+                    int number = DayValue[arrayDia[aux]];
+                    for (int c = 0; c < number; c++)
+                    {
+                        horario += "\t";
+                    }
+                    if (aux < arrayHora.Length)
+                    {
+                        horario += arrayHora[aux];
+                    }
+
+                }
+                reporte.Add(new Paragraph(horario));
+                */
                 reporte.Add(Chunk.NEWLINE);
 
                 PdfPTable tblProgramacion = new PdfPTable(6);

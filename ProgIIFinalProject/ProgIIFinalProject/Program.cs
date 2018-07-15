@@ -11,10 +11,10 @@ namespace ProgIIFinalProject
 {
     class Program
     {
-         SqlConnection con = new SqlConnection();
+        SqlConnection con = new SqlConnection();
+        SqlCommand cmd = new SqlCommand();
 
-         SqlCommand cmd = new SqlCommand();
-         void DBConnect()
+        void DBConnect()
         {
             try
             {
@@ -26,11 +26,13 @@ namespace ProgIIFinalProject
             con.ConnectionString = path;
             con.Open();
         }
-         List<string> ListaAreas = new List<string>()
+
+        List<string> ListaAreas = new List<string>()
         {
             "Ingeneria","Ciencias Basicas Y Ambientales","Ciencias de la Salud", "Ciencias Sociales y Humanidades", "Economía y Negocios"
         };
-         void AddAlumnsToDataBase(int id,string idNacional, string nombre,string apellido,string estado,string carrera,string extran,string fecha)
+
+        void AddAlumnsToDataBase(int id,string idNacional, string nombre,string apellido,string estado,string carrera,string extran,string fecha)
         {
             DBConnect();
             using (SqlCommand cmd = new SqlCommand("Insert into Alumnos VALUES (" +
@@ -53,7 +55,7 @@ namespace ProgIIFinalProject
                 "'" + estado + "'," + "'" + carrera + "'," + "'" + extran + "'," + "'" + fecha + "')";*/
             con.Close();
         }
-         void AddMateriasToDataBase(int id, string code, string nombre, string area)
+        void AddMateriasToDataBase(int id, string code, string nombre, string area)
         {
             DBConnect();
             using (SqlCommand cmd = new SqlCommand("Insert into Materias VALUES (" +
@@ -72,7 +74,7 @@ namespace ProgIIFinalProject
             con.Close();
         }
 
-         int GenerarIDMateria(MateriasCS materia)
+        int GenerarIDMateria(MateriasCS materia)
         {
             materia.GenerarID();
             int id = 0000000;
@@ -98,7 +100,7 @@ namespace ProgIIFinalProject
             return id;
 
         }
-         string GenerarCodigoMateria(MateriasCS materia)
+        string GenerarCodigoMateria(MateriasCS materia)
         {
             materia.GenerarCodigo();
             string code = "";
@@ -124,7 +126,7 @@ namespace ProgIIFinalProject
             return code;
 
         }
-         int GenerarIDAlumno(User usuario)
+        int GenerarIDAlumno(User usuario)
         {
             usuario.GenerarID();
             int id = 0000000;
@@ -150,7 +152,7 @@ namespace ProgIIFinalProject
             
         }
 
-         void MenuGeneral()
+        void MenuGeneral()
         {
             byte opcion;
             Console.Clear();
@@ -187,7 +189,7 @@ namespace ProgIIFinalProject
             }
 
         }
-         void MenuMaterias()
+        void MenuMaterias()
         {
             byte opcion;
             string iD;
@@ -246,7 +248,7 @@ namespace ProgIIFinalProject
             Console.ReadKey();
 
         }
-         void MenuAlumnos()
+        void MenuAlumnos()
         {
             
             byte opcion;
@@ -304,7 +306,7 @@ namespace ProgIIFinalProject
             }
             Console.ReadKey();
         }
-         void MenuProgramaciones()
+        void MenuProgramaciones()
         {   
             byte opcion;
             string iD;
@@ -521,7 +523,7 @@ namespace ProgIIFinalProject
             Console.ReadKey();
             MenuAlumnos();
         }
-         void AgregarMateria()
+        void AgregarMateria()
         {
             try
             {
@@ -587,7 +589,7 @@ namespace ProgIIFinalProject
             
              
         }
-         void AgregarProgramacion()
+        void AgregarProgramacion()
         {
 
             string[] meridiano = new string[2] { "AM", "PM" };
@@ -801,7 +803,7 @@ namespace ProgIIFinalProject
             MenuProgramaciones();
         }
             
-         void RevisarUsuarios()
+        void RevisarUsuarios()
         {
             
             Console.Clear();
@@ -844,7 +846,7 @@ namespace ProgIIFinalProject
             Console.ReadKey();
             MenuAlumnos();
         }
-         void RevisarMaterias()
+        void RevisarMaterias()
         {
             Console.Clear();
             gotoXY("-ID: ", 0, 0);
@@ -874,7 +876,7 @@ namespace ProgIIFinalProject
             Console.ReadKey();
             MenuMaterias();
         }           
-         void RevisarProgramacion()
+        void RevisarProgramacion()
         {
             Console.Clear();
             gotoXY("-Dia: ", 0, 0);
@@ -931,8 +933,8 @@ namespace ProgIIFinalProject
 
 
         }
-        //nada
-         void BuscarUsuario(String id)
+        
+        void BuscarUsuario(String id)
         {
             
             Console.Clear();
@@ -989,7 +991,7 @@ namespace ProgIIFinalProject
             con.Close();
             MenuAlumnos();
         }
-         void BuscarMateria(string id)
+        void BuscarMateria(string id)
         {   
             Console.Clear();
             try
@@ -1031,7 +1033,7 @@ namespace ProgIIFinalProject
             Console.ReadKey();
             MenuMaterias();
         }
-         void BuscarSeleccionUsuario(string idAlumno)
+        void BuscarSeleccionUsuario(string idAlumno)
          {
             DBConnect();
             Console.Clear();
@@ -1124,7 +1126,7 @@ namespace ProgIIFinalProject
             MenuProgramaciones();
          }
 
-         void EditarUsuario(String id)
+        void EditarUsuario(String id)
         {
             int found=(0);
             try
@@ -1345,7 +1347,7 @@ namespace ProgIIFinalProject
             
             
         }
-         void EditarMateria(string id)
+        void EditarMateria(string id)
         {
             int found = (0);
             try
@@ -1477,7 +1479,7 @@ namespace ProgIIFinalProject
                 MenuMaterias();
             }
         }
-         void EditarProgramacion(String id)
+        void EditarProgramacion(String id)
         {
             int found = (0);
             try
@@ -1677,7 +1679,7 @@ namespace ProgIIFinalProject
             MenuProgramaciones();
         }
 
-         void EliminarUsuario(String id)
+        void EliminarUsuario(String id)
         {
             try
             {
@@ -1712,7 +1714,7 @@ namespace ProgIIFinalProject
             con.Close();
             MenuAlumnos();
         }
-         void EliminarMateria(String id)
+        void EliminarMateria(String id)
         {
             try
             {
@@ -1748,7 +1750,7 @@ namespace ProgIIFinalProject
             con.Close();
             MenuMaterias();
         }
-         void EliminarProgramacion(String id)
+        void EliminarProgramacion(String id)
         {
 
             try

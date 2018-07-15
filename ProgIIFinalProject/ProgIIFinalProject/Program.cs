@@ -14,10 +14,10 @@ namespace ProgIIFinalProject
 {
     class Program
     {
-         SqlConnection con = new SqlConnection();
+        SqlConnection con = new SqlConnection();
+        SqlCommand cmd = new SqlCommand();
 
-         SqlCommand cmd = new SqlCommand();
-         void DBConnect()
+        void DBConnect()
         {
             try
             {
@@ -29,11 +29,13 @@ namespace ProgIIFinalProject
             con.ConnectionString = path;
             con.Open();
         }
-         List<string> ListaAreas = new List<string>()
+
+        List<string> ListaAreas = new List<string>()
         {
             "Ingeneria","Ciencias Basicas Y Ambientales","Ciencias de la Salud", "Ciencias Sociales y Humanidades", "Economía y Negocios"
         };
-         void AddAlumnsToDataBase(int id,string idNacional, string nombre,string apellido,string estado,string carrera,string extran,string fecha)
+
+        void AddAlumnsToDataBase(int id,string idNacional, string nombre,string apellido,string estado,string carrera,string extran,string fecha)
         {
             DBConnect();
             using (SqlCommand cmd = new SqlCommand("Insert into Alumnos VALUES (" +
@@ -56,7 +58,7 @@ namespace ProgIIFinalProject
                 "'" + estado + "'," + "'" + carrera + "'," + "'" + extran + "'," + "'" + fecha + "')";*/
             con.Close();
         }
-         void AddMateriasToDataBase(int id, string code, string nombre, string area)
+        void AddMateriasToDataBase(int id, string code, string nombre, string area)
         {
             DBConnect();
             using (SqlCommand cmd = new SqlCommand("Insert into Materias VALUES (" +
@@ -75,7 +77,7 @@ namespace ProgIIFinalProject
             con.Close();
         }
 
-         int GenerarIDMateria(MateriasCS materia)
+        int GenerarIDMateria(MateriasCS materia)
         {
             materia.GenerarID();
             int id = 0000000;
@@ -101,7 +103,7 @@ namespace ProgIIFinalProject
             return id;
 
         }
-         string GenerarCodigoMateria(MateriasCS materia)
+        string GenerarCodigoMateria(MateriasCS materia)
         {
             materia.GenerarCodigo();
             string code = "";
@@ -127,7 +129,7 @@ namespace ProgIIFinalProject
             return code;
 
         }
-         int GenerarIDAlumno(User usuario)
+        int GenerarIDAlumno(User usuario)
         {
             usuario.GenerarID();
             int id = 0000000;
@@ -153,7 +155,7 @@ namespace ProgIIFinalProject
             
         }
 
-         void MenuGeneral()
+        void MenuGeneral()
         {
             byte opcion;
             Console.Clear();
@@ -196,7 +198,7 @@ namespace ProgIIFinalProject
             }
 
         }
-         void MenuMaterias()
+        void MenuMaterias()
         {
             byte opcion;
             string iD;
@@ -255,7 +257,7 @@ namespace ProgIIFinalProject
             Console.ReadKey();
 
         }
-         void MenuAlumnos()
+        void MenuAlumnos()
         {
             
             byte opcion;
@@ -313,7 +315,7 @@ namespace ProgIIFinalProject
             }
             Console.ReadKey();
         }
-         void MenuProgramaciones()
+        void MenuProgramaciones()
         {   
             byte opcion;
             string iD;
@@ -401,7 +403,7 @@ namespace ProgIIFinalProject
 
 
         }
-         void MenuReportes()
+        void MenuReportes()
         {
             byte opcion;
             string iD;
@@ -472,7 +474,7 @@ namespace ProgIIFinalProject
             }
             Console.ReadKey();
         }
-         void MenuIntegracion()
+        void MenuIntegracion()
         {
             Console.Clear();
             Console.SetCursorPosition(5, 0);
@@ -485,7 +487,7 @@ namespace ProgIIFinalProject
                 "6. Salir \n");
         }   
 
-         void generarReportePDF(string id)
+        void generarReportePDF(string id)
         {
             DBConnect();
 
@@ -493,7 +495,7 @@ namespace ProgIIFinalProject
             try
             {
                 DBConnect();
-                using (cmd = new SqlCommand("select * from Programacion where [ID]= @id", con))
+                using (cmd = new SqlCommand("select * from Programacion where [ID] = @id", con))
                 {
                     cmd.Parameters.AddWithValue("@id", id);
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -512,17 +514,23 @@ namespace ProgIIFinalProject
             if (found > 0)
             {
                 DBConnect();
-                string materia = "", maestro = "", aula = "";
-                
-             /*   using (cmd = new SqlCommand("select * from Programacion where [ID] = @id", con))
+                string materia = "", maestro = "", aula = "", horario = "";
+                string[] arrayHora = new string[20];
+                string[] arrayDia = new string[20];
+                using (cmd = new SqlCommand("select * from Programacion where [ID] = @id", con))
                 {
                     cmd.Parameters.AddWithValue("@id", id);
                     SqlDataReader reader = cmd.ExecuteReader();
-                    materia = reader["Materia"].ToString();
-                    maestro = reader["Maestro"].ToString();
-                    aula = reader["Aula"].ToString();*/
-                  //reader.Close();
-                //}
+                    while (reader.Read())
+                    {
+                        materia = reader["Materia"].ToString();
+                        maestro = reader["Maestro"].ToString();
+                        aula = reader["Aula"].ToString();
+                        arrayHora = reader["hora"].ToString().Split('\n');
+                        arrayDia = reader["dia"].ToString().Split('\n');
+                    }
+                    reader.Close();
+                }
                
                 Document reporte = new Document(PageSize.LETTER);
                 PdfWriter writer = PdfWriter.GetInstance(reporte, new FileStream("Reporte - " + id + ".pdf", FileMode.Create));
@@ -531,7 +539,21 @@ namespace ProgIIFinalProject
                 reporte.Open();
 
                 iTextSharp.text.Font font = new iTextSharp.text.Font(iTextSharp.text.Font.FontFamily.TIMES_ROMAN, 10, iTextSharp.text.Font.NORMAL, BaseColor.BLACK);
-                reporte.Add(new Paragraph("INSTITUTO TECNOLÓGICO DE SANTO DOMINGO\nDirección de registro\nAsistencia a Estudiantes\n\n" + "Asignatura:" + materia + "\nProfesor(a):"+ maestro + "\nHorario:" + "\nAula:" + aula));
+                
+                reporte.Add(new Paragraph("INSTITUTO TECNOLÓGICO DE SANTO DOMINGO\nDirección de registro\nAsistencia a Estudiantes\n\n" + "Asignatura: " + materia + "\nProfesor(a): " + maestro));
+                reporte.Add(new Paragraph("Horario: "));
+                for (int aux = 0; aux <= arrayDia.Length - 1; aux++)
+                {
+
+                    horario = arrayDia[aux]+": ";
+                    if (aux < arrayHora.Length)
+                    {
+                        horario += arrayHora[aux];
+                    }
+                    reporte.Add(new Paragraph(horario));
+                }
+
+                reporte.Add(new Paragraph("Aula: " + aula));
                 reporte.Add(Chunk.NEWLINE);
 
                 PdfPTable tblProgramacion = new PdfPTable(6);
@@ -630,7 +652,7 @@ namespace ProgIIFinalProject
                                 clAusencias.BorderWidth = 0;
                                 clTotal = new PdfPCell(new Phrase("", font));
                                 clTotal.BorderWidth = 0;
-
+                                
                                 tblProgramacion.AddCell(clID);
                                 tblProgramacion.AddCell(clMatricula);
                                 tblProgramacion.AddCell(clPrograma);
@@ -662,7 +684,7 @@ namespace ProgIIFinalProject
 
         }
 
-         static void Main(string[] args)
+        static void Main(string[] args)
         {   
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("es-ES");
             Console.SetWindowSize(Convert.ToInt32(Console.LargestWindowWidth), Convert.ToInt32(Console.LargestWindowHeight));
@@ -673,13 +695,13 @@ namespace ProgIIFinalProject
             p.MenuGeneral();
         }
 
-         void gotoXY(string word,int x,int y)
+        void GotoXY(string word,int x,int y)
         {
             Console.SetCursorPosition(x, y);
             Console.WriteLine(word);
         }
 
-         void AgregarUsuario()
+        void AgregarUsuario()
         {
             int xPosition = 0,option;
             Console.Clear();
@@ -687,13 +709,13 @@ namespace ProgIIFinalProject
             String nombre, apellido, estado, carrera, identificador;
             bool extrangero;
             DateTime fechaNacimiento;
-            gotoXY("-Nombre: ", xPosition, 1);
+            GotoXY("-Nombre: ", xPosition, 1);
             xPosition += 8;
             Console.SetCursorPosition(xPosition, 1);
             nombre  = Console.ReadLine();
             xPosition += nombre.Length + 1;
 
-            gotoXY("-Apellido: ", xPosition, 1);
+            GotoXY("-Apellido: ", xPosition, 1);
             xPosition += 10;
             Console.SetCursorPosition(xPosition, 1);
             apellido = Console.ReadLine();
@@ -701,19 +723,19 @@ namespace ProgIIFinalProject
 
             usuario.ID = GenerarIDAlumno(usuario);
 
-            gotoXY("-Carrera: ", xPosition, 1);
+            GotoXY("-Carrera: ", xPosition, 1);
             xPosition += 9;
             Console.SetCursorPosition(xPosition, 1);
             carrera = Console.ReadLine();
             xPosition += carrera.Length + 1;
 
-            gotoXY("-Identificador nacional: ", xPosition, 1);
+            GotoXY("-Identificador nacional: ", xPosition, 1);
             xPosition += 26;
             Console.SetCursorPosition(xPosition, 1);
             identificador = Console.ReadLine();
             xPosition =0;
 
-            gotoXY("-Fecha de nacimiento dd/mm/yyyy: ", xPosition, 2);
+            GotoXY("-Fecha de nacimiento dd/mm/yyyy: ", xPosition, 2);
             xPosition += 33;
             Console.SetCursorPosition(xPosition, 2);
             try { fechaNacimiento = DateTime.Parse(Console.ReadLine()); }
@@ -726,7 +748,7 @@ namespace ProgIIFinalProject
             xPosition += fechaNacimiento.ToString().Length + 1;
 
             Console.Clear();
-            gotoXY("-Nacionalidad dominicana? \n" +
+            GotoXY("-Nacionalidad dominicana? \n" +
                 "1.Si \n" +
                 "2.No",0,1);
             Console.SetCursorPosition(27, 1);
@@ -742,7 +764,7 @@ namespace ProgIIFinalProject
                         extrangero = false;
                         break;
                     default:
-                        gotoXY("Error en la selección. El usuario será identificado como extranjero", 0, 6);
+                        GotoXY("Error en la selección. El usuario será identificado como extranjero", 0, 6);
                         extrangero = true;
                         Console.ReadKey();
                         break;
@@ -750,14 +772,14 @@ namespace ProgIIFinalProject
             }
             catch
             {
-                gotoXY("Error en la selección. El usuario será identificado como extranjero", 0, 6);
+                GotoXY("Error en la selección. El usuario será identificado como extranjero", 0, 6);
                 extrangero = true;
                 Console.ReadKey();
             }
                 
 
             Console.Clear();
-            gotoXY("-Estados del usuario: \n" +
+            GotoXY("-Estados del usuario: \n" +
                 "1. Incompleto \n" +
                 "2. Activo \n" +
                 "3. Inactivo \n" +
@@ -782,7 +804,7 @@ namespace ProgIIFinalProject
                         estado = "APA";
                         break;
                     default:
-                        gotoXY("Error al seleccionar la opcion, el usuario será puesto como incompleto", 0, 6);
+                        GotoXY("Error al seleccionar la opcion, el usuario será puesto como incompleto", 0, 6);
                            
                         estado = "Incompleto";
                         Console.ReadKey();
@@ -791,7 +813,7 @@ namespace ProgIIFinalProject
             }
             catch
             {
-                gotoXY("Error al seleccionar la opcion, el usuario será puesto como incompleto", 0, 6);
+                GotoXY("Error al seleccionar la opcion, el usuario será puesto como incompleto", 0, 6);
                 estado = "Incompleto";
                 Console.ReadKey();
             }
@@ -816,7 +838,7 @@ namespace ProgIIFinalProject
             Console.ReadKey();
             MenuAlumnos();
         }
-         void AgregarMateria()
+        void AgregarMateria()
         {
             try
             {
@@ -824,13 +846,13 @@ namespace ProgIIFinalProject
                 Console.Clear();
                 MateriasCS materia = new MateriasCS();
                 String nombre;
-                gotoXY("-Nombre: ", xPosition, 1);
+                GotoXY("-Nombre: ", xPosition, 1);
                 xPosition += 8;
                 Console.SetCursorPosition(xPosition, 1);
                 nombre = Console.ReadLine();
                 xPosition += nombre.Length + 1;
 
-                gotoXY("-Area: ", xPosition, 1);
+                GotoXY("-Area: ", xPosition, 1);
                 int i = 2;
                 bool space = false;
                 string[] codes = new string[(ListaAreas.Count + 1)];
@@ -839,7 +861,7 @@ namespace ProgIIFinalProject
                 {
                     materiasT[(i - 1)] = areas;
                     string code = "";
-                    gotoXY((i - 1) + ") " + areas, xPosition, i);
+                    GotoXY((i - 1) + ") " + areas, xPosition, i);
                     code += areas[0].ToString().ToUpper();
                     for (int a = 0; a < areas.Length - 1; a++)
                     {
@@ -875,14 +897,14 @@ namespace ProgIIFinalProject
             }
             catch (Exception)
             {
-                gotoXY("Error en la creación",0,8);
+                GotoXY("Error en la creación",0,8);
                 Console.ReadKey();
                 MenuMaterias();
             }
             
              
         }
-         void AgregarProgramacion()
+        void AgregarProgramacion()
         {
             string idMateria="";
             string[] meridiano = new string[2] { "AM", "PM" };
@@ -898,19 +920,19 @@ namespace ProgIIFinalProject
             
            
 
-            gotoXY("-Profesor: ", xPosition, 1);
+            GotoXY("-Profesor: ", xPosition, 1);
             xPosition += 10;
             Console.SetCursorPosition(xPosition, 1);
             profesor = Console.ReadLine();
             xPosition += profesor.Length + 5;
 
 
-            gotoXY("-Trimestre: ", xPosition, 1);
+            GotoXY("-Trimestre: ", xPosition, 1);
             xPosition += 12;
             int i = 1, auxiliar =0;
             foreach (string periodo in trimestres)
             {                
-                gotoXY(i + ")" + periodo, xPosition, i);
+                GotoXY(i + ")" + periodo, xPosition, i);
                 i++;               
             }
             try
@@ -927,7 +949,7 @@ namespace ProgIIFinalProject
             
 
             xPosition += 6;
-            gotoXY("-Aula: ", xPosition, 1);
+            GotoXY("-Aula: ", xPosition, 1);
             Console.SetCursorPosition(xPosition + 6, 1);
             aula = Console.ReadLine();
 
@@ -935,7 +957,7 @@ namespace ProgIIFinalProject
             xPosition = 0;
             try
             {
-                gotoXY("Cuantos dias a la semana se impartira la materia?" , xPosition, 1);
+                GotoXY("Cuantos dias a la semana se impartira la materia?" , xPosition, 1);
                 Console.SetCursorPosition(xPosition + 51, 1);
                 auxiliar = Convert.ToInt32(Console.ReadLine());
                 Console.Clear();
@@ -945,12 +967,12 @@ namespace ProgIIFinalProject
                 {
                     int aux2;
                     xPosition = 0;
-                    gotoXY("Seleccione el dia numero " + (aux + 1) + ": ", xPosition, 1);
+                    GotoXY("Seleccione el dia numero " + (aux + 1) + ": ", xPosition, 1);
                     xPosition = 28;
                     i = 1;
                     foreach (string dia in dias)
                     {
-                        gotoXY(i + ")" + dia, xPosition, i);
+                        GotoXY(i + ")" + dia, xPosition, i);
                         i++;
                     }
                     xPosition += 8;
@@ -966,14 +988,14 @@ namespace ProgIIFinalProject
                     
 
                     xPosition = 0;
-                    gotoXY("Seleccione el horario para los " + dias[aux2 - 1] + ": ", xPosition, 10);
+                    GotoXY("Seleccione el horario para los " + dias[aux2 - 1] + ": ", xPosition, 10);
 
-                    gotoXY("-Desde las: ", xPosition, 14);
+                    GotoXY("-Desde las: ", xPosition, 14);
                     xPosition += 14;
                     i = 14;
                     foreach (string hora in horas)
                     {
-                        gotoXY((i - 13) + ")" + hora, xPosition, i);
+                        GotoXY((i - 13) + ")" + hora, xPosition, i);
                         i++;
                     }
 
@@ -982,19 +1004,19 @@ namespace ProgIIFinalProject
                     i = Convert.ToInt32(Console.ReadLine());
                     horario.hora = horario.hora + horas[i - 1];
                     xPosition += 4;
-                    gotoXY("1)AM", xPosition, 14);
-                    gotoXY("2)PM", xPosition, 15);
+                    GotoXY("1)AM", xPosition, 14);
+                    GotoXY("2)PM", xPosition, 15);
                     xPosition += 8;
                     Console.SetCursorPosition(xPosition, 14);
                     i = Convert.ToInt32(Console.ReadLine());
                     horario.hora = horario.hora + meridiano[i - 1];
                     xPosition += 4;
-                    gotoXY("-Hasta las: ", xPosition, 14);
+                    GotoXY("-Hasta las: ", xPosition, 14);
                     xPosition += 14;
                     i = 14;
                     foreach (string hora in horas)
                     {
-                        gotoXY((i - 13) + ")" + hora, xPosition, i);
+                        GotoXY((i - 13) + ")" + hora, xPosition, i);
                         i++;
                     }
                     xPosition += 9;
@@ -1002,8 +1024,8 @@ namespace ProgIIFinalProject
                     i = Convert.ToInt32(Console.ReadLine());
                     horario.hora = horario.hora + " - " + horas[i - 1];
                     xPosition += 4;
-                    gotoXY("1)AM", xPosition, 14);
-                    gotoXY("2)PM", xPosition, 15);
+                    GotoXY("1)AM", xPosition, 14);
+                    GotoXY("2)PM", xPosition, 15);
                     xPosition += 8;
                     Console.SetCursorPosition(xPosition, 14);
                     i = Convert.ToInt32(Console.ReadLine());
@@ -1020,8 +1042,8 @@ namespace ProgIIFinalProject
                 Console.Clear();
                 xPosition = 0;
                 Console.WriteLine("Seleccione el ID de la materia: ");
-                gotoXY("ID    Materias", 0, 2);
-                gotoXY("--------------", 0, 3);
+                GotoXY("ID    Materias", 0, 2);
+                GotoXY("--------------", 0, 3);
                 using (cmd = new SqlCommand("select * from Materias", con))
                 {   
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -1106,18 +1128,18 @@ namespace ProgIIFinalProject
             MenuProgramaciones();
         }
             
-         void RevisarUsuarios()
+        void RevisarUsuarios()
         {
             
             Console.Clear();
-            gotoXY("-Nombre: ", 0, 0);
-            gotoXY("-Apellido: ", 20, 0);
-            gotoXY("-ID: ", 40, 0);
-            gotoXY("-Carrera: ",51, 0);
-            gotoXY("-Identificador nacional: ", 70, 0);
-            gotoXY("-Fecha de nacimiento ", 95, 0);
-            gotoXY("-Dominicano?", 120, 0);
-            gotoXY("-Estado", 133, 0);
+            GotoXY("-Nombre: ", 0, 0);
+            GotoXY("-Apellido: ", 20, 0);
+            GotoXY("-ID: ", 40, 0);
+            GotoXY("-Carrera: ",51, 0);
+            GotoXY("-Identificador nacional: ", 70, 0);
+            GotoXY("-Fecha de nacimiento ", 95, 0);
+            GotoXY("-Dominicano?", 120, 0);
+            GotoXY("-Estado", 133, 0);
             int i = 1;
             DBConnect();
             using(cmd = new SqlCommand("select * from Alumnos", con))
@@ -1133,14 +1155,14 @@ namespace ProgIIFinalProject
                     string estado = reader["Estado"].ToString();
                     string fecha = reader["Fecha"].ToString();
                     string extranjero = reader["Extranjero"].ToString();
-                    gotoXY(nombre, 0, i);
-                    gotoXY(apellido, 20, i);
-                    gotoXY(id, 40, i);
-                    gotoXY(carrera, 51, i);
-                    gotoXY(identificadorPersonal, 70, i);
-                    gotoXY(fecha, 95, i);
-                    gotoXY(extranjero, 120, i);
-                    gotoXY(estado, 133, i);
+                    GotoXY(nombre, 0, i);
+                    GotoXY(apellido, 20, i);
+                    GotoXY(id, 40, i);
+                    GotoXY(carrera, 51, i);
+                    GotoXY(identificadorPersonal, 70, i);
+                    GotoXY(fecha, 95, i);
+                    GotoXY(extranjero, 120, i);
+                    GotoXY(estado, 133, i);
                     i++;
                 }
             }
@@ -1150,13 +1172,13 @@ namespace ProgIIFinalProject
             Console.ReadKey();
             MenuAlumnos();
         }
-         void RevisarMaterias()
+        void RevisarMaterias()
         {
             Console.Clear();
-            gotoXY("-ID: ", 0, 0);
-            gotoXY("-Nombre: ", 16, 0);
-            gotoXY("-Codigo: ", 46, 0);
-            gotoXY("-Area: ", 55, 0);
+            GotoXY("-ID: ", 0, 0);
+            GotoXY("-Nombre: ", 16, 0);
+            GotoXY("-Codigo: ", 46, 0);
+            GotoXY("-Area: ", 55, 0);
             int i = 1;
             DBConnect();
             string query = "select * from Materias";
@@ -1169,10 +1191,10 @@ namespace ProgIIFinalProject
                 string nombre = reader["Nombre"].ToString();
                 string code = reader["Code"].ToString();
                 string area = reader["Area"].ToString();
-                gotoXY(id, 0, i);
-                gotoXY(nombre, 16, i);
-                gotoXY(code, 46, i);
-                gotoXY(area, 55, i);
+                GotoXY(id, 0, i);
+                GotoXY(nombre, 16, i);
+                GotoXY(code, 46, i);
+                GotoXY(area, 55, i);
                 i++;
             }
             con.Close();
@@ -1180,17 +1202,17 @@ namespace ProgIIFinalProject
             Console.ReadKey();
             MenuMaterias();
         }           
-         void RevisarProgramacion()
+        void RevisarProgramacion()
         {
             Console.Clear();
-            gotoXY("-Dia: ", 0, 0);
-            gotoXY("-Hora: ", 15, 0);
-            gotoXY("-ID: ", 35, 0);
-            gotoXY("-Trimestre: ", 51, 0);
-            gotoXY("-Aula: ", 81, 0);
-            gotoXY("-Profesor: ", 90, 0);
-            gotoXY("-Materia: ", 110, 0);
-            gotoXY("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------", 0, 1);
+            GotoXY("-Dia: ", 0, 0);
+            GotoXY("-Hora: ", 15, 0);
+            GotoXY("-ID: ", 35, 0);
+            GotoXY("-Trimestre: ", 51, 0);
+            GotoXY("-Aula: ", 81, 0);
+            GotoXY("-Profesor: ", 90, 0);
+            GotoXY("-Materia: ", 110, 0);
+            GotoXY("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------", 0, 1);
             int i = 3;
             DBConnect();
             string query = "select * from Programacion";
@@ -1208,26 +1230,26 @@ namespace ProgIIFinalProject
                 string maestro = reader["maestro"].ToString();
                 string materia = reader["materia"].ToString();
                 
-                gotoXY(id, 35, i);
-                gotoXY(trimestre, 51, i);
-                gotoXY(aula, 81, i);
-                gotoXY(maestro, 90, i);
-                gotoXY(materia, 110, i);
+                GotoXY(id, 35, i);
+                GotoXY(trimestre, 51, i);
+                GotoXY(aula, 81, i);
+                GotoXY(maestro, 90, i);
+                GotoXY(materia, 110, i);
                 for (int aux =0; aux <= arrayDia.Length-1; aux++)
                 {
                     
-                    gotoXY(arrayDia[aux], 0, i);
+                    GotoXY(arrayDia[aux], 0, i);
                     
                     if (aux < arrayHora.Length)
                     {
 
-                        gotoXY(arrayHora[aux], 15, i);
+                        GotoXY(arrayHora[aux], 15, i);
                     }
                     
                     i++;
                 }
 
-                gotoXY("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------", 0, i+1);
+                GotoXY("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------", 0, i+1);
                 i += + 3;
             }
             con.Close();
@@ -1237,8 +1259,8 @@ namespace ProgIIFinalProject
 
 
         }
-         
-         void BuscarUsuario(String id)
+        //nada
+        void BuscarUsuario(String id)
         {
             
             Console.Clear();
@@ -1255,14 +1277,14 @@ namespace ProgIIFinalProject
                     while (reader.Read())
                     {
                         aux = true;
-                        gotoXY("-Nombre: ", 0, 0);
-                        gotoXY("-Apellido: ", 20, 0);
-                        gotoXY("-ID: ", 40, 0);
-                        gotoXY("-Carrera: ", 51, 0);
-                        gotoXY("-Identificador nacional: ", 70, 0);
-                        gotoXY("-Fecha de nacimiento ", 95, 0);
-                        gotoXY("-Dominicano?", 120, 0);
-                        gotoXY("-Estado", 133, 0);
+                        GotoXY("-Nombre: ", 0, 0);
+                        GotoXY("-Apellido: ", 20, 0);
+                        GotoXY("-ID: ", 40, 0);
+                        GotoXY("-Carrera: ", 51, 0);
+                        GotoXY("-Identificador nacional: ", 70, 0);
+                        GotoXY("-Fecha de nacimiento ", 95, 0);
+                        GotoXY("-Dominicano?", 120, 0);
+                        GotoXY("-Estado", 133, 0);
                         string nombre = reader["Nombre"].ToString();
                         string apellido = reader["Apellido"].ToString();
                         string carrera = reader["Carrera"].ToString();
@@ -1270,14 +1292,14 @@ namespace ProgIIFinalProject
                         string estado = reader["Estado"].ToString();
                         string fecha = reader["Fecha"].ToString();
                         string extranjero = reader["Extranjero"].ToString();
-                        gotoXY(nombre, 0, i);
-                        gotoXY(apellido, 20, i);
-                        gotoXY(id, 40, i);
-                        gotoXY(carrera, 51, i);
-                        gotoXY(identificadorPersonal, 70, i);
-                        gotoXY(fecha, 95, i);
-                        gotoXY(extranjero, 120, i);
-                        gotoXY(estado, 133, i);
+                        GotoXY(nombre, 0, i);
+                        GotoXY(apellido, 20, i);
+                        GotoXY(id, 40, i);
+                        GotoXY(carrera, 51, i);
+                        GotoXY(identificadorPersonal, 70, i);
+                        GotoXY(fecha, 95, i);
+                        GotoXY(extranjero, 120, i);
+                        GotoXY(estado, 133, i);
                         i++;
                     }
                 }
@@ -1298,7 +1320,7 @@ namespace ProgIIFinalProject
             con.Close();
             MenuAlumnos();
         }
-         void BuscarMateria(string id)
+        void BuscarMateria(string id)
         {   
             Console.Clear();
             try
@@ -1313,18 +1335,18 @@ namespace ProgIIFinalProject
 
                     while (reader.Read())
                     {
-                        gotoXY("-ID: ", 0, 0);
-                        gotoXY("-Nombre: ", 16, 0);
-                        gotoXY("-Codigo: ", 46, 0);
-                        gotoXY("-Area: ", 55, 0);
+                        GotoXY("-ID: ", 0, 0);
+                        GotoXY("-Nombre: ", 16, 0);
+                        GotoXY("-Codigo: ", 46, 0);
+                        GotoXY("-Area: ", 55, 0);
                         string cid = reader["ID"].ToString();
                         string nombre = reader["Nombre"].ToString();
                         string code = reader["Code"].ToString();
                         string area = reader["Area"].ToString();
-                        gotoXY(cid, 0, i);
-                        gotoXY(nombre, 16, i);
-                        gotoXY(code, 46, i);
-                        gotoXY(area, 55, i);
+                        GotoXY(cid, 0, i);
+                        GotoXY(nombre, 16, i);
+                        GotoXY(code, 46, i);
+                        GotoXY(area, 55, i);
                         i++;
 
                     }
@@ -1342,7 +1364,7 @@ namespace ProgIIFinalProject
             Console.ReadKey();
             MenuMaterias();
         }
-         void BuscarSeleccionUsuario(string idAlumno)
+        void BuscarSeleccionUsuario(string idAlumno)
          {
             DBConnect();
             Console.Clear();
@@ -1375,11 +1397,11 @@ namespace ProgIIFinalProject
             if (found > 0)
             {
                 Console.Clear();
-                gotoXY("Trimestre", 20-20, 0);
-                gotoXY("Materia", 40 - 20, 0);
-                gotoXY("Dia", 55 - 20, 0);
-                gotoXY("Hora", 65 - 20, 0);
-                gotoXY("Aula", 90 - 20, 0);
+                GotoXY("Trimestre", 20-20, 0);
+                GotoXY("Materia", 40 - 20, 0);
+                GotoXY("Dia", 55 - 20, 0);
+                GotoXY("Hora", 65 - 20, 0);
+                GotoXY("Aula", 90 - 20, 0);
                 int column = 1;
                 int last = column+1;
                 while ((column - 1) < found)
@@ -1397,18 +1419,18 @@ namespace ProgIIFinalProject
                             string[] arrayDia = reader["dia"].ToString().Split('\n');
                             string[] arrayHora = reader["hora"].ToString().Split('\n');
                             aula = reader["Aula"].ToString();
-                            gotoXY(trimestre, 20 - 20, last);
-                            gotoXY(mat, 40 - 20, last);
-                            gotoXY(aula, 90 - 20, last);
+                            GotoXY(trimestre, 20 - 20, last);
+                            GotoXY(mat, 40 - 20, last);
+                            GotoXY(aula, 90 - 20, last);
                             for (int aux = 0; aux <= arrayDia.Length - 1; aux++)
                             {
 
-                                gotoXY(arrayDia[aux], 35, last);
+                                GotoXY(arrayDia[aux], 35, last);
 
                                 if (aux < arrayHora.Length)
                                 {
 
-                                    gotoXY(arrayHora[aux], 45, last);
+                                    GotoXY(arrayHora[aux], 45, last);
                                 }
 
                                 last++;
@@ -1434,7 +1456,7 @@ namespace ProgIIFinalProject
             Console.ReadKey();
             MenuProgramaciones();
          }
-         void BuscarSeccionesMateria(string id)
+        void BuscarSeccionesMateria(string id)
         {
             Console.Clear();
             int found = (0);
@@ -1455,11 +1477,11 @@ namespace ProgIIFinalProject
                 if (found > 0)
                 {
                     Console.Clear();
-                    gotoXY("Trimestre", 20 - 20, 0);
-                    gotoXY("ID Programacion", 40 - 20, 0);
-                    gotoXY("Dia", 60 - 20, 0);
-                    gotoXY("Hora", 70 - 20, 0);
-                    gotoXY("Aula", 95 - 20, 0);
+                    GotoXY("Trimestre", 20 - 20, 0);
+                    GotoXY("ID Programacion", 40 - 20, 0);
+                    GotoXY("Dia", 60 - 20, 0);
+                    GotoXY("Hora", 70 - 20, 0);
+                    GotoXY("Aula", 95 - 20, 0);
                     int column = 1;
                     int last = column+1;
                     DBConnect();
@@ -1477,18 +1499,18 @@ namespace ProgIIFinalProject
                             string[] arrayDia = reader["dia"].ToString().Split('\n');
                             string[] arrayHora = reader["hora"].ToString().Split('\n');
                             aula = reader["Aula"].ToString();
-                            gotoXY(trimestre, 20 - 20, last);
-                            gotoXY(ID, 40 - 20, last);
-                            gotoXY(aula, 95 - 20, last);
+                            GotoXY(trimestre, 20 - 20, last);
+                            GotoXY(ID, 40 - 20, last);
+                            GotoXY(aula, 95 - 20, last);
                             for (int aux = 0; aux <= arrayDia.Length - 1; aux++)
                             {
 
-                                gotoXY(arrayDia[aux], 40, last);
+                                GotoXY(arrayDia[aux], 40, last);
 
                                 if (aux < arrayHora.Length)
                                 {
 
-                                    gotoXY(arrayHora[aux], 50, last);
+                                    GotoXY(arrayHora[aux], 50, last);
                                 }
 
                                 last++;
@@ -1518,7 +1540,7 @@ namespace ProgIIFinalProject
 
         }
 
-         void EditarUsuario(String id)
+        void EditarUsuario(String id)
         {
             int found=(0);
             try
@@ -1638,7 +1660,7 @@ namespace ProgIIFinalProject
                             ;
                             break;
                         case 6:
-                            gotoXY("-Nacionalidad dominicana? \n" +
+                            GotoXY("-Nacionalidad dominicana? \n" +
                             "1.Si \n" +
                             "2.No", 0, 2);
                             Console.SetCursorPosition(27, 2);
@@ -1664,7 +1686,7 @@ namespace ProgIIFinalProject
                                         }
                                         break;
                                     default:
-                                        gotoXY("Error en la selección. El usuario será identificado como extranjero", 0, 6);
+                                        GotoXY("Error en la selección. El usuario será identificado como extranjero", 0, 6);
                                         using (cmd = new SqlCommand("update Alumnos set Extranjero= @value where ID= @id", con))
                                         {
                                             cmd.Parameters.AddWithValue("@value", "si");
@@ -1676,7 +1698,7 @@ namespace ProgIIFinalProject
                             }
                             catch
                             {
-                                gotoXY("Error en la selección. El usuario será identificado como extranjero", 0, 6);
+                                GotoXY("Error en la selección. El usuario será identificado como extranjero", 0, 6);
 
                                 using (cmd = new SqlCommand("update Alumnos set Extranjero= @value where ID= @id", con))
                                 {
@@ -1688,7 +1710,7 @@ namespace ProgIIFinalProject
                             ;
                             break;
                         case 7:
-                            gotoXY("-Estados del usuario: \n" +
+                            GotoXY("-Estados del usuario: \n" +
                             "1. Incompleto \n" +
                             "2. Activo \n" +
                             "3. Inactivo \n" +
@@ -1737,7 +1759,7 @@ namespace ProgIIFinalProject
                                         Console.ReadKey();
                                         break;
                                     default:
-                                        gotoXY("Error al seleccionar la opcion, el usuario será puesto como incompleto", 0, 7);
+                                        GotoXY("Error al seleccionar la opcion, el usuario será puesto como incompleto", 0, 7);
                                         using (cmd = new SqlCommand("update Alumnos set Estado= @value where ID= @id", con))
                                         {
                                             cmd.Parameters.AddWithValue("@value", "INCOMPLETO");
@@ -1751,7 +1773,7 @@ namespace ProgIIFinalProject
                             }
                             catch
                             {
-                                gotoXY("Error al seleccionar la opcion, el usuario será puesto como incompleto", 0, 7);
+                                GotoXY("Error al seleccionar la opcion, el usuario será puesto como incompleto", 0, 7);
                                 using (cmd = new SqlCommand("update Alumnos set Estado= @value where ID= @id", con))
                                 {
                                     cmd.Parameters.AddWithValue("@value", "INCOMPLETO");
@@ -1764,7 +1786,7 @@ namespace ProgIIFinalProject
                     }
 
                     Console.Clear();
-                    gotoXY("Atributo modificado correctamente", 0, 0);
+                    GotoXY("Atributo modificado correctamente", 0, 0);
                     Console.ReadKey();
                     con.Close();
                     MenuAlumnos();
@@ -1787,7 +1809,7 @@ namespace ProgIIFinalProject
             
             
         }
-         void EditarMateria(string id)
+        void EditarMateria(string id)
         {
             int found = (0);
             try
@@ -1879,7 +1901,7 @@ namespace ProgIIFinalProject
                             foreach (string areas in ListaAreas)
                             {
                                 materiasT[(i - 2)] = areas;
-                                gotoXY((i - 2) + ") " + areas, xPosition, i);
+                                GotoXY((i - 2) + ") " + areas, xPosition, i);
                                 i += 1;
                             }
                             Console.SetCursorPosition(xPosition, 2);
@@ -1897,15 +1919,15 @@ namespace ProgIIFinalProject
                     }
 
                     Console.Clear();
-                    gotoXY("Atributo modificado correctamente", 0, 0);
+                    GotoXY("Atributo modificado correctamente", 0, 0);
                     Console.ReadKey();
                     con.Close();
                     MenuMaterias();
                 }
                 catch (Exception)
                 {
-                    gotoXY("El usuario no pudo ser modificado",0,8);
-                    gotoXY("Presione cualquier tecla para continuar...", 0,9);
+                    GotoXY("El usuario no pudo ser modificado",0,8);
+                    GotoXY("Presione cualquier tecla para continuar...", 0,9);
                     Console.ReadKey();
                     con.Close();
                     MenuMaterias();
@@ -1919,7 +1941,7 @@ namespace ProgIIFinalProject
                 MenuMaterias();
             }
         }
-         void EditarProgramacion(String id)
+        void EditarProgramacion(String id)
         {
             int found = (0);
             try
@@ -2075,9 +2097,9 @@ namespace ProgIIFinalProject
                         if (found > 0)
                         {
                             Console.Clear();
-                            gotoXY("ID Alumno", 0, 0);
-                            gotoXY("Nombre", 20, 0);
-                            gotoXY("Carrera", 55, 0);
+                            GotoXY("ID Alumno", 0, 0);
+                            GotoXY("Nombre", 20, 0);
+                            GotoXY("Carrera", 55, 0);
                             int column = 1;
                             while ((column - 1) < found)
                             {
@@ -2090,9 +2112,9 @@ namespace ProgIIFinalProject
                                     {
                                         Nombre = reader["Nombre"].ToString() + " " + reader["Apellido"].ToString();
                                         Carrera = reader["Carrera"].ToString();
-                                        gotoXY(idAlumno[column - 1], 0, column);
-                                        gotoXY(Nombre, 20, column);
-                                        gotoXY(Carrera, 55, column);
+                                        GotoXY(idAlumno[column - 1], 0, column);
+                                        GotoXY(Nombre, 20, column);
+                                        GotoXY(Carrera, 55, column);
                                         
                                     }
                                     reader.Close();
@@ -2121,7 +2143,7 @@ namespace ProgIIFinalProject
             MenuProgramaciones();
         }
 
-         void EliminarUsuario(String id)
+        void EliminarUsuario(String id)
         {
             try
             {
@@ -2156,7 +2178,7 @@ namespace ProgIIFinalProject
             con.Close();
             MenuAlumnos();
         }
-         void EliminarMateria(String id)
+        void EliminarMateria(String id)
         {
             try
             {
@@ -2192,7 +2214,7 @@ namespace ProgIIFinalProject
             con.Close();
             MenuMaterias();
         }
-         void EliminarProgramacion(String id)
+        void EliminarProgramacion(String id)
         {
 
             try

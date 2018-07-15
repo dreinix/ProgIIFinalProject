@@ -584,9 +584,10 @@ namespace ProgIIFinalProject
                 reporte.Open();
 
                 iTextSharp.text.Font font = new iTextSharp.text.Font(iTextSharp.text.Font.FontFamily.TIMES_ROMAN, 10, iTextSharp.text.Font.NORMAL, BaseColor.BLACK);
+                iTextSharp.text.Font font2 = new iTextSharp.text.Font(iTextSharp.text.Font.FontFamily.HELVETICA, 11, iTextSharp.text.Font.BOLD, BaseColor.BLACK);
 
                 reporte.Add(new Paragraph("INSTITUTO TECNOLÓGICO DE SANTO DOMINGO\nDirección de registro\nAsistencia a Estudiantes\n\n" + "Asignatura: " + materia + "\nProfesor(a): " + maestro));
-                reporte.Add(new Paragraph("Horario: "));
+                reporte.Add(new Paragraph("HORARIO: ", font2));
                 for (int aux = 0; aux <= arrayDia.Length - 1; aux++)
                 {
 
@@ -975,6 +976,12 @@ namespace ProgIIFinalProject
             Console.WriteLine("Reporte creado exitosamente");
             Console.ReadKey();
             MenuReportes();
+
+        }
+        void generarReporteExcel()
+        {
+
+
 
         }
 

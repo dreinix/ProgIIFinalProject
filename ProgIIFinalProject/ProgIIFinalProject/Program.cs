@@ -1280,29 +1280,41 @@ namespace ProgIIFinalProject
 
         void ExportarAlumnoJson()
         {
-            List<AlumnoCS> AlumData = new List<AlumnoCS>();
-
-            DBConnect();
-            using (cmd = new SqlCommand("select * from Alumnos", con))
+            try
             {
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    AlumnoCS alumno = new AlumnoCS(reader["Nombre"].ToString(), reader["Apellido"].ToString(), int.Parse(reader["ID"].ToString())
-                        , reader["Identificador"].ToString(), reader["Estado"].ToString(), (bool.Parse(reader["Extranjero"].ToString()))
-                        , reader["Carrera"].ToString(), (DateTime.Parse(reader["Fecha"].ToString()).ToShortDateString()));
+                List<AlumnoCS> AlumData = new List<AlumnoCS>();
 
-                    AlumData.Add(alumno);
-                }
-                using (StreamWriter file = File.CreateText("Json Export-Alumnos.Json"))
+                DBConnect();
+                using (cmd = new SqlCommand("select * from Alumnos", con))
                 {
-                    JsonSerializer serializer = new JsonSerializer();
-                    //serialize object directly into file stream
-                    serializer.Serialize(file, AlumData);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        AlumnoCS alumno = new AlumnoCS(reader["Nombre"].ToString(), reader["Apellido"].ToString(), int.Parse(reader["ID"].ToString())
+                            , reader["Identificador"].ToString(), reader["Estado"].ToString(), (bool.Parse(reader["Extranjero"].ToString()))
+                            , reader["Carrera"].ToString(), (DateTime.Parse(reader["Fecha"].ToString()).ToShortDateString()));
+
+                        AlumData.Add(alumno);
+                    }
+                    using (StreamWriter file = File.CreateText("Json Export-Alumnos.Json"))
+                    {
+                        JsonSerializer serializer = new JsonSerializer();
+                        //serialize object directly into file stream
+                        serializer.Serialize(file, AlumData);
+                    }
                 }
+                con.Close();
             }
-            con.Close();
-
+            
+                catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                Console.ReadKey();
+                return;
+            }
+            Console.WriteLine("Exportacion exitosa");
+        
+            
         }
         void ExportarAlumnoXML()
         {
@@ -1329,13 +1341,19 @@ namespace ProgIIFinalProject
                         writer.Serialize(Write, AlumData);
                     }
                 }
+                con.Close();
             }
             catch (Exception ex)
             {
+                
                 MessageBox.Show(ex.Message);
+                Console.ReadKey();
+                return;
             }
 
-            con.Close();
+            
+            Console.WriteLine("Exportación exitosa");
+            Console.ReadKey();
 
         }
         void ExportarMateriasJson()
@@ -1360,14 +1378,17 @@ namespace ProgIIFinalProject
                         serializer.Serialize(file, MatData);
                     }
                 }
-                
+                con.Close();
             }
             catch(Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                Console.ReadKey();
+                return;
             }
-            con.Close();
 
+            Console.WriteLine("Exportación exitosa");
+            Console.ReadKey();
         }
         void ExportarMateriasXML()
         {
@@ -1391,12 +1412,17 @@ namespace ProgIIFinalProject
                         writer.Serialize(Write, MatData);
                     }
                 }
+                con.Close();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                Console.ReadKey();
+                return;
             }
-            con.Close();
+            
+            Console.WriteLine("Exportación exitosa");
+            Console.ReadKey();
 
         }
 

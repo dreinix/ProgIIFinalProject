@@ -48,7 +48,7 @@ namespace ProgIIFinalProject
             get { return _estado; }
             set { _estado = value; }
         }
-        public string carrera
+        public string Carrera
         {
             get { return _carrera; }
             set { _carrera = value; }

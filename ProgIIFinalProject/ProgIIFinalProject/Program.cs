@@ -876,9 +876,11 @@ namespace ProgIIFinalProject
                     }
                     reporte.Add(tblProgramacion);
                     
-                    writer.Close();
+                    
                 }
                 reporte.Close();
+                writer.Close();
+                
             }
             else
             {
@@ -1572,7 +1574,7 @@ namespace ProgIIFinalProject
                 {
                     try
                     {
-                        AddAlumnsToDataBase(alumno.ID, alumno.Cedula, alumno.Nombre, alumno.Apellido, alumno.Estado, alumno.carrera,
+                        AddAlumnsToDataBase(alumno.ID, alumno.Cedula, alumno.Nombre, alumno.Apellido, alumno.Estado, alumno.Carrera,
                         alumno.Nacionalidad.ToString(), alumno.FechaNacimiento);
                     }
                     catch (Exception)
@@ -1582,7 +1584,7 @@ namespace ProgIIFinalProject
                             cmd.Parameters.AddWithValue("@id", alumno.ID);
                             cmd.ExecuteNonQuery();
                         }
-                        AddAlumnsToDataBase(alumno.ID, alumno.Cedula, alumno.Nombre, alumno.Apellido, alumno.Estado, alumno.carrera,
+                        AddAlumnsToDataBase(alumno.ID, alumno.Cedula, alumno.Nombre, alumno.Apellido, alumno.Estado, alumno.Carrera,
                                                 alumno.Nacionalidad.ToString(), alumno.FechaNacimiento);
                     }
                     
@@ -1618,7 +1620,7 @@ namespace ProgIIFinalProject
                 {
                     try
                     {
-                        AddAlumnsToDataBase(alumno.ID, alumno.Cedula, alumno.Nombre, alumno.Apellido, alumno.Estado, alumno.carrera,
+                        AddAlumnsToDataBase(alumno.ID, alumno.Cedula, alumno.Nombre, alumno.Apellido, alumno.Estado, alumno.Carrera,
                         alumno.Nacionalidad.ToString(), alumno.FechaNacimiento);
                     }
                     catch (Exception)
@@ -1628,7 +1630,7 @@ namespace ProgIIFinalProject
                             cmd.Parameters.AddWithValue("@id", alumno.ID);
                             cmd.ExecuteNonQuery();
                         }
-                        AddAlumnsToDataBase(alumno.ID, alumno.Cedula, alumno.Nombre, alumno.Apellido, alumno.Estado, alumno.carrera,
+                        AddAlumnsToDataBase(alumno.ID, alumno.Cedula, alumno.Nombre, alumno.Apellido, alumno.Estado, alumno.Carrera,
                                                 alumno.Nacionalidad.ToString(), alumno.FechaNacimiento);
                     }
                 }
@@ -2277,9 +2279,9 @@ namespace ProgIIFinalProject
                 int i = 1;
                 bool aux = false;
                 DBConnect();
-                using (cmd = new SqlCommand("select * from Alumnos where [Identificador]= @id or [Nombre]=@id", con))
+                using (cmd = new SqlCommand("select * from Alumnos where [Identificador] = @id or [Nombre]=@id", con))
                 {
-                    cmd.Parameters.AddWithValue("@id", int.Parse(id));
+                    cmd.Parameters.AddWithValue("@id", id);
                     cmd.ExecuteNonQuery();
                     SqlDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
@@ -2337,7 +2339,7 @@ namespace ProgIIFinalProject
                 DBConnect();
                 using (cmd = new SqlCommand("select * from Materias where [Area]= @id or [Nombre]=@id", con))
                 {
-                    cmd.Parameters.AddWithValue("@id", int.Parse(id));
+                    cmd.Parameters.AddWithValue("@id", id);
                     cmd.ExecuteNonQuery();
                     SqlDataReader reader = cmd.ExecuteReader();
 
@@ -2369,7 +2371,6 @@ namespace ProgIIFinalProject
 
             con.Close();
             Console.WriteLine("Presione cualquier tecla para continuar...");
-            Console.ReadKey();
             
         }
         void BuscarSeleccionUsuario(string idAlumno)

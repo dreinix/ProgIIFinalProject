@@ -274,7 +274,7 @@ namespace ProgIIFinalProject
                         EliminarMateria(iD);
                         break;
                     case 6:
-                        //Console.ReadKey();
+                        return;
                         break;
                     default:
                         Console.WriteLine("Opcion invalida,intente de nuevo");
@@ -289,63 +289,67 @@ namespace ProgIIFinalProject
         void MenuAlumnos()
         {
 
-            byte opcion;
-            string iD;
-            Console.Clear();
-            Console.SetCursorPosition(5, 0);
-            Console.WriteLine("*****Menú*****");
-            Console.WriteLine("1. Agregar alummnos \n" +
-                "2. Visualizar alumnos \n" +
-                "3. Buscar \n" +
-                "4. Modificar alumnos \n" +
-                "5. Eliminar alumnos \n" +
-                "6. Salir \n");
-            try
-            {
-                opcion = byte.Parse(Console.ReadLine());
-            }
-            catch (Exception)
-            {
+            byte opcion = 0; string iD;
+            while (opcion !=6){
+
                 opcion = 0;
+                Console.Clear();
+                Console.SetCursorPosition(5, 0);
+                Console.WriteLine("*****Menú*****");
+                Console.WriteLine("1. Agregar alummnos \n" +
+                    "2. Visualizar alumnos \n" +
+                    "3. Buscar \n" +
+                    "4. Modificar alumnos \n" +
+                    "5. Eliminar alumnos \n" +
+                    "6. Salir \n");
+                try
+                {
+                    opcion = byte.Parse(Console.ReadLine());
+                }
+                catch (Exception)
+                {
+                    opcion = 0;
+                }
+                switch (opcion)
+                {
+                    case 1:
+                        AgregarUsuario();
+                        break;
+                    case 2:
+                        RevisarUsuarios();
+                        break;
+                    case 3:
+                        Console.WriteLine("Ingrese el nombre o el identificador nacional del usuario: ");
+                        mostrarEstudiantes(0, 13, 10, 1);
+                        iD = Console.ReadLine();
+                        BuscarUsuario(iD);
+                        break;
+                    case 4:
+                        Console.WriteLine("Ingrese el ID del usuario al que desea modificar algun dato: \n");
+                        mostrarEstudiantes(0, 13, 10, 0);
+                        iD = Console.ReadLine();
+                        EditarUsuario(iD);
+                        break;
+                    case 5:
+                        Console.WriteLine("Ingrese el ID del usuario al que desea eliminar: \n");
+                        mostrarEstudiantes(0, 13, 10, 0);
+                        iD = Console.ReadLine();
+                        EliminarUsuario(iD);
+                        break;
+                    case 6:
+                        Console.Clear();
+                        return;
+                        break;
+                    default:
+                        Console.WriteLine("Opcion invalida,intente de nuevo");
+                        Console.ReadKey();
+                        Console.Clear();
+
+                        break;
+                }
+                
             }
-            switch (opcion)
-            {
-                case 1:
-                    AgregarUsuario();
-                    break;
-                case 2:
-                    RevisarUsuarios();
-                    break;
-                case 3:
-                    Console.WriteLine("Ingrese el nombre o el identificador nacional del usuario: ");
-                    mostrarEstudiantes(0, 13, 10,1);
-                    iD = Console.ReadLine();
-                    BuscarUsuario(iD);
-                    break;
-                case 4:
-                    Console.WriteLine("Ingrese el ID del usuario al que desea modificar algun dato: \n");
-                    mostrarEstudiantes(0, 13, 10,0);
-                    iD = Console.ReadLine();
-                    EditarUsuario(iD);
-                    break;
-                case 5:
-                    Console.WriteLine("Ingrese el ID del usuario al que desea eliminar: \n");
-                    mostrarEstudiantes(0, 13, 10,0);
-                    iD = Console.ReadLine();
-                    EliminarUsuario(iD);
-                    break;
-                case 6:
-                    Console.Clear();
-                    MenuGeneral();
-                    break;
-                default:
-                    Console.WriteLine("Opcion invalida,intente de nuevo");
-                    Console.ReadKey();
-                    Console.Clear();
-                    MenuAlumnos();
-                    break;
-            }
-            Console.ReadKey();
+            
         }
         void MenuProgramaciones()
         {
@@ -1792,7 +1796,7 @@ namespace ProgIIFinalProject
             }
             
             Console.ReadKey();
-            MenuAlumnos();
+            
         }
         void AgregarMateria()
         {
@@ -1845,14 +1849,14 @@ namespace ProgIIFinalProject
                 Console.Clear();
                 Console.WriteLine("Materia agregada con exito");
                 Console.ReadKey();
-                MenuMaterias();
+                
 
             }
             catch (Exception)
             {
                 GotoXY("Error en la creación",0,8);
                 Console.ReadKey();
-                MenuMaterias();
+                
             }
             
              
@@ -2122,7 +2126,7 @@ namespace ProgIIFinalProject
             con.Close();
             Console.WriteLine("Presione cualquier tecla para continuar...");
             Console.ReadKey();
-            MenuAlumnos();
+            
         }
         void RevisarMaterias()
         {
@@ -2152,7 +2156,7 @@ namespace ProgIIFinalProject
             con.Close();
             Console.WriteLine("Presione cualquier tecla para continuar...");
             Console.ReadKey();
-            MenuMaterias();
+           
         }           
         void RevisarProgramacion()
         {
@@ -2270,7 +2274,7 @@ namespace ProgIIFinalProject
             Console.WriteLine("Presione cualquier tecla para continuar...");
             Console.ReadKey();
             con.Close();
-            MenuAlumnos();
+            
         }
         void BuscarMateria(string id)
         {   
@@ -2314,7 +2318,7 @@ namespace ProgIIFinalProject
             con.Close();
             Console.WriteLine("Presione cualquier tecla para continuar...");
             Console.ReadKey();
-            MenuMaterias();
+            
         }
         void BuscarSeleccionUsuario(string idAlumno)
          {
@@ -2741,7 +2745,7 @@ namespace ProgIIFinalProject
                     GotoXY("Atributo modificado correctamente", 0, 0);
                     Console.ReadKey();
                     con.Close();
-                    MenuAlumnos();
+                    
                 }
                 catch (Exception)
                 {
@@ -2874,7 +2878,7 @@ namespace ProgIIFinalProject
                     GotoXY("Atributo modificado correctamente", 0, 0);
                     Console.ReadKey();
                     con.Close();
-                    MenuMaterias();
+                    return;
                 }
                 catch (Exception)
                 {
@@ -2882,7 +2886,7 @@ namespace ProgIIFinalProject
                     GotoXY("Presione cualquier tecla para continuar...", 0,9);
                     Console.ReadKey();
                     con.Close();
-                    MenuMaterias();
+                    return;
                 }
             }
             else
@@ -2890,7 +2894,7 @@ namespace ProgIIFinalProject
                 Console.WriteLine("El ID ingresado no coincide con ninguno de los usuarios agregados");
                 Console.ReadKey();
                 con.Close();
-                MenuMaterias();
+                
             }
         }
         void EditarProgramacion(String id)
@@ -3242,7 +3246,7 @@ namespace ProgIIFinalProject
             }
 
             con.Close();
-            MenuAlumnos();
+            
         }
         void EliminarMateria(String id)
         {
@@ -3278,7 +3282,7 @@ namespace ProgIIFinalProject
             }
 
             con.Close();
-            MenuMaterias();
+            
         }
         void EliminarProgramacion(String id)
         {

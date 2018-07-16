@@ -41,7 +41,7 @@ namespace ProgIIFinalProject
             }
 
         }
-
+        int TodayRegister = 1;
         List<string> ListaAreas = new List<string>()
         {
             "Ingeneria","Ciencias Basicas Y Ambientales","Ciencias de la Salud", "Ciencias Sociales y Humanidades", "Economía y Negocios"
@@ -144,9 +144,15 @@ namespace ProgIIFinalProject
         }
         int GenerarIDAlumno(AlumnoCS usuario)
         {
-            usuario.GenerarID();
+            string yearIdentiffier = DateTime.Today.Year.ToString(), currentId = yearIdentiffier[2]+""+ yearIdentiffier[3];
+            string MothIdentiffier = DateTime.Today.Month.ToString(),DayIdentiffier = DateTime.Today.Day.ToString();
+            if (MothIdentiffier.Length == 1)
+            {
+                MothIdentiffier = "0" + MothIdentiffier;
+            }
+            currentId += MothIdentiffier + "" + DayIdentiffier;
             int id = 0000000;
-            id = usuario.ID;
+            id = (int.Parse(currentId)*1000)+TodayRegister;
             try
             {
                 DBConnect();
@@ -164,8 +170,8 @@ namespace ProgIIFinalProject
             {
                 Console.WriteLine("Database error");
             }
+            TodayRegister += 1;
             return id;
-
         }
 
         void MenuGeneral()
@@ -1385,7 +1391,7 @@ namespace ProgIIFinalProject
                 foreach (AlumnoCS alumno in AlumData)
                 {
                     AddAlumnsToDataBase(alumno.ID, alumno.IdentificadorPersonal, alumno.Nombre, alumno.Apellido, alumno.Estado, alumno.carrera,
-                        alumno.Extrangero.ToString(), alumno.FechaNacimiento);
+                        alumno.Nacionalidad.ToString(), alumno.FechaNacimiento);
                 }
                 con.Close();
             }
@@ -1411,7 +1417,7 @@ namespace ProgIIFinalProject
                 foreach (AlumnoCS alumno in AlumData)
                 {
                     AddAlumnsToDataBase(alumno.ID, alumno.IdentificadorPersonal, alumno.Nombre, alumno.Apellido, alumno.Estado, alumno.carrera,
-                        alumno.Extrangero.ToString(), alumno.FechaNacimiento);
+                        alumno.Nacionalidad.ToString(), alumno.FechaNacimiento);
                 }
                 con.Close();
             }
@@ -2719,15 +2725,18 @@ namespace ProgIIFinalProject
         void EditarProgramacion(String id)
         {
             int found = (0);
+            string thisArea = "";
             try
             {
                 DBConnect();
-                using (cmd = new SqlCommand("select * from Programacion where [ID]= @id", con))
+                
+                using (cmd = new SqlCommand("select [IDMateria] from Programacion where [ID]= @id", con))
                 {
                     cmd.Parameters.AddWithValue("@id", id);
                     SqlDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
+                        thisArea = reader["IDMateria"].ToString();
                         found += 1;
                     }
                     con.Close();
@@ -2740,6 +2749,19 @@ namespace ProgIIFinalProject
 
             if(found > 0)
             {
+                DBConnect();
+                using (cmd = new SqlCommand("select [Area] from Materias where [ID]= @id", con))
+                {
+                    cmd.Parameters.AddWithValue("@id", thisArea);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        thisArea = reader["Area"].ToString();
+                    }
+                    con.Close();
+                }
+                Dictionary<string, int> regla = new Dictionary<string, int>();
+                regla.Add(thisArea, 0);
                 DBConnect();
                 byte op;
                 Console.WriteLine("1)Asignar alumno a la programación \n2)Listar alumnos de la programación");
@@ -2756,22 +2778,10 @@ namespace ProgIIFinalProject
                             SqlDataReader reader = cmd.ExecuteReader();
                             while (reader.Read())
                             {
-                                idMateria = reader["Materia"].ToString();
-                                found += 1;
-                                
+                                idMateria = reader["IDMateria"].ToString();
+                                found += 1;   
                             }
                             reader.Close();
-                            using (SqlCommand cmd = new SqlCommand("Select [ID] from Materias where [Nombre]=@id", con))
-                            {
-                                cmd.Parameters.AddWithValue("@id", idMateria);
-                                SqlDataReader reader2 = cmd.ExecuteReader();
-                                while (reader2.Read())
-                                {
-                                    idMateria = reader2["ID"].ToString();
-                                }
-                                reader2.Close();
-                            }
-
                         }
                         if (found > 0)
                         {   
@@ -2779,6 +2789,8 @@ namespace ProgIIFinalProject
                             Console.SetCursorPosition(33, 0);
                             string idAlm = Console.ReadLine();
                             found = 0;
+                            bool registered = false;
+                            DBConnect();
                             using (cmd = new SqlCommand("Select * from Alumnos where [ID]=@id", con))
                             {
                                 cmd.Parameters.AddWithValue("@id", idAlm);
@@ -2789,9 +2801,113 @@ namespace ProgIIFinalProject
                                 }
                                 reader.Close();
                             }
+                            
                             if (found > 0)
                             {
+                                DBConnect();
+                                using (cmd = new SqlCommand("Select * from Seleccion where [IDAlumno]=@id and [IDProgramacion]=@prog", con))
+                                {
+                                    cmd.Parameters.AddWithValue("@id", idAlm);
+                                    cmd.Parameters.AddWithValue("@prog", id);
+                                    SqlDataReader reader = cmd.ExecuteReader();
+                                    while (reader.Read())
+                                    {
+                                        registered = true;
+                                    }
+                                    reader.Close();
+                                }
+                                if (registered)
+                                {
+                                    Console.WriteLine("El alumno ya está registrado en esta sección");
+                                    Console.ReadKey();
+                                    return;
+                                }
+                                registered = false;
+                                DBConnect();
+                                using (cmd = new SqlCommand("Select [Estado] from Alumnos where [ID]=@id", con))
+                                {
+                                    cmd.Parameters.AddWithValue("@id", idAlm);
+                                    SqlDataReader reader = cmd.ExecuteReader();
+                                    string estado = "";
+                                    while (reader.Read())
+                                    {
+                                        estado = reader["Estado"].ToString();
+                                    }
+                                    if (estado.ToUpper() == "INACTIVO")
+                                    {
+                                        registered = true;
+                                    }
+                                    reader.Close();
+                                }
+                                if (registered)
+                                {
+                                    Console.WriteLine("El alumno debe no puede estar inactivo");
+                                    Console.ReadKey();
+                                    return;
+                                }
+                                int conteo = 0;
+                                DBConnect();
+                                using (cmd = new SqlCommand("Select * from Seleccion where [IDAlumno]=@id", con))
+                                {
+                                    cmd.Parameters.AddWithValue("@id", idAlm);
+                                    cmd.Parameters.AddWithValue("@orig", id);
+                                    SqlDataReader reader = cmd.ExecuteReader();
+                                    while (reader.Read())
+                                    {
+                                        conteo += 1;
+                                    }
+                                    reader.Close();
+                                }
+                                if (conteo>=5)
+                                {
+                                    Console.WriteLine("El alumno ya está inscrito en el máximo de programaciones posibles");
+                                    Console.ReadKey();
+                                    return;
+                                }
+                                conteo = 0;
+                                DBConnect();
+                                List<string> materias = new List<string>();
+                                using (cmd = new SqlCommand("Select [IDMateria] from Seleccion where [IDAlumno]=@id", con))
+                                {
+                                    cmd.Parameters.AddWithValue("@id", idAlm);
+                                    cmd.Parameters.AddWithValue("@prog", id);
+                                    SqlDataReader reader = cmd.ExecuteReader();
+                                    
+                                    while (reader.Read())
+                                    {
+                                        materias.Add(reader["IDMateria"].ToString());
+                                        
+                                    }
+                                    reader.Close();
+                                }
+                                foreach (var materia in materias)
+                                {
+                                    using (cmd = new SqlCommand("Select [Area] from Materias where [ID]=@id", con))
+                                    {
+                                        cmd.Parameters.AddWithValue("@id", materia);
+                                        SqlDataReader reader = cmd.ExecuteReader();
+                                        string localArea = "";
+                                        while (reader.Read())
+                                        {
+                                            localArea = reader["Area"].ToString();
+                                            if (localArea.ToLower() == thisArea.ToLower())
+                                            {
+                                                conteo++;
+                                            }
+                                        }
+                                        reader.Close();
+                                    }
+                                }
+                                
+                                if (conteo > 2)
+                                {
+                                    Console.WriteLine("El alumno ya está inscrito en el máximo de programaciones de esta area permitido");
+                                    Console.ReadKey();
+                                    return;
+                                }
+
                                 bool gotit = false;
+                                DBConnect();
                                 using (cmd = new SqlCommand("Insert into [Seleccion] Values(@idProg, @idAlumno, @idMat)", con))
                                 {
                                     cmd.Parameters.AddWithValue("@idProg", id);
@@ -2805,12 +2921,14 @@ namespace ProgIIFinalProject
                                 {
                                     Console.WriteLine("Alumno agregado correctamente");
                                     Console.ReadKey();
+                                    con.Close();
                                     MenuProgramaciones();
                                 }
                                 else
                                 {
                                     Console.WriteLine("Alumno no pudo ser agregado");
                                     Console.ReadKey();
+                                    con.Close();
                                     MenuProgramaciones();
                                 }
                                 
@@ -2819,6 +2937,7 @@ namespace ProgIIFinalProject
                             {
                                 Console.WriteLine("El alumno no existe");
                                 Console.ReadKey();
+                                con.Close();
                                 MenuProgramaciones();
                             }
                                 
@@ -2827,6 +2946,7 @@ namespace ProgIIFinalProject
                         {
                             Console.WriteLine("La Programación no existe");
                             Console.ReadKey();
+                            con.Close();
                             MenuProgramaciones();
                         }
                         break;

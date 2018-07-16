@@ -17,7 +17,7 @@ namespace ProgIIFinalProject
         private int _ID;
         private String _identificadorPersonal;
         private String _estado;
-        private bool _extrangero = true;
+        private bool _nacionalidad = true;
         private String _carrera;
         private string _fechaNacimiento;
         
@@ -53,10 +53,10 @@ namespace ProgIIFinalProject
             get { return _carrera; }
             set { _carrera = value; }
         }
-        public bool Extrangero
+        public bool Nacionalidad
         {
-            get { return _extrangero; }
-            set { _extrangero = value; }
+            get { return _nacionalidad; }
+            set { _nacionalidad = value; }
         }
  
         public string FechaNacimiento
@@ -77,7 +77,7 @@ namespace ProgIIFinalProject
             _ID = ID;
             _identificadorPersonal = identificadorPersonal;
             _estado = estado;
-            _extrangero = extrangero;
+            _nacionalidad = extrangero;
             _carrera = carrera;
             _fechaNacimiento = fechaNacimiento;
         }

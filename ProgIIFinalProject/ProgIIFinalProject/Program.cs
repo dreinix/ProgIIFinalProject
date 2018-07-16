@@ -379,7 +379,7 @@ namespace ProgIIFinalProject
                     break;
                 case 2:
                     Console.WriteLine("Ingrese el ID de la programación: ");
-                    mostrarProgramaciones(0, 13, 10);
+                    mostrarProgramaciones(0, 15, 10);
                     iD = Console.ReadLine();
                     EditarProgramacion(iD);
                     break;
@@ -476,6 +476,7 @@ namespace ProgIIFinalProject
                         opcion = 0;
                     }
                     Console.WriteLine("Ingrese el ID de la programacion de la cual desea generar un reporte: ");
+                    mostrarProgramaciones(0, 10,7);
                     iD = Console.ReadLine();
                     switch (opcion)
                     {
@@ -2961,6 +2962,8 @@ namespace ProgIIFinalProject
                         if (found > 0)
                         {   
                             Console.WriteLine("Ingrese el id del estudiante: ");
+                            
+                            mostrarEstudiantes(0, 3, 0, 0);
                             Console.SetCursorPosition(33, 0);
                             string idAlm = Console.ReadLine();
                             found = 0;
@@ -3283,6 +3286,7 @@ namespace ProgIIFinalProject
 
             con.Close();
             
+
         }
         void EliminarProgramacion(String id)
         {

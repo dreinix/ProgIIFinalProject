@@ -254,6 +254,8 @@ namespace ProgIIFinalProject
                         break;
                     case 3:
                         Console.WriteLine("Ingrese el nombre o el area de la materia: ");
+                        mostrarMaterias(0, 13);
+                        Console.SetCursorPosition(0, 10);
                         iD = Console.ReadLine();
                         BuscarMateria(iD);
                         break;
@@ -1279,7 +1281,33 @@ namespace ProgIIFinalProject
             MenuReportes();
         }
     
+        void mostrarMaterias(int x, int y)
+        {
+            DBConnect();
+            int xPosition = 0;
+            GotoXY("ID    Materias", x, y);
+            GotoXY("--------------", x, y+1);
+            using (cmd = new SqlCommand("select * from Materias", con))
+            {
+                SqlDataReader reader = cmd.ExecuteReader();
+                int index = y+2;
+                while (reader.Read())
+                {
+                    Console.SetCursorPosition(xPosition, index);
+                    string Mid = reader["ID"].ToString();
+                    Console.WriteLine(Mid);
+                    xPosition += Mid.Length + 2;
+                    Console.SetCursorPosition(xPosition, index);
+                    string NombreMateria = reader["Nombre"].ToString();
+                    Console.WriteLine(NombreMateria);
+                    xPosition = 0;
+                    index += 1;
+                }
+                con.Close();
+            }
 
+
+        }
     
 
         //Exportar
@@ -1309,18 +1337,21 @@ namespace ProgIIFinalProject
                         serializer.Serialize(file, AlumData);
                     }
                 }
-                con.Close();
+                
+                
             }
             
                 catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
                 Console.ReadKey();
+                con.Close();
                 return;
             }
             Console.WriteLine("Exportacion exitosa");
-        
+            con.Close();
             
+
         }
         void ExportarAlumnoXML()
         {
@@ -1347,19 +1378,20 @@ namespace ProgIIFinalProject
                         writer.Serialize(Write, AlumData);
                     }
                 }
-                con.Close();
+                
             }
             catch (Exception ex)
             {
                 
                 MessageBox.Show(ex.Message);
+                con.Close();
                 Console.ReadKey();
                 return;
             }
 
-            
+            con.Close();
             Console.WriteLine("Exportación exitosa");
-            Console.ReadKey();
+            
 
         }
         void ExportarMateriasJson()
@@ -1384,17 +1416,19 @@ namespace ProgIIFinalProject
                         serializer.Serialize(file, MatData);
                     }
                 }
-                con.Close();
+                
             }
             catch(Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                con.Close();
                 Console.ReadKey();
                 return;
             }
-
+            con.Close();
             Console.WriteLine("Exportación exitosa");
-            Console.ReadKey();
+            
+
         }
         void ExportarMateriasXML()
         {
@@ -1418,17 +1452,18 @@ namespace ProgIIFinalProject
                         writer.Serialize(Write, MatData);
                     }
                 }
-                con.Close();
+                
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                con.Close();
                 Console.ReadKey();
                 return;
             }
-            
+            con.Close();
             Console.WriteLine("Exportación exitosa");
-            Console.ReadKey();
+           
 
         }
 
@@ -1441,7 +1476,7 @@ namespace ProgIIFinalProject
 
                 
                 Console.WriteLine("Ingrese la ruta");
-                string path = "Json Export-Alumnos.Json";
+                string path = Console.ReadLine();
 
                 //List<AlumnoCS> UserList = JsonConvert.DeserializeObject<List<AlumnoCS>>(path);
                 using (StreamReader r = new StreamReader(path))
@@ -1467,7 +1502,7 @@ namespace ProgIIFinalProject
 
 
                 Console.WriteLine("Ingrese la ruta");
-                string path = "XML export - Alumnos.xml";
+                string path = Console.ReadLine();
 
                 //List<AlumnoCS> UserList = JsonConvert.DeserializeObject<List<AlumnoCS>>(path);
                 using (StreamReader xmlReader = new StreamReader(path))
@@ -1494,7 +1529,7 @@ namespace ProgIIFinalProject
 
 
                 Console.WriteLine("Ingrese la ruta");
-                string path = "Json Export-Materias.Json";
+                string path = Console.ReadLine();
 
                 //List<AlumnoCS> UserList = JsonConvert.DeserializeObject<List<AlumnoCS>>(path);
                 using (StreamReader r = new StreamReader(path))
@@ -1519,7 +1554,7 @@ namespace ProgIIFinalProject
 
 
                 Console.WriteLine("Ingrese la ruta");
-                string path = "XML export - Materias.xml";
+                string path = Console.ReadLine();
 
                 //List<AlumnoCS> UserList = JsonConvert.DeserializeObject<List<AlumnoCS>>(path);
                 using (StreamReader xmlReader = new StreamReader(path))
@@ -2102,7 +2137,7 @@ namespace ProgIIFinalProject
 
 
         }
-        //nada
+        
         void BuscarUsuario(String id)
         {
             

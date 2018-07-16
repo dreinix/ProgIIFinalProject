@@ -143,7 +143,7 @@ namespace ProgIIFinalProject
             return code;
 
         }
-        int GenerarIDAlumno(AlumnoCS usuario)
+        int GenerarIDAlumno()
         {
             string yearIdentiffier = DateTime.Today.Year.ToString(), currentId = yearIdentiffier[2]+""+ yearIdentiffier[3];
             string MothIdentiffier = DateTime.Today.Month.ToString(),DayIdentiffier = DateTime.Today.Day.ToString();
@@ -161,14 +161,29 @@ namespace ProgIIFinalProject
                 {
                     cmd.Parameters.AddWithValue("@id", id);
                     SqlDataReader reader = cmd.ExecuteReader();
-                    while (reader.Read())
+                    try
                     {
-                        GenerarIDAlumno(usuario);
+                        while (reader.Read())
+                        {
+                            if (id.ToString() == reader["ID"].ToString())
+                            {
+                                reader.Close();
+                                ++TodayRegister;
+                                id = GenerarIDAlumno();
+                            }
+
+                        }
                     }
+                    catch
+                    {
+
+                    }
+                    
                 }
             }
-            catch
+            catch(Exception ex)
             {
+                MessageBox.Show(ex.Message); 
                 Console.WriteLine("Database error");
             }
             TodayRegister += 1;
@@ -1725,8 +1740,8 @@ namespace ProgIIFinalProject
             apellido = Console.ReadLine();
             xPosition += apellido.Length + 1;
 
-            usuario.ID = GenerarIDAlumno(usuario);
-
+            usuario.ID = GenerarIDAlumno();
+            
             GotoXY("-Carrera: ", xPosition, 1);
             xPosition += 9;
             Console.SetCursorPosition(xPosition, 1);

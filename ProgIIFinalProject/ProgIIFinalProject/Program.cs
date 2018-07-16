@@ -254,22 +254,22 @@ namespace ProgIIFinalProject
                         break;
                     case 3:
                         Console.WriteLine("Ingrese el nombre o el area de la materia: ");
-                        mostrarMaterias(0, 13);
-                        Console.SetCursorPosition(0, 10);
+                        mostrarMaterias(0, 13,10);
+                        
                         iD = Console.ReadLine();
                         BuscarMateria(iD);
                         break;
                     case 4:
                         Console.WriteLine("Ingrese el ID o el codigo de la materia al que desea modificar algun dato: \n");
-                        mostrarMaterias(0, 13);
-                        Console.SetCursorPosition(0, 10);
+                        mostrarMaterias(0, 13,10);
+                        
                         iD = Console.ReadLine();
                         EditarMateria(iD);
                         break;
                     case 5:
                         Console.WriteLine("Ingrese el ID o el codigo de la materia que desea eliminar: \n");
-                        mostrarMaterias(0, 13);
-                        Console.SetCursorPosition(0, 10);
+                        mostrarMaterias(0, 13,10);
+                        
                         iD = Console.ReadLine();
                         EliminarMateria(iD);
                         break;
@@ -318,16 +318,19 @@ namespace ProgIIFinalProject
                     break;
                 case 3:
                     Console.WriteLine("Ingrese el nombre o el identificador nacional del usuario: ");
+                    mostrarEstudiantes(0, 13, 10);
                     iD = Console.ReadLine();
                     BuscarUsuario(iD);
                     break;
                 case 4:
                     Console.WriteLine("Ingrese el ID del usuario al que desea modificar algun dato: \n");
+                    mostrarEstudiantes(0, 13, 10);
                     iD = Console.ReadLine();
                     EditarUsuario(iD);
                     break;
                 case 5:
                     Console.WriteLine("Ingrese el ID del usuario al que desea eliminar: \n");
+                    mostrarEstudiantes(0, 13, 10);
                     iD = Console.ReadLine();
                     EliminarUsuario(iD);
                     break;
@@ -372,11 +375,13 @@ namespace ProgIIFinalProject
                     break;
                 case 2:
                     Console.WriteLine("Ingrese el ID de la programación: ");
+                    mostrarProgramaciones(0, 13, 10);
                     iD = Console.ReadLine();
                     EditarProgramacion(iD);
                     break;
                 case 3:
                     Console.WriteLine("Ingrese el id de la programacion: ");
+                    mostrarProgramaciones(0, 13, 10);
                     iD = Console.ReadLine();
                     EliminarProgramacion(iD);
                     break;
@@ -393,11 +398,13 @@ namespace ProgIIFinalProject
                         {
                             case 1:
                                 Console.WriteLine("Ingrese el ID del estudiante a buscar \n");
+                                mostrarEstudiantes(0, 16, 13);
                                 iD = Console.ReadLine();
                                 BuscarSeleccionUsuario(iD);
                                 break;
                             case 2:
                                 Console.WriteLine("Ingrese el ID de la materia a buscar \n");
+                                mostrarMaterias(0, 16, 13);
                                 iD = Console.ReadLine();
                                 BuscarSeccionesMateria(iD);
                                 break;
@@ -1285,7 +1292,7 @@ namespace ProgIIFinalProject
             MenuReportes();
         }
     
-        void mostrarMaterias(int x, int y)
+        void mostrarMaterias(int x, int y, int z)
         {
             DBConnect();
             int xPosition = 0;
@@ -1310,9 +1317,60 @@ namespace ProgIIFinalProject
                 con.Close();
             }
 
+            Console.SetCursorPosition (0,z);
+        }
+        void mostrarEstudiantes(int x, int y, int z)
+        {
+            DBConnect();
+            int xPosition = 0;
+            GotoXY("ID       Alumnos", x, y);
+            GotoXY("-----------------", x, y + 1);
+            using (cmd = new SqlCommand("select * from Alumnos", con))
+            {
+                SqlDataReader reader = cmd.ExecuteReader();
+                int index = y + 2;
+                while (reader.Read())
+                {
+                    Console.SetCursorPosition(xPosition, index);
+                    string Mid = reader["Identificador"].ToString();
+                    Console.WriteLine(Mid);
+                    xPosition = 9;
+                    Console.SetCursorPosition(xPosition, index);
+                    string NombreMateria = reader["Nombre"].ToString();
+                    Console.WriteLine(NombreMateria);
+                    xPosition = 0;
+                    index += 1;
+                }
+                con.Close();
+            }
+            Console.SetCursorPosition(0, z);
 
         }
-    
+        void mostrarProgramaciones(int x, int y, int z)
+        {
+            DBConnect();
+            int xPosition = 0;
+            GotoXY("  ID  ", x, y);
+            GotoXY("------", x, y + 1);
+            using (cmd = new SqlCommand("select * from Programacion", con))
+            {
+                SqlDataReader reader = cmd.ExecuteReader();
+                int index = y + 2;
+                while (reader.Read())
+                {
+                    Console.SetCursorPosition(xPosition, index);
+                    string Mid = reader["ID"].ToString();
+                    Console.WriteLine(Mid);                                       
+                    xPosition = 0;
+                    index += 1;
+                }
+                con.Close();
+            }
+
+            Console.SetCursorPosition(0, z);
+
+
+        }
 
         //Exportar
 

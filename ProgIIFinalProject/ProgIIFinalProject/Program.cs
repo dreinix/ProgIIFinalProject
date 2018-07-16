@@ -27,7 +27,8 @@ namespace ProgIIFinalProject
             try
             {
                 con.Close();
-            } catch (Exception) { };
+            }
+            catch (Exception) { };
             try
             {
                 string cPath = System.IO.Path.GetFullPath(@"..\..\") + "ProgIIDB.mdf";
@@ -176,7 +177,7 @@ namespace ProgIIFinalProject
 
         void MenuGeneral()
         {
-            byte opcion=0;
+            byte opcion = 0;
             while (opcion != 6)
             {
                 Console.Clear();
@@ -218,11 +219,11 @@ namespace ProgIIFinalProject
                         break;
                 }
             }
-            
+
         }
         void MenuMaterias()
         {
-            byte opcion=0;
+            byte opcion = 0;
             while (opcion != 6)
             {
                 string iD;
@@ -276,7 +277,7 @@ namespace ProgIIFinalProject
                         break;
                 }
                 Console.ReadKey();
-            }   
+            }
 
         }
         void MenuAlumnos()
@@ -379,7 +380,8 @@ namespace ProgIIFinalProject
                 case 5:
                     byte op;
                     Console.WriteLine("1)Buscar seleccion del estudiante \n2) Buscar secciones de una materia");
-                    try {
+                    try
+                    {
                         op = byte.Parse(Console.ReadLine());
                         switch (op)
                         {
@@ -401,7 +403,8 @@ namespace ProgIIFinalProject
                                 break;
 
                         }
-                    } catch (Exception ex)
+                    }
+                    catch (Exception ex)
                     {
                         Console.WriteLine(ex.Message);
                         Console.ReadKey();
@@ -502,14 +505,14 @@ namespace ProgIIFinalProject
             byte opcion = 0, op2 = 0;
             while (opcion != 5)
             {
-                
+
                 Console.Clear();
                 Console.SetCursorPosition(5, 0);
                 Console.WriteLine("*****Menú*****");
                 Console.WriteLine("1. Importar alumnos \n" +
                     "2. Exportar alumnos \n" +
                     "3. Importar materias \n" +
-                    "4. Exportar materias \n"+
+                    "4. Exportar materias \n" +
                     "5. Salir");
                 try
                 {
@@ -524,7 +527,7 @@ namespace ProgIIFinalProject
                     case 1:
                         Console.Clear();
                         Console.WriteLine("1. Json \n" +
-                            "2. XML \n"+
+                            "2. XML \n" +
                             "3. Atras");
                         op2 = byte.Parse(Console.ReadLine());
                         switch (op2)
@@ -604,7 +607,7 @@ namespace ProgIIFinalProject
                             default:
                                 break;
                         }
-                        
+
                         Console.ReadKey();
                         break;
                     case 5:
@@ -613,7 +616,7 @@ namespace ProgIIFinalProject
                     default:
                         break;
                 }
-                
+
             }
 
         }
@@ -1066,31 +1069,37 @@ namespace ProgIIFinalProject
         void generarReporteExcel(string id)
         {
 
-            FileInfo reporte = new FileInfo("Reporte - " + id + ".xlsx");
-            using (ExcelPackage excel = new ExcelPackage(reporte))
+
+            DBConnect();
+            int found = (0);
+            try
             {
                 DBConnect();
-                int found = (0);
-                try
+                using (cmd = new SqlCommand("select * from Programacion where [ID] = @id", con))
                 {
-                    DBConnect();
-                    using (cmd = new SqlCommand("select * from Programacion where [ID] = @id", con))
+                    cmd.Parameters.AddWithValue("@id", id);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        cmd.Parameters.AddWithValue("@id", id);
-                        SqlDataReader reader = cmd.ExecuteReader();
-                        while (reader.Read())
-                        {
-                            found += 1;
-                        }
-                        con.Close();
+                        found += 1;
                     }
+                    con.Close();
                 }
-                catch
-                {
-                    Console.WriteLine("Database error");
-                }
+            }
+            catch
+            {
+                Console.WriteLine("Database error");
+            }
 
-                if (found > 0)
+            if (found > 0)
+            {
+                string sFile = "Reporte - " + id + ".xlsx";
+                if (File.Exists(sFile))
+                {
+                    File.Delete(sFile);
+                }
+                FileInfo reporte = new FileInfo("Reporte - " + id + ".xlsx");
+                using (ExcelPackage excel = new ExcelPackage(reporte))
                 {
                     DBConnect();
                     string materia = "", maestro = "", aula = "", horario = "";
@@ -1154,9 +1163,14 @@ namespace ProgIIFinalProject
                     programacionWorksheet.Cells["B10"].Value = "Matrícula";
                     programacionWorksheet.Cells["C10"].Value = "Programa";
                     programacionWorksheet.Cells["D10"].Value = "Nombre";
-                    programacionWorksheet.Cells["E10"].Value = "Ausencias";
-                    programacionWorksheet.Cells["F10"].Value = "Total";
-                    programacionWorksheet.Cells["A10:F10"].Style.Font.Bold = true;
+
+                    var titleCell4 = programacionWorksheet.Cells["E10:Y10"];
+                    titleCell4.Merge = true;
+                    titleCell4.Value = "Ausencias";
+                    programacionWorksheet.Cells["E10:Y10"].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
+                    programacionWorksheet.Cells["Z10"].Value = "Total";
+                    programacionWorksheet.Cells["A10:Z10"].Style.Font.Bold = true;
 
                     found = 0;
                     using (cmd = new SqlCommand("select * from Programacion where [ID] = @id", con))
@@ -1195,7 +1209,7 @@ namespace ProgIIFinalProject
                         reader.Close();
 
                     }
-
+                    int len = idAlumno.Length;
                     a = 0;
                     if (found > 0)
                     {
@@ -1227,52 +1241,86 @@ namespace ProgIIFinalProject
                             column++;
                             cell++;
                         }
+
+                        for (int i = 5; i <= 25; i++)
+                        {
+                            programacionWorksheet.Column(i).Width = 2;
+                        }
+                        programacionWorksheet.Cells["A1:A" + (len + 10)].AutoFitColumns();
+                        programacionWorksheet.Cells["C9:D" + (len + 10)].AutoFitColumns();
+                        programacionWorksheet.Cells["Z9:Z" + (len + 10)].AutoFitColumns();
+
+                        var modelTable = programacionWorksheet.Cells["A10:Z" + (len + 9)];
+
+
+                        modelTable.Style.Border.Top.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                        modelTable.Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                        modelTable.Style.Border.Right.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                        modelTable.Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+
                         excel.Save();
-                       
+
 
                     }
+
+
+
                 }
-                else
-                {
-                    Console.WriteLine("Programación no encontrada");
-                    Console.ReadKey();
-                    MenuReportes();
-                }
-                Console.Clear();
-                Console.WriteLine("Reporte creado exitosamente");
+            }
+            else
+            {
+                Console.WriteLine("Programación no encontrada");
                 Console.ReadKey();
                 MenuReportes();
             }
-
+            Console.Clear();
+            Console.WriteLine("Reporte creado exitosamente");
+            Console.ReadKey();
+            MenuReportes();
         }
+    
+
+    
 
         //Exportar
 
         void ExportarAlumnoJson()
         {
-            List<AlumnoCS> AlumData = new List<AlumnoCS>();
-
-            DBConnect();
-            using (cmd = new SqlCommand("select * from Alumnos", con))
+            try
             {
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    AlumnoCS alumno = new AlumnoCS(reader["Nombre"].ToString(), reader["Apellido"].ToString(), int.Parse(reader["ID"].ToString())
-                        , reader["Identificador"].ToString(), reader["Estado"].ToString(), (bool.Parse(reader["Extranjero"].ToString()))
-                        , reader["Carrera"].ToString(), (DateTime.Parse(reader["Fecha"].ToString()).ToShortDateString()));
+                List<AlumnoCS> AlumData = new List<AlumnoCS>();
 
-                    AlumData.Add(alumno);
-                }
-                using (StreamWriter file = File.CreateText("Json Export-Alumnos.Json"))
+                DBConnect();
+                using (cmd = new SqlCommand("select * from Alumnos", con))
                 {
-                    JsonSerializer serializer = new JsonSerializer();
-                    //serialize object directly into file stream
-                    serializer.Serialize(file, AlumData);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        AlumnoCS alumno = new AlumnoCS(reader["Nombre"].ToString(), reader["Apellido"].ToString(), int.Parse(reader["ID"].ToString())
+                            , reader["Identificador"].ToString(), reader["Estado"].ToString(), (bool.Parse(reader["Extranjero"].ToString()))
+                            , reader["Carrera"].ToString(), (DateTime.Parse(reader["Fecha"].ToString()).ToShortDateString()));
+
+                        AlumData.Add(alumno);
+                    }
+                    using (StreamWriter file = File.CreateText("Json Export-Alumnos.Json"))
+                    {
+                        JsonSerializer serializer = new JsonSerializer();
+                        //serialize object directly into file stream
+                        serializer.Serialize(file, AlumData);
+                    }
                 }
+                con.Close();
             }
-            con.Close();
-
+            
+                catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                Console.ReadKey();
+                return;
+            }
+            Console.WriteLine("Exportacion exitosa");
+        
+            
         }
         void ExportarAlumnoXML()
         {
@@ -1299,13 +1347,19 @@ namespace ProgIIFinalProject
                         writer.Serialize(Write, AlumData);
                     }
                 }
+                con.Close();
             }
             catch (Exception ex)
             {
+                
                 MessageBox.Show(ex.Message);
+                Console.ReadKey();
+                return;
             }
 
-            con.Close();
+            
+            Console.WriteLine("Exportación exitosa");
+            Console.ReadKey();
 
         }
         void ExportarMateriasJson()
@@ -1330,14 +1384,17 @@ namespace ProgIIFinalProject
                         serializer.Serialize(file, MatData);
                     }
                 }
-                
+                con.Close();
             }
             catch(Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                Console.ReadKey();
+                return;
             }
-            con.Close();
 
+            Console.WriteLine("Exportación exitosa");
+            Console.ReadKey();
         }
         void ExportarMateriasXML()
         {
@@ -1361,12 +1418,17 @@ namespace ProgIIFinalProject
                         writer.Serialize(Write, MatData);
                     }
                 }
+                con.Close();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                Console.ReadKey();
+                return;
             }
-            con.Close();
+            
+            Console.WriteLine("Exportación exitosa");
+            Console.ReadKey();
 
         }
 

@@ -716,30 +716,6 @@ namespace ProgIIFinalProject
                 }
 
                 reporte.Add(new Paragraph("Aula: " + aula));
-                /*reporte.Add(new Paragraph("Horario: \t \t \t \t \t \t \t \t \t \t " + "Aula: " + aula + "\n Lunes\t \t Martes \t \t Miercoles \t \t Jueves \t \t Viernes"));
-                Dictionary<String, int> DayValue = new Dictionary<string, int>();
-                DayValue.Add("Lunes", 1);
-                DayValue.Add("Martes", 2);
-                DayValue.Add("Miercoles", 3);
-                DayValue.Add("Jueves", 4);
-                DayValue.Add("Viernes", 5);
-                DayValue.Add("Sabado", 6);
-                horario += "\t";
-                for (int aux = 0; aux <= arrayDia.Length - 1; aux++)
-                {
-                    int number = DayValue[arrayDia[aux]];
-                    for (int c = 0; c < number; c++)
-                    {
-                        horario += "\t";
-                    }
-                    if (aux < arrayHora.Length)
-                    {
-                        horario += arrayHora[aux];
-                    }
-
-                }
-                reporte.Add(new Paragraph(horario));
-                */
                 reporte.Add(Chunk.NEWLINE);
 
                 PdfPTable tblProgramacion = new PdfPTable(25);
@@ -884,9 +860,10 @@ namespace ProgIIFinalProject
                         column++;
                     }
                     reporte.Add(tblProgramacion);
-                    reporte.Close();
+                    
                     writer.Close();
                 }
+                reporte.Close();
             }
             else
             {
@@ -1286,13 +1263,8 @@ namespace ProgIIFinalProject
                         modelTable.Style.Border.Right.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
                         modelTable.Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
 
-                        excel.Save();
-
-
                     }
-
-
-
+                    excel.Save();
                 }
             }
             else
@@ -1565,7 +1537,14 @@ namespace ProgIIFinalProject
 
                 
                 Console.WriteLine("Ingrese la ruta");
-                string path = Console.ReadLine();
+                OpenFileDialog dialog = new OpenFileDialog();
+                DialogResult result = dialog.ShowDialog();
+                string path="";
+                if (result == DialogResult.OK)
+                {
+                    path = dialog.FileName;
+                }
+                
 
                 //List<AlumnoCS> UserList = JsonConvert.DeserializeObject<List<AlumnoCS>>(path);
                 using (StreamReader r = new StreamReader(path))
@@ -1576,8 +1555,22 @@ namespace ProgIIFinalProject
                 DBConnect();
                 foreach (AlumnoCS alumno in AlumData)
                 {
-                    AddAlumnsToDataBase(alumno.ID, alumno.IdentificadorPersonal, alumno.Nombre, alumno.Apellido, alumno.Estado, alumno.carrera,
+                    try
+                    {
+                        AddAlumnsToDataBase(alumno.ID, alumno.Cedula, alumno.Nombre, alumno.Apellido, alumno.Estado, alumno.carrera,
                         alumno.Nacionalidad.ToString(), alumno.FechaNacimiento);
+                    }
+                    catch (Exception)
+                    {
+                        using(cmd = new SqlCommand("delete from Alumnos where [ID]=@id",con))
+                        {
+                            cmd.Parameters.AddWithValue("@id", alumno.ID);
+                            cmd.ExecuteNonQuery();
+                        }
+                        AddAlumnsToDataBase(alumno.ID, alumno.Cedula, alumno.Nombre, alumno.Apellido, alumno.Estado, alumno.carrera,
+                                                alumno.Nacionalidad.ToString(), alumno.FechaNacimiento);
+                    }
+                    
                 }
                 con.Close();
             }
@@ -1591,7 +1584,13 @@ namespace ProgIIFinalProject
 
 
                 Console.WriteLine("Ingrese la ruta");
-                string path = Console.ReadLine();
+                OpenFileDialog dialog = new OpenFileDialog();
+                DialogResult result = dialog.ShowDialog();
+                string path = "";
+                if (result == DialogResult.OK)
+                {
+                    path = dialog.FileName;
+                }
 
                 //List<AlumnoCS> UserList = JsonConvert.DeserializeObject<List<AlumnoCS>>(path);
                 using (StreamReader xmlReader = new StreamReader(path))
@@ -1602,10 +1601,24 @@ namespace ProgIIFinalProject
                 DBConnect();
                 foreach (AlumnoCS alumno in AlumData)
                 {
-                    AddAlumnsToDataBase(alumno.ID, alumno.IdentificadorPersonal, alumno.Nombre, alumno.Apellido, alumno.Estado, alumno.carrera,
+                    try
+                    {
+                        AddAlumnsToDataBase(alumno.ID, alumno.Cedula, alumno.Nombre, alumno.Apellido, alumno.Estado, alumno.carrera,
                         alumno.Nacionalidad.ToString(), alumno.FechaNacimiento);
+                    }
+                    catch (Exception)
+                    {
+                        using (cmd = new SqlCommand("delete from Alumnos where [ID]=@id",con))
+                        {
+                            cmd.Parameters.AddWithValue("@id", alumno.ID);
+                            cmd.ExecuteNonQuery();
+                        }
+                        AddAlumnsToDataBase(alumno.ID, alumno.Cedula, alumno.Nombre, alumno.Apellido, alumno.Estado, alumno.carrera,
+                                                alumno.Nacionalidad.ToString(), alumno.FechaNacimiento);
+                    }
                 }
                 con.Close();
+                MessageBox.Show("Importacion exitosa");
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
 
@@ -1618,7 +1631,13 @@ namespace ProgIIFinalProject
 
 
                 Console.WriteLine("Ingrese la ruta");
-                string path = Console.ReadLine();
+                OpenFileDialog dialog = new OpenFileDialog();
+                DialogResult result = dialog.ShowDialog();
+                string path = "";
+                if (result == DialogResult.OK)
+                {
+                    path = dialog.FileName;
+                }
 
                 //List<AlumnoCS> UserList = JsonConvert.DeserializeObject<List<AlumnoCS>>(path);
                 using (StreamReader r = new StreamReader(path))
@@ -1628,10 +1647,11 @@ namespace ProgIIFinalProject
                 }
                 DBConnect();
                 foreach (TempMat materia in MatData)
-                {
+                {   
                     AddMateriasToDataBase(GenerarIDMateria(),materia.Codigo, materia.Nombre, materia.Area);
                 }
                 con.Close();
+                MessageBox.Show("Importacion exitosa");
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
@@ -1643,7 +1663,13 @@ namespace ProgIIFinalProject
 
 
                 Console.WriteLine("Ingrese la ruta");
-                string path = Console.ReadLine();
+                OpenFileDialog dialog = new OpenFileDialog();
+                DialogResult result = dialog.ShowDialog();
+                string path = "";
+                if (result == DialogResult.OK)
+                {
+                    path = dialog.FileName;
+                }
 
                 //List<AlumnoCS> UserList = JsonConvert.DeserializeObject<List<AlumnoCS>>(path);
                 using (StreamReader xmlReader = new StreamReader(path))
@@ -1661,7 +1687,7 @@ namespace ProgIIFinalProject
             catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
 
-
+        [STAThread]
         static void Main(string[] args)
         {   
             Console.SetWindowSize(Convert.ToInt32(Console.LargestWindowWidth), Convert.ToInt32(Console.LargestWindowHeight));

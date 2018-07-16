@@ -15,7 +15,7 @@ namespace ProgIIFinalProject
         private String _nombre;
         private String _apellido;
         private int _ID;
-        private String _identificadorPersonal;
+        private String _cedula;
         private String _estado;
         private bool _nacionalidad = true;
         private String _carrera;
@@ -37,10 +37,10 @@ namespace ProgIIFinalProject
             get { return _ID; }
             set { _ID = value; }
         }
-        public string IdentificadorPersonal
+        public string Cedula
         {
-            get { return _identificadorPersonal; }
-            set { _identificadorPersonal = value; }
+            get { return _cedula; }
+            set { _cedula = value; }
 
         }
         public string Estado
@@ -75,7 +75,7 @@ namespace ProgIIFinalProject
             _nombre = nombre;
             _apellido = apellido;
             _ID = ID;
-            _identificadorPersonal = identificadorPersonal;
+            _cedula = identificadorPersonal;
             _estado = estado;
             _nacionalidad = extrangero;
             _carrera = carrera;

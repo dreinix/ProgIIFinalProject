@@ -447,76 +447,86 @@ namespace ProgIIFinalProject
         }
         void MenuReportes()
         {
-            byte opcion;
-            string iD;
-            Console.Clear();
-            Console.SetCursorPosition(5, 0);
-            Console.WriteLine("*****Menú*****");
-            Console.WriteLine("1.Crear reporte \n2.Salir");
-            try
+            byte opcion = 0;
+            while (opcion != 2)
             {
-                opcion = byte.Parse(Console.ReadLine());
+                string iD;
+                Console.Clear();
+                Console.SetCursorPosition(5, 0);
+                Console.WriteLine("*****Menú*****");
+                Console.WriteLine("1.Crear reporte \n2.Salir");
+                try
+                {
+                    opcion = byte.Parse(Console.ReadLine());
+                }
+                catch (Exception)
+                {
+                    opcion = 0;
+                }
+                switch (opcion)
+                {
+                    case 1:
+
+                        Console.Clear();
+                        Console.WriteLine("Seleccione el formato en el que desee generar el reporte: \n1.PDF\n2.Excel\n3.CSV\n");
+                        try
+                        {
+                            opcion = byte.Parse(Console.ReadLine());
+                        }
+                        catch (Exception)
+                        {
+                            opcion = 0;
+                        }
+                        
+                        switch (opcion)
+                        {
+                            case 1:
+                                Console.WriteLine("Ingrese el ID de la programacion de la cual desea generar un reporte: ");
+                                mostrarProgramaciones(0, 10, 7);
+                                iD = Console.ReadLine();
+                                generarReportePDF(iD);
+
+
+                                
+                                break;
+                            case 2:
+                                Console.WriteLine("Ingrese el ID de la programacion de la cual desea generar un reporte: ");
+                                mostrarProgramaciones(0, 10, 7);
+                                iD = Console.ReadLine();
+                                generarReporteExcel(iD);
+                                
+                                break;
+                            case 3:
+                                Console.WriteLine("Ingrese el ID de la programacion de la cual desea generar un reporte: ");
+                                mostrarProgramaciones(0, 10, 7);
+                                iD = Console.ReadLine();
+                                generarReporteCVS(iD);
+                                break;
+                            default:
+                                Console.WriteLine("Opcion invalida,intente de nuevo");
+                                
+                               
+                                
+                                break;
+
+                        }
+                        break;
+                    case 2:
+                        return;
+                        break;
+
+                    default:
+                        Console.WriteLine("Opcion invalida,intente de nuevo");
+                        
+                       
+                        
+                        break;
+
+
+
+                }
+                Console.ReadKey();
             }
-            catch (Exception)
-            {
-                opcion = 0;
-            }
-            switch (opcion)
-            {
-                case 1:
-
-                    Console.Clear();
-                    Console.WriteLine("Seleccione el formato en el que desee generar el reporte: \n1.PDF\n2.Excel\n3.CSV\n");
-                    try
-                    {
-                        opcion = byte.Parse(Console.ReadLine());
-                    }
-                    catch (Exception)
-                    {
-                        opcion = 0;
-                    }
-                    Console.WriteLine("Ingrese el ID de la programacion de la cual desea generar un reporte: ");
-                    mostrarProgramaciones(0, 10,7);
-                    iD = Console.ReadLine();
-                    switch (opcion)
-                    {
-                        case 1:
-                            generarReportePDF(iD);
-
-
-                            MenuReportes();
-                            break;
-                        case 2:
-                            generarReporteExcel(iD);
-                            MenuReportes();
-                            break;
-                        case 3:
-                            generarReporteCVS(iD);
-                            break;
-                        default:
-                            Console.WriteLine("Opcion invalida,intente de nuevo");
-                            Console.ReadKey();
-                            Console.Clear();
-                            MenuReportes();
-                            break;
-
-                    }
-                    break;
-                case 2:
-                    MenuGeneral();
-                    break;
-
-                default:
-                    Console.WriteLine("Opcion invalida,intente de nuevo");
-                    Console.ReadKey();
-                    Console.Clear();
-                    MenuReportes();
-                    break;
-
-
-
-            }
-            Console.ReadKey();
         }
         void MenuIntegracion()
         {
@@ -882,12 +892,12 @@ namespace ProgIIFinalProject
             {
                 Console.WriteLine("Programación no encontrada");
                 Console.ReadKey();
-                MenuReportes();
+                return;
             }
             Console.Clear();
             Console.WriteLine("Reporte creado exitosamente");
             Console.ReadKey();
-            MenuReportes();
+           
 
         }
         void generarReporteCVS(string id)
@@ -1076,12 +1086,12 @@ namespace ProgIIFinalProject
             {
                 Console.WriteLine("Programación no encontrada");
                 Console.ReadKey();
-                MenuReportes();
+                return;
             }
             Console.Clear();
             Console.WriteLine("Reporte creado exitosamente");
             Console.ReadKey();
-            MenuReportes();
+            
 
         }
         void generarReporteExcel(string id)
@@ -1289,12 +1299,12 @@ namespace ProgIIFinalProject
             {
                 Console.WriteLine("Programación no encontrada");
                 Console.ReadKey();
-                MenuReportes();
+                return;
             }
             Console.Clear();
             Console.WriteLine("Reporte creado exitosamente");
             Console.ReadKey();
-            MenuReportes();
+           
         }
     
         void mostrarMaterias(int x, int y, int z)
@@ -1340,8 +1350,8 @@ namespace ProgIIFinalProject
 
             DBConnect();
             int xPosition = 0;
-            GotoXY("ID       Alumnos", x, y);
-            GotoXY("-----------------", x, y + 1);
+            GotoXY("ID         Alumnos", x, y);
+            GotoXY("-------------------", x, y + 1);
             using (cmd = new SqlCommand("select * from Alumnos", con))
             {
                 SqlDataReader reader = cmd.ExecuteReader();
@@ -1351,7 +1361,7 @@ namespace ProgIIFinalProject
                     Console.SetCursorPosition(xPosition, index);
                     string Mid = reader[ident].ToString();
                     Console.WriteLine(Mid);
-                    xPosition = 9;
+                    xPosition = 11;
                     Console.SetCursorPosition(xPosition, index);
                     string NombreMateria = reader["Nombre"].ToString();
                     Console.WriteLine(NombreMateria);

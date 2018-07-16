@@ -261,11 +261,15 @@ namespace ProgIIFinalProject
                         break;
                     case 4:
                         Console.WriteLine("Ingrese el ID o el codigo de la materia al que desea modificar algun dato: \n");
+                        mostrarMaterias(0, 13);
+                        Console.SetCursorPosition(0, 10);
                         iD = Console.ReadLine();
                         EditarMateria(iD);
                         break;
                     case 5:
                         Console.WriteLine("Ingrese el ID o el codigo de la materia que desea eliminar: \n");
+                        mostrarMaterias(0, 13);
+                        Console.SetCursorPosition(0, 10);
                         iD = Console.ReadLine();
                         EliminarMateria(iD);
                         break;

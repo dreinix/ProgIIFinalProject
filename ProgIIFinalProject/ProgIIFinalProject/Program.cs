@@ -318,19 +318,19 @@ namespace ProgIIFinalProject
                     break;
                 case 3:
                     Console.WriteLine("Ingrese el nombre o el identificador nacional del usuario: ");
-                    mostrarEstudiantes(0, 13, 10);
+                    mostrarEstudiantes(0, 13, 10,1);
                     iD = Console.ReadLine();
                     BuscarUsuario(iD);
                     break;
                 case 4:
                     Console.WriteLine("Ingrese el ID del usuario al que desea modificar algun dato: \n");
-                    mostrarEstudiantes(0, 13, 10);
+                    mostrarEstudiantes(0, 13, 10,0);
                     iD = Console.ReadLine();
                     EditarUsuario(iD);
                     break;
                 case 5:
                     Console.WriteLine("Ingrese el ID del usuario al que desea eliminar: \n");
-                    mostrarEstudiantes(0, 13, 10);
+                    mostrarEstudiantes(0, 13, 10,0);
                     iD = Console.ReadLine();
                     EliminarUsuario(iD);
                     break;
@@ -398,7 +398,7 @@ namespace ProgIIFinalProject
                         {
                             case 1:
                                 Console.WriteLine("Ingrese el ID del estudiante a buscar \n");
-                                mostrarEstudiantes(0, 16, 13);
+                                mostrarEstudiantes(0, 16, 13,0);
                                 iD = Console.ReadLine();
                                 BuscarSeleccionUsuario(iD);
                                 break;
@@ -1319,8 +1319,20 @@ namespace ProgIIFinalProject
 
             Console.SetCursorPosition (0,z);
         }
-        void mostrarEstudiantes(int x, int y, int z)
+        void mostrarEstudiantes(int x, int y, int z,int key)
         {
+            string ident = "";
+            switch (key)
+            {
+                case 0:
+                    ident = "ID";
+                    break;
+                case 1:
+                    ident = "Identificador";
+                    break;
+            }
+
+
             DBConnect();
             int xPosition = 0;
             GotoXY("ID       Alumnos", x, y);
@@ -1332,7 +1344,7 @@ namespace ProgIIFinalProject
                 while (reader.Read())
                 {
                     Console.SetCursorPosition(xPosition, index);
-                    string Mid = reader["Identificador"].ToString();
+                    string Mid = reader[ident].ToString();
                     Console.WriteLine(Mid);
                     xPosition = 9;
                     Console.SetCursorPosition(xPosition, index);
